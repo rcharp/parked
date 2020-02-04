@@ -27,11 +27,11 @@ CARD_CVV = ''
 
 # Cache
 CACHE_TYPE = 'redis'
-CACHE_REDIS_HOST = os.environ.get('CACHE_REDIS_HOST', None)
-CACHE_REDIS_PASSWORD = os.environ.get('CACHE_REDIS_PASSWORD', None)
-CACHE_DEFAULT_TIMEOUT = os.environ.get('CACHE_DEFAULT_TIMEOUT', None)
-CACHE_REDIS_PORT = os.environ.get('CACHE_REDIS_PORT', None)
-CACHE_REDIS_URL = os.environ.get('CACHE_REDIS_URL', None)
+CACHE_REDIS_HOST = os.environ.get('REDIS_HOST', None)
+CACHE_REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', None)
+CACHE_DEFAULT_TIMEOUT = os.environ.get('DEFAULT_TIMEOUT', None)
+CACHE_REDIS_PORT = os.environ.get('REDIS_PORT', None)
+CACHE_REDIS_URL = os.environ.get('REDIS_URL', None)
 
 # Celery Heartbeat.
 BROKER_HEARTBEAT = 10
@@ -39,17 +39,16 @@ BROKER_HEARTBEAT_CHECKRATE = 2
 
 # Celery.
 CLOUDAMQP_URL = os.environ.get('CLOUDAMQP_URL', None)
-REDIS_URL = os.environ.get('CACHE_REDIS_URL', None)
-HEROKU_REDIS_COPPER_URL = os.environ.get('HEROKU_REDIS_COPPER_URL', None)
-REDBEAT_REDIS_URL = os.environ.get('CACHE_REDIS_URL', None)
+REDIS_URL = os.environ.get('REDIS_URL', None)
+REDBEAT_REDIS_URL = os.environ.get('REDIS_URL', None)
 
-CELERY_BROKER_URL = os.environ.get('CACHE_REDIS_URL', None)
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', None)
 CELERY_BROKER_HEARTBEAT = 10
 CELERY_BROKER_HEARTBEAT_CHECKRATE = 2
-CELERY_RESULT_BACKEND = os.environ.get('CACHE_REDIS_URL', None)
-CELERY_REDIS_URL = os.environ.get('CACHE_REDIS_URL', None)
-CELERY_REDIS_HOST = os.environ.get('CACHE_REDIS_HOST', None)
-CELERY_REDIS_PORT = os.environ.get('CACHE_REDIS_PORT', None)
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', None)
+CELERY_REDIS_URL = os.environ.get('REDIS_URL', None)
+CELERY_REDIS_HOST = os.environ.get('REDIS_HOST', None)
+CELERY_REDIS_PORT = os.environ.get('REDIS_PORT', None)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -67,10 +66,6 @@ CELERYBEAT_SCHEDULE = {
     },
     'send_trial_expired_emails': {
         'task': 'app.blueprints.billing.tasks.send_trial_expired_emails',
-        'schedule': crontab(hour=12, minute=0)
-    },
-    'send_no_integrations_emails': {
-        'task': 'app.blueprints.billing.tasks.send_no_integrations_emails',
         'schedule': crontab(hour=12, minute=0)
     }
 }
@@ -104,12 +99,17 @@ SEED_ADMIN_PASSWORD = os.environ.get('SEED_ADMIN_PASSWORD', None)
 SEED_MEMBER_EMAIL = ''
 REMEMBER_COOKIE_DURATION = timedelta(days=90)
 
+# Namecheap
+NAMECHEAP_API_KEY = os.environ.get('NAMECHEAP_API_KEY', None)
+NAMECHEAP_USERNAME = os.environ.get('NAMECHEAP_USERNAME', None)
+NAMECHEAP_IP_ADDRESS = os.environ.get('NAMECHEAP_IP_ADDRESS', None)
+
 # Mailgun.
-MAILGUN_LOGIN = os.environ.get('MAILGUN_LOGIN', None)
-MAILGUN_PASSWORD = os.environ.get('MAILGUN_PASSWORD', None)
-MAILGUN_HOST = os.environ.get('MAILGUN_HOST', None)
-MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN', None)
-MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY', None)
+# MAILGUN_LOGIN = os.environ.get('MAILGUN_LOGIN', None)
+# MAILGUN_PASSWORD = os.environ.get('MAILGUN_PASSWORD', None)
+# MAILGUN_HOST = os.environ.get('MAILGUN_HOST', None)
+# MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN', None)
+# MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY', None)
 
 # Turn off debug intercepts
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -122,34 +122,7 @@ SITE_URL = 'https://www.domain.com'
 WEBHOOK_URL = 'https://www.domain.com/webhook'
 
 # Mailerlite
-MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)
-
-# Google
-GOOGLE_APPLICATION_CREDENTIALS=os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', None)
-GOOGLE_PROJECT_ID=os.environ.get('GOOGLE_PROJECT_ID', None)
-GOOGLE_CLIENT_ID=os.environ.get('GOOGLE_CLIENT_ID', None)
-GOOGLE_CLIENT_SECRET=os.environ.get('GOOGLE_CLIENT_SECRET', None)
-GOOGLE_TOKEN_URI=os.environ.get('GOOGLE_TOKEN_URI', None)
-GOOGLE_AUTH_URI=os.environ.get('GOOGLE_AUTH_URI', None)
-GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.compose','https://www.googleapis.com/auth/gmail.modify','email']
-GOOGLE_DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive','email']
-GOOGLE_CONTACTS_SCOPES = ['https://www.googleapis.com/auth/contacts','email']
-GOOGLE_SHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets','email']
-GOOGLE_PUSH_ENDPOINT=os.environ.get('GOOGLE_PUSH_ENDPOINT', None)
-GOOGLE_CALLBACK_URL=os.environ.get('GOOGLE_CALLBACK_URL', None)
-
-# Slack
-SLACK_CLIENT_ID=os.environ.get('SLACK_CLIENT_ID', None)
-SLACK_CLIENT_SECRET=os.environ.get('SLACK_CLIENT_SECRET', None)
-SLACK_SCOPE=os.environ.get('SLACK_SCOPE', None)
-SLACK_AUTH_URL=os.environ.get('SLACK_AUTH_URL', None)
-SLACK_BUTTON=os.environ.get('SLACK_BUTTON', None)
-
-# Airtable
-AIRTABLE_KEY = os.environ.get('AIRTABLE_KEY', None)
-AIRTABLE_BASE = os.environ.get('AIRTBALE_BASE', None)
-D_AIRTABLE_KEY = os.environ.get('D_AIRTABLE_KEY', None)
-D_AIRTABLE_BASE = os.environ.get('D_AIRTBALE_BASE', None)
+# MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)
 
 # Billing.
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', None)
@@ -235,11 +208,5 @@ STRIPE_PLANS = {
         'trial_period_days': 0,
         'statement_descriptor': 'DEVELOPER',
         'metadata': {}
-    }
-}
-
-# APIs
-API = {
-    'gmail': {
     }
 }
