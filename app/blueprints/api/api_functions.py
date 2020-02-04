@@ -16,7 +16,7 @@ from importlib import import_module
 from app.blueprints.page.date import is_date
 from app.blueprints.api.pynamecheap import namecheap as nc
 
-ip_address = socket.gethostbyname(socket.gethostname())
+# ip_address = socket.gethostbyname(socket.gethostname())
 
 # Create a distinct integration id for the integration.
 def generate_id(size=8, chars=string.digits):
@@ -72,7 +72,7 @@ def print_traceback(e):
 def check_domain_availability(domains):
     username = current_app.config.get('NAMECHEAP_USERNAME')
     api_key = current_app.config.get('NAMECHEAP_API_KEY')
-    # ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
+    ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
 
     api = nc.Api(username, api_key, username, ip_address, sandbox=False)
 
