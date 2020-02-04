@@ -68,20 +68,20 @@ def print_traceback(e):
 
 
 def check_domain_availability(domains):
-    try:
-        username = current_app.config.get('NAMECHEAP_USERNAME')
-        api_key = current_app.config.get('NAMECHEAP_API_KEY')
-        ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
+    username = current_app.config.get('NAMECHEAP_USERNAME')
+    api_key = current_app.config.get('NAMECHEAP_API_KEY')
+    ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
 
-        api = nc.Api(username, api_key, username, ip_address, sandbox=False)
+    api = nc.Api(username, api_key, username, ip_address, sandbox=False)
 
-        availability = []
+    availability = []
 
-        for domain in domains:
+    for domain in domains:
+        try:
             available = api.domains_check(domain)
             availability.append({domain: available})
+        except Exception as e:
+            print_traceback(e)
+            pass
 
-        return availability  #api.domains_check(domain)
-    except Exception as e:
-        print_traceback(e)
-        return []
+    return availability
