@@ -82,6 +82,6 @@ def check_domain_availability(domains):
             availability.append({domain: available})
         except Exception as e:
             print_traceback(e)
-            pass
+            continue
 
     return availability
