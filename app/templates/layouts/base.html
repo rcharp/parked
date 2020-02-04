@@ -1,0 +1,198 @@
+{% import 'macros/flash.html' as flash with context %}
+{% import 'billing/macros/billing.html' as billing with context %}
+
+<!DOCTYPE html>
+<html style="max-width:100%;">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117689313-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-117689313-1');
+    </script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="../../static/oneui/assets/img/favicons/favicon.png">
+    <meta name="description"
+          content="{% block meta_description %}{% endblock %}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <!--link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/vendor/bootstrap.min.css') }}"-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/main.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/vendor/font-awesome.min.css') }}">
+
+    <!-- Theme CSS -->
+    <!-- Animation library for notifications   -->
+
+    <!--  Light Bootstrap Table core CSS    --
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/theme/light-bootstrap-dashboard.css?v=1.4.0') }}"-->
+
+    <!-- Bootstrap Theme -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/theme/bootstrap.min.css') }}">
+
+      <!-- Javascript loader -->
+
+    <!-- Theme Fonts -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Cabin|Gotham|Gotham|Open+Sans|Comfortaa"
+          rel="stylesheet">
+
+    <!-- Lite elements -->
+
+    <!-- Bootstrap Core CSS -->
+    <!--<link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='page/assets/plugins/bootstrap/css/bootstrap.min.css') }}">-->
+    <!--<link rel="stylesheet" type="text/css" href="../../blueprints/page/templates/assets/plugins/bootstrap/css/bootstrap.min.css">-->
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='page/lite/css/style.css') }}">
+    <!--<link rel="stylesheet" type="text/css" href="../../blueprints/page/templates/lite/css/style.css">-->
+
+    <!-- chartist CSS --
+    <link href="../../blueprints/page/templates/assets/plugins/chartist-js/dist/chartist.min.css" rel="stylesheet">
+    <link href="../../blueprints/page/templates/assets/plugins/chartist-js/dist/chartist-init.css" rel="stylesheet">
+    <link href="../../blueprints/page/templates/assets/plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.css" rel="stylesheet">
+    <!--This page css - Morris CSS --
+    <link href="../../blueprints/page/templates/assets/plugins/c3-master/c3.min.css" rel="stylesheet">
+
+    <!-- You can change the theme colors from here -->
+    <!--link href="../../blueprints/page/templates/lite/css/colors/blue.css" id="theme" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
+    <!-- end Lite elements -->
+
+
+
+
+    <script
+      src="https://code.jquery.com/jquery-1.12.2.min.js"
+      integrity="sha256-lZFHibXzMHo3GGeehn1hudTAP3Sc0uKXBXAzHX1sjtk="
+      crossorigin="anonymous"></script>
+    <script src="https://js.stripe.com/v2/"></script>
+
+    {% if config['ANALYTICS_GOOGLE_UA'] %}
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.gmail-analytics.com/analytics.js','ga');
+
+        ga('create', "{{ config['ANALYTICS_GOOGLE_UA'] }}", 'auto');
+        ga('send', 'pageview');
+      </script>
+    {% endif %}
+
+  </head>
+  {% block litebody %}{% endblock %}
+  <body style="font-family: 'Gotham', sans-serif;margin:auto;width:100%;max-width:100%;overflow-x:hidden;padding-bottom:0; background-color:#fff;">
+    {% block header %}{% endblock %}
+    {{ billing.card_expiring_warning() }}
+
+    {% if request.path != '/demo' and request.path != '/inbox' and request.path != '/refresh'
+    and request.path != '/rules' and not ('/add' in request.path) and not ('/parse' in request.path)
+    and not ('/export' in request.path) and not ('/view_email' in request.path) %}
+    <main class="container"style="min-height:850px;">
+      {{ flash.render() }}
+
+      <div class="md-margin-top">{% block heading %}{% endblock %}</div>
+      {% block body %}{% endblock %}
+    </main>
+    {% endif %}
+    <br /><br />
+    {% block footer %}{% endblock %}
+    <!--footer class="footer text-center" style="font-family: 'Gotham', sans-serif;">
+      <div class="container">
+        <ul class="list-inline">
+          <li class="text-muted">Domain &copy; {{ current_year() }}</li>
+
+        </ul>
+      </div>
+    </footer-->
+
+<!-- Footer -->
+        <footer class="footer section bg-light-primary text-gray pt-2">
+            <div class="container" style="min-width:80%; max-width:95%;">
+                <!-- Empty Space --
+                <div class="lg-space"></div>
+                <!--/ End Empty Space --
+                <div class="row">
+                    <div class="col-10 col-lg-8 mx-auto">
+                        <div class="row">
+                            <ul class="nav col flex-column sm-font-size">
+                                <li class="nav-link nav-head text-uppercase font-weight__500 text-black base-font-size font-family-secondary">Company</li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Features</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Pricing</a></li>
+                            </ul>
+                            <ul class="nav col flex-column sm-font-size">
+                                <li class="nav-link nav-head text-uppercase font-weight__500 text-black base-font-size font-family-secondary">Support</li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Help</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">FAQ</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Contact</a></li>
+                            </ul>
+                            <ul class="nav col flex-column sm-font-size">
+                                <li class="nav-link nav-head text-uppercase font-weight__500 text-black base-font-size font-family-secondary">Legal</li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Terms</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Privacy</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Policy</a></li>
+                            </ul>
+                            <ul class="nav col flex-column sm-font-size">
+                                <li class="nav-link nav-head text-uppercase font-weight__500 text-black base-font-size font-family-secondary">Press</li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Press Release</a></li>
+                                <li class="nav-item"><a href="#" class="nav-link text-gray">Press Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Empty Space --
+                <div class="lg-space"></div>
+                <!--/ End Empty Space -->
+                <div class="row align-items-center">
+                    <div class="col-8 col-lg-8 pr-lg-0" style="padding:0;float:right">
+                        <div class="credit sm-font-size text-right text-lg-right text-dark-gray">
+                            <a href="https://www.domain.com/contact">Contact Us</a> | <a href="https://www.domain.com/privacy">Privacy Policy</a> | <a href="https://www.domain.com/terms">Terms of Service</a>
+
+                        </div>
+                        <div class="copyright xs-font-size text-right text-lg-right">
+                            &copy; 2019 Domain. All Rights Reserved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--/ End Footer -->
+
+    <script
+      src="{{ url_for('static', filename='scripts/vendor/bootstrap.min.js') }}">
+    </script>
+    <script
+      src="{{ url_for('static', filename='scripts/vendor/moment.min.js') }}">
+    </script>
+    <script
+      src="{{ url_for('static', filename='scripts/main.js') }}">
+    </script>
+  </body>
+</html>

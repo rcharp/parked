@@ -1,0 +1,281 @@
+{% import 'macros/flash.html' as flash with context %}
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+
+        <title>Contact us - Domain</title>
+
+        <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
+        <meta name="author" content="pixelcave">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <!-- Icons -->
+        <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+        <link rel="shortcut icon" href="../../../../static/oneui/assets/img/favicons/favicon.png">
+
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-16x16.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-160x160.png" sizes="160x160">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-192x192.png" sizes="192x192">
+
+        <link rel="apple-touch-icon" sizes="57x57" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-180x180.png">
+        <!-- END Icons -->
+
+        <!-- Page JS Plugins CSS -->
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/select2/select2.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/select2/select2-bootstrap.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/jquery-auto-complete/jquery.auto-complete.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/ion-rangeslider/css/ion.rangeSlider.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/ion-rangeslider/css/ion.rangeSlider.skinHTML5.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/dropzonejs/dropzone.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/jquery-tags-input/jquery.tagsinput.min.css">
+
+        <!-- Stylesheets -->
+        <!-- Web fonts -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+
+        <!-- Bootstrap and OneUI CSS framework -->
+        <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" id="css-main" href="../../../../static/oneui/assets/css/oneui.css">
+
+        <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
+        <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
+        <!-- END Stylesheets -->
+    </head>
+    <body style="zoom: 80%;">
+        <!-- Page Container -->
+        <!--
+            Available Classes:
+
+            'enable-cookies'             Remembers active color theme between pages (when set through color theme list)
+
+            'sidebar-l'                  Left Sidebar and right Side Overlay
+            'sidebar-r'                  Right Sidebar and left Side Overlay
+            'sidebar-mini'               Mini hoverable Sidebar (> 991px)
+            'sidebar-o'                  Visible Sidebar by default (> 991px)
+            'sidebar-o-xs'               Visible Sidebar by default (< 992px)
+
+            'side-overlay-hover'         Hoverable Side Overlay (> 991px)
+            'side-overlay-o'             Visible Side Overlay by default (> 991px)
+
+            'side-scroll'                Enables custom scrolling on Sidebar and Side Overlay instead of native scrolling (> 991px)
+
+            'header-navbar-fixed'        Enables fixed header
+        -->
+        <div id="page-container" class="header-navbar-fixed">
+
+            <!-- Header -->
+            <header id="header-navbar" class="content-mini content-mini-full">
+                {% if current_user.email %}
+                <!-- Header Navigation Right -->
+                <ul class="nav-header pull-right">
+                    <li>
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                                <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
+                                <i class="si si-user"></i>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="dropdown-header">Profile</li>
+                                <li>
+                                    <a tabindex="-1" href="javascript:void(0)">
+                                        {{ current_user.email }}
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">Actions</li>
+                                <li>
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-layers pull-right"></i>My Integrations
+                                    </a>
+                                </li>
+                                <li>
+                                    <a tabindex="-1" href="{{ url_for('user.contact') }}">
+                                        <i class="si si-bubbles pull-right"></i>Contact us
+                                    </a>
+                                </li>
+                                <li>
+                                    <a tabindex="-1" href="{{ url_for('user.logout') }}">
+                                        <i class="si si-logout pull-right"></i>Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <!-- END Header Navigation Right -->
+                {% endif %}
+
+                <!-- Header Navigation Left -->
+                <ul class="nav-header pull-left">
+                    <li>
+                        <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
+                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                            <i class="si si-home"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('page.home') }}">
+                          <img src="{{ url_for('static', filename='assets/images/logos/domain.png') }}"
+                               height="40" title="Domain" alt="Domain"/>
+                        </a>
+                    </li>
+                </ul>
+                <!-- END Header Navigation Left -->
+            </header>
+            <!-- END Header -->
+
+            <!-- Main Container -->
+            <main id="main-container">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
+                    <div class="row items-push">
+                        <div class="col-sm-7">
+                            <h1 class="font-w300 text-white">
+                                Contact us
+                            </h1>
+                        </div>
+                    </div>
+                    {% for message in get_flashed_messages(with_categories=True) %}
+                        {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                        <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;">
+                            {{ message[1] }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Page Content -->
+                <div class="content" style="min-height:500px;">
+
+
+                    <!-- Start Content -->
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-lg-12" style="width:50%; margin:0 auto; min-width:400px; float:none;">
+                            <div class="block" style="min-height:800px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                                <div class="block-content" id="contact" style="padding-right:10px;overflow:visible !important">
+                                    <h2 class="font-w300 push-15" style="margin-bottom:5px !important;">Contact us</h2>
+                                    <h4 class="font-w300 push-15">Questions? Concerns? Just wanna tell us we're awesome? Let us know below!</h4><hr />
+                                    <form class="form-horizontal" id="contact_form" action="{{ url_for('user.contact') }}" method="post" style="text-align:left;">
+                                        <div class="form-group" style="width:100%; margin:0 auto; margin-top:45px; float:none;">
+                                            <div class="block block-content" style="text-align:left;">
+                                                <span class="h3 text-muted">What's your email address?</span><br /><br />
+                                                <input required class="form-control contact" style="width:60%;" type="email" id="email" name="email" {% if current_user.email %}value="{{ current_user.email }}"{% endif %} />
+                                            </div><br /><br />
+                                            <div class="block block-content" style="text-align:left;">
+                                                <span class="h3 text-muted">What do you want to let us know?</span><br /><br />
+                                                <textarea required class="form-control contact" id="message" name="message" rows="10" placeholder="Please enter your message here"></textarea>
+                                            </div><br /><br /><br /><br />
+                                            <!-- Send integration request button -->
+                                            <div class="col-md-8" style="vertical-align:top; width:60%; line-height:0;display:block;min-width:250px;margin:0 auto;float:none">
+                                                <div class="col-sm-4" style="width:100%; margin:0 auto; float:none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-8" style="width:80%; margin:0 auto; float:none; text-align:center;padding:0">
+                                                            <button class="btn btn-lg btn-primary" type="submit"
+                                                                    style="width:175px;margin:0 auto; float:none;">Send email</button><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end of submit integration request button -->
+                                        </div>
+
+                                        {% if current_user.email %}
+                                            <input type="hidden" name="user" id="user" value="{{ current_user.email }}" />
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end first row -->
+                </div>
+                <!-- END Page Content -->
+            </main>
+            <!-- END Main Container -->
+
+            <!-- Footer -->
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
+                <div class="pull-right">
+                    <a href="https://www.domain.com/contact">Contact Us</a> | <a href="https://www.domain.com/privacy">Privacy Policy</a> | <a href="https://www.domain.com/terms">Terms of Service</a>
+                </div>
+                <div class="pull-left">
+                    <a class="font-w600" href="http://goo.gl/6LF10W" target="_blank">OneUI 3.1</a> &copy; <span class="js-year-copy"></span>
+                </div>
+            </footer>
+            <!-- END Footer -->
+        </div>
+        <!-- END Page Container -->
+
+
+        <!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+        <script src="../../../../static/oneui/assets/js/core/jquery.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/bootstrap.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/jquery.slimscroll.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/jquery.scrollLock.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/jquery.appear.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/jquery.countTo.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/jquery.placeholder.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/core/js.cookie.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/app.js"></script>
+
+        <!-- Page JS Plugins -->
+        <script src="../../../../static/oneui/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+        <!-- Page JS Code -->
+        <script src="../../../../static/oneui/assets/js/pages/base_tables_datatables.js"></script>
+
+        <!-- Page Plugins -->
+        <script src="../../../../static/oneui/assets/js/plugins/slick/slick.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/chartjs/Chart.min.js"></script>
+
+        <!-- Page JS Plugins -->
+        <script src="../../../../static/oneui/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/bootstrap-datetimepicker/moment.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/select2/select2.full.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/masked-inputs/jquery.maskedinput.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/jquery-auto-complete/jquery.auto-complete.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/ion-rangeslider/js/ion.rangeSlider.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/dropzonejs/dropzone.min.js"></script>
+        <script src="../../../../static/oneui/assets/js/plugins/jquery-tags-input/jquery.tagsinput.min.js"></script>
+
+        <!-- DDSlick JS Plugin -->
+        <script src="../../../../static/oneui/assets/js/ddslick.js"></script>
+
+        <!-- Page JS Code -->
+        <script src="../../../../static/oneui/assets/js/pages/base_forms_pickers_more.js"></script>
+        <script>
+            jQuery(function () {
+                // Init page helpers (BS Datepicker + BS Datetimepicker + BS Colorpicker + BS Maxlength + Select2 + Masked Input + Range Sliders + Tags Inputs plugins)
+                App.initHelpers(['datepicker', 'datetimepicker', 'colorpicker', 'maxlength', 'select2', 'masked-inputs', 'rangeslider', 'tags-inputs']);
+            });
+        </script>
+
+        <script src="../../../../static/oneui/assets/js/pages/base_pages_dashboard.js"></script>
+        <script>
+            jQuery(function () {
+                // Init page helpers (Slick Slider plugin)
+                App.initHelpers('slick');
+            });
+        </script>
+
+    </body>
+    <div id="page-loader"></div>
+</html>

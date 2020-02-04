@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+  postgres:
+    image: 'postgres:9.5'
+    env_file:
+      - '.env'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: 'redis:3.0-alpine'
+    command: redis-server
+    volumes:
+      - 'redis:/var/lib/redis/data'
+    ports:
+      - '13525:13525'
+
+  rabbitmq:
+    image: 'rabbitmq'
+    command: rabbitmq-server
+    hostname: "fox.rmq.cloudamqp.com"
+    ports:
+      - '1883:1883'
+
+  website:
+    build: .
+    command: >
+      gunicorn -c "python:config.gunicorn_dev" --reload "app.app:create_app()"
+    env_file:
+      - '.env'
+    volumes:
+      - '.:/airform'
+    ports:
+      - '5000:5000'
+
+  celery:
+    build: .
+    command: celery worker -B -l info -A app.blueprints.user.tasks
+    env_file:
+      - '.env'
+    volumes:
+      - '.:/airform'
+
+volumes:
+  postgres:
+  redis:

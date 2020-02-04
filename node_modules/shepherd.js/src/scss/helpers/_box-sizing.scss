@@ -1,0 +1,10 @@
+@mixin box-sizing() {
+  .shepherd-element,
+  .shepherd-element * {
+    &,
+    &:after,
+    &:before {
+      box-sizing: border-box;
+    }
+  }
+}

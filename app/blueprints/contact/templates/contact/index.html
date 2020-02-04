@@ -1,0 +1,25 @@
+{% extends 'layouts/app.html' %}
+{% import 'macros/form.html' as f with context %}
+
+{% block title %}Contact Us - Domain{% endblock %}
+{% block meta_description %}Contact Us{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-8 well" style="margin-top:50px">
+      {% call f.form_tag('contact.index') %}
+        <legend>How can we help?</legend>
+        {% call f.form_group(form.email, css_class='margin-bottom',
+                             placeholder='E-mail address') %}
+        {% endcall %}
+
+        {% call f.form_group(form.message, css_class='margin-bottom',
+                             placeholder='What\'s going on?',
+                             rows='12') %}
+        {% endcall %}
+
+        <button type="submit" class="btn btn-primary">Send e-mail</button>
+      {% endcall %}
+    </div>
+  </div>
+{% endblock %}

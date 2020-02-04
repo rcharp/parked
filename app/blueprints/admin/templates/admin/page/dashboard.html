@@ -1,0 +1,56 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Admin - Dashboard{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h4>Subscriptions</h4>
+          {% for item in group_and_count_plans.query %}
+            {% set percent = ((item[0] / group_and_count_plans.total) * 100) | round %}
+            <h5>
+              {{ item[1] | title }}
+              <span class="text-muted">({{ item[0] }})</span>
+            </h5>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"
+                   aria-valuenow="{{ percent }}" aria-valuemin="0"
+                   aria-valuemax="100" style="width: {{ percent }}%;">
+                {{ percent }}%
+              </div>
+            </div>
+          {% endfor %}
+          <hr/>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="{{ url_for('admin.users') }}">Users</a>
+          <span class="pull-right text-muted">
+            {{ group_and_count_users.total }}
+          </span>
+        </div>
+        <div class="panel-body">
+          {% for item in group_and_count_users.query %}
+            {% set percent = ((item[0] / group_and_count_users.total) * 100) | round %}
+            <h5>
+              {{ item[1] | title }}
+              <span class="text-muted">({{ item[0] }})</span>
+            </h5>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"
+                   aria-valuenow="{{ percent }}" aria-valuemin="0"
+                   aria-valuemax="100" style="width: {{ percent }}%;">
+                {{ percent }}%
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

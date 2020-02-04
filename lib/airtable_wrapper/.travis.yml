@@ -1,0 +1,19 @@
+language: python
+git:
+  depth: 2
+python:
+  - 2.7
+  # - 3.4
+  # - 3.5
+  - 3.6
+branches:
+  only:
+  - master
+  - dev/main
+script:
+  - pytest --cov=airtable --cov-report=xml
+install:
+  - pip install -r requirements-dev.txt
+  - pip install codecov
+after_success:
+    - codecov

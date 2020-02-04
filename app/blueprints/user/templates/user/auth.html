@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <!-- Icons -->
+        <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+        <link rel="shortcut icon" href="../../../../static/oneui/assets/img/favicons/favicon.png">
+
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-16x16.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-160x160.png" sizes="160x160">
+        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-192x192.png" sizes="192x192">
+
+        <link rel="apple-touch-icon" sizes="57x57" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-180x180.png">
+        <!-- END Icons -->
+
+        <!-- Stylesheets -->
+        <!-- Web fonts -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+
+        <!-- Page JS Plugins CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/select2/select2.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/select2/select2-bootstrap.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/jquery-auto-complete/jquery.auto-complete.min.css">
+
+        <!-- Bootstrap and OneUI CSS framework -->
+        <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" id="css-main" href="../../../../static/oneui/assets/css/oneui.css">
+
+</head>
+<body style="max-height:600px;">
+    <div class="block col-lg-14" style="background-color:transparent; width:100%; min-width:320px; display:block; padding:0; min-height:500px;margin-bottom:20px; margin-top:80px;">
+        <div class="block col-md-4" style="width:90%; margin:0 auto; float:none;min-width:320px;
+                min-height:600px;padding:0;padding-bottom:20px; display:block; {# border:1px solid #d3d3d3; #}
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);border-radius:4px">
+            <!-- full div for actions and apps -->
+            <div class="block-content block-content-narrow ribbon ribbon-right" style="display:block">
+                <div class="block block-link-hover3 text-center" href="javascript:void(0)">
+                    <div class="block-content block-content-full">
+                        <img src="../../../../static/assets/images/logos/{{ app }}.png" class="img-fluid mt-5 mt-lg-0" id="app_image" alt="features" width="75px">
+                        <div class="font-w600 push-15-t" id="app_name">{{ app|replace('_', ' ')|title }}</div>
+                    </div>
+                </div>
+                <form action="{{ url_for('page.callback', app=app) }}" id="api_key_form" method="post">
+                    <span class="h3 font-w400 text-muted">Please copy and paste your API key below (Required):</span><br /><br />
+                    <span class="h5 font-w400 text-muted">We need it in order to get access to your account. Don't worry, we'll keep it safe!</span>
+                    <span class="h5 font-w400 text-muted">You can find it on <a href="{{ account }}" target="_blank">{{ app|replace('_', ' ')|title }}'s account page.</a></span><br /><br /><br />
+                    <input required class="form-control input-lg" type="text" id="api_key" value="" name="api_key"><br />
+                    <input type="hidden" name="app" id="app" value="{{ app }}" />
+
+                    <button class="btn btn-block btn-primary push-10" id="api_key_submit_button" type="submit" value="" style="height:50px;width:50%;min-width:250px;max-width:400px;margin:0 auto;float:none;white-space:normal;"
+                            onsubmit="RedirectToCaller();">Submit
+                    </button>
+
+                    <div class="col-md-4" style="width:60%;display:block;margin:0 auto;float:none">
+                        <br /><a href="javascript:void(0)" onclick="window.close();"><p style="color:red;text-align:center;"><u>Cancel</u></p></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function RedirectToCaller(){
+            window.opener.location.reload();
+            window.close();
+        }
+    </script>
+</body>
+</html>

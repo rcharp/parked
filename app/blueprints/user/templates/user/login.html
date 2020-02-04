@@ -1,0 +1,44 @@
+{% extends 'layouts/login.html' %}
+{% import 'macros/form.html' as f with context %}
+
+{% block title %}Login - Domain{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="block-content" style="width:50%;min-width:300px;max-width:350px;margin:0 auto;
+    border:1px solid #d3d3d3;border-radius:4px; padding:20px;float:none;margin-top:50px; background-color:#fff;">
+      {% call f.form_tag('user.login') %}
+        <legend>Log in</legend>
+
+        {% call f.form_group(form.identity, css_class='sm-margin-bottom',
+                             autofocus='autofocus') %}
+        {% endcall %}
+
+        {% call f.form_group(form.password, css_class='sm-margin-bottom') %}
+        {% endcall %}
+
+        <div class="row">
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-block btn-primary" style="background-color:#5c90d2">
+              Log in
+            </button>
+          </div>
+          <div class="col-md-6">
+            <div class="visible-xs visible-sm sm-margin-top"></div>
+            <a href="{{ url_for('user.signup') }}"
+               class="btn btn-default btn-block">
+              Sign Up
+            </a>
+          </div>
+        </div>
+      {% endcall %}
+
+      <div class="text-center md-margin-top">
+        <a href="{{ url_for('user.begin_password_reset') }}" class="text-muted">
+          Forgot your password?
+        </a>
+      </div><br />
+        <small>By logging you agree to our <a href="https://www.domain.com/privacy">Privacy Policy</a> and <a href="https://www.domain.com/terms">Terms of Service</a></small>
+    </div>
+  </div>
+{% endblock %}

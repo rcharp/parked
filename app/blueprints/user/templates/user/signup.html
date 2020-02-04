@@ -1,0 +1,44 @@
+{% extends 'layouts/app.html' %}
+{% import 'macros/form.html' as f with context %}
+
+{% block title %}Sign Up - Domain{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="block-content" style="width:50%;min-width:300px;max-width:350px;margin:0 auto;
+    border:1px solid #d3d3d3;border-radius:4px; padding:20px;float:none;margin-top:50px; background-color:#fff;">
+      {% call f.form_tag('user.signup') %}
+        <legend>Sign up</legend>
+
+        {% call f.form_group(form.email, css_class='sm-margin-bottom',
+                             autofocus='autofocus',
+                             placeholder='Email address') %}
+        {% endcall %}
+
+        {% call f.form_group(form.password, css_class='sm-margin-bottom') %}
+        {% endcall %}
+
+        {% call f.form_group(form.confirm, css_class='sm-margin-bottom') %}
+        {% endcall %}
+
+        <div class="row">
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-block btn-primary" style="background-color:#5c90d2">
+              Sign Up
+            </button>
+          </div>
+        </div>
+        <div class="row"><br /></div>
+        <div class="row">
+          <div class="col-md-8">
+            <div style="height:100%;border:none;">
+              <span style="font-size:16px;">Already registered? <a href="{{ url_for('user.login') }}">
+                  Login</a></span>
+             </div>
+          </div>
+        </div>
+      {% endcall %}<br />
+    <small>By signing up you agree to our <a href="https://www.domain.com/privacy">Privacy Policy</a> and <a href="https://www.domain.com/terms">Terms of Service</a></small>
+    </div>
+  </div>
+{% endblock %}

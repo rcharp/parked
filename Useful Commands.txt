@@ -1,0 +1,143 @@
+cd to icloud drive directory in terminal
+cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/
+
+webhook: celery -A app.blueprints.billing.webhooks worker -B -S redbeat.RedBeatScheduler -l info --loglevel=INFO
+webhook: celery -A app.blueprints.billing.webhooks worker -B -l info --loglevel=INFO --concurrency 1
+
+Heroku Backup Database
+=====================
+# Manual database backup
+heroku pg:backups:capture --app getairform
+
+# Get database backup URL
+heroku pg:backups:url b001 --app getairform
+
+Ngrok
+==============
+# Get ngrok to work with localhost
+./ngrok http -host-header=rewrite localhost:5000
+
+HOW TO MERGE BRANCHES IN GIT
+====================
+git checkout <branch merging into>
+git merge <branch merging from>
+git push origin <branch merging into>
+
+*So to merge from master into dev, the command is:*
+git checkout dev
+git merge master
+git push origin master
+
+Force upgrade of packages in requirements.txt
+=================
+pur -r requirements.txt
+==sudo pip install --upgrade --force-reinstall -r requirements.txt
+
+Fix git merge issue
+================
+error: you need to resolve your current index first
+git reset --merge
+
+Flush redis
+================
+redis-cli -h <REDIS HOST> -p <REDIS PORT> -a <REDIS PASSWORD>
+
+Delete file from git
+================
+git filter-branch --force --index-filter \
+'git rm --cached --ignore-unmatch <PATH-TO-YOUR-FILE-WITH-SENSITIVE-DATA>' \
+--prune-empty --tag-name-filter cat -- --all
+
+itsdangerous.exc.SignatureExpired: Signature age X > Y error
+================
+This happens when the cookie age is older than the duration.
+Fix it by either going to app.py, authentication() and setting the max_age to 999999999999
+or change REMEMBER_COOKIE_DURATION in settings.py and rebuild
+
+Website not loading a page
+==============
+this is because github can't find directory
+delete .git folder from directory to make it show up
+
+Importing Celery task
+=============
+Cannot import celery task globally wherever I need it.
+Must import locally in function.
+
+"No module named" error
+=============
+When this happens with an installed module, I have to add the module to the requirements.txt file.
+
+Unable to get PubSub working in Google API console fix
+=============
+I had to create a new service account with permissions for PubSub Editor, not Subscriber or Publisher.
+
+Docker Images
+==============
+
+# Start Docker image
+docker-compose up
+
+# Build Docker image
+docker-compose up --build
+
+# Stop Docker image
+docker-compose stop
+
+# Delete dangling images
+docker rmi -f $(docker images -qf dangling=true)
+
+# Delete Docker image
+docker-compose rm -f
+
+# List Docker containters
+docker container ls
+
+Docker DB commands
+=================
+
+# Docker db commands
+docker-compose exec website airform db [command_name]
+
+# Reset db
+docker-compose exec website airform db reset
+
+# Show tables in db
+docker exec -it $(docker-compose ps -q postgres9 ) psql -Upostgres -c '\z'
+
+# Add fake users
+docker-compose exec website airform add all
+
+# Test coverage
+docker-compose exec website airform cov
+
+# Generate a secret key for production
+docker-compose exec website airform secret
+
+# Generate secret key 64 bytes
+docker-compose exec website airform secret 64
+
+# All website's routes
+docker-compose exec website airform routes
+
+# Count lines of code
+docker-compose exec website airform loc
+
+# List all stripe charges
+docker-compose exec website airform stripe list_charges
+
+
+Changes
+=========
+
+# Login change
+blueprints/user/views, line 58
+"Identity or password is incorrect" change to "username/email or password is incorrect"
+
+# Sign Up change
+signing up with an existing email currently says "Already exists." Change to "This email already exists"
+
+Fix Magic Number error
+====================
+In the root of the domain folder, run “find . -name \*.pyc -delete” then push to github. also, log out/in from github on heroku
+

@@ -1,0 +1,235 @@
+{% macro card_expiring_warning() -%}
+  {% if current_user.is_authenticated and 
+        current_user.subscription and current_user.credit_card.is_expiring %}
+    <div class="alert alert-warning" role="alert">
+      <div class="container">
+        Your credit card is going to expire soon,
+        <a href="{{ url_for('billing.update_payment_method') }}">
+          please update it</a>
+        .
+      </div>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro plan(plan) -%}
+  {% if request.path == '/' or request.path == '/subscription/pricing' %}
+  <div class="col-md-12{{ ' quarter-faded' if plan.metadata.recommended }} {{ ' quarter-faded' if not plan.metadata
+  .recommended }}" style="min-width:250px;width:100%;margin:0 auto;float:none;">
+       <div class="panel panel-default{{ ' panel-success' if plan.metadata.recommended else ' panel-info'}}">
+        <div class="panel-heading text-center" style="font-family:'Gotham', sans-serif !important; font-weight:200"></div>
+  {% else %}
+  <div class="col-md-4{{ ' quarter-faded' if plan.metadata.recommended }} {{ ' quarter-faded' if not plan.metadata
+  .recommended }}" {{ 'style=margin-top:30px;' if not plan.metadata.recommended }}>
+
+    <div class="panel panel-default{{ ' panel-success' if plan.metadata.recommended else ' panel-info'}}">
+        <div class="panel-heading text-center"><h4 style="top:10px;"><i><span style="font-size:14px;margin-top:20px;">{{ 'Most Popular' if plan.metadata.recommended
+                }}</span></i></h4><h2>{{ plan
+        .name
+                }}</h2><h1>${{ plan
+        .amount|format_currency|int }}
+            <span style="font-size:16px;">/ {{plan.interval }}</span> </h1></div>
+    {% endif %}
+      <div class="panel-body">
+        {{ caller () }}
+
+        {% if current_user.is_authenticated %}
+          {% if current_user.subscription %}
+            {% if plan == active_plan %}
+              <strong class="btn btn-default btn-lg btn-block">
+                Current plan
+              </strong>
+            {% else %}
+              <button id="submit_{{ plan.id }}" name="submit_{{ plan.id }}"
+                      class="btn btn-primary btn-lg btn-block">
+                <img src="{{ url_for('static', filename='images/spinner.gif') }}"
+                     class="spinner"
+                     width="16" height="11" alt="Spinner"/>
+                Choose plan
+              </button>
+            {% endif %}
+          {% else %}
+            <a href="{{ url_for('billing.create', plan=plan.id) }}"
+               class="btn btn-primary btn-lg btn-block">Sign up now</a>
+          {% endif %}
+        {% else %}
+          <a href="{{ url_for('user.signup') }}"
+             class="btn btn-primary btn-lg btn-block">
+          {% if request.path == '/' %}
+            Try for free
+          {% else %}
+              Sign up now
+              {% endif %}
+          </a>
+        {% endif %}
+
+        <!--<p class="text-muted sm-margin-top text-center">
+          ${{ plan.amount | format_currency }} / {{ plan.interval }}
+        </p>-->
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
+
+
+{% macro coupon_data(coupon) -%}
+  {% if coupon.amount_off %}
+    {% set discount = '$' + coupon.amount_off | format_currency %}
+  {% else %}
+    {% set discount = coupon.percent_off | string + '%' %}
+  {% endif %}
+  {% if coupon.duration == 'forever' %}
+    {% set label = 'It is saving you ' + discount + ' per month forever.' %}
+  {% elif coupon.duration == 'once' %}
+    {% set label = 'It saved you ' + discount + ' this month.' %}
+  {% else %}
+    {% set label = 'It is saving you ' + discount + ' for the next ' + coupon.duration_in_months | string + ' months.' %}
+  {% endif %}
+
+  {{ label }}
+{%- endmacro %}
+
+
+{% macro coupon_duration_tag_for(coupon) -%}
+  {% if coupon.duration == 'forever' %}
+    <span class="label label-success">Forever</span>
+  {% elif coupon.duration == 'once' %}
+    <span class="label label-warning">Once</span>
+  {% else %}
+    <span class="label label-info">
+      {{ coupon.duration_in_months }} months
+    </span>
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro coupon_expiration(coupon) -%}
+  {% if coupon.redeem_by %}
+    <time class="from-now"
+          data-datetime="{{ coupon.redeem_by }}">
+      {{ coupon.redeem_by }}
+    </time>
+  {% elif coupon.duration_in_months %}
+    &mdash;
+  {% else %}
+    Never
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro coupon_redeemed(times_redeemed, max_redemptions) -%}
+  {% set total = max_redemptions if max_redemptions else '&infin;' | safe %}
+  {{ times_redeemed }} / {{ total }}
+{%- endmacro %}
+
+
+{% macro coupon_discount(amount_off, percent_off) -%}
+  {% if amount_off %}
+    ${{ amount_off | format_currency }}
+  {% else %}
+    {{ percent_off }}%
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro subscription_details(coupon) -%}
+  <h2>Subscription details</h2>
+  {% if coupon %}
+    <div class="alert alert-info alert-small">
+      Coupon code <strong>{{ coupon.code }}</strong> is applied to your
+      subscription.
+    </div>
+    <span class="small text-muted">
+      {{ coupon_data(coupon) }}
+    </span>
+    <br class="sm-margin-bottom">
+    <br class="sm-margin-bottom">
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro upcoming_invoice(invoice) -%}
+  {% if invoice == None %}
+    <h3>No upcoming payments</h3>
+    <p>You are not currently subscribed, so there's nothing to see here.</p>
+  {% else %}
+    <table class="table table-striped sm-margin-bottom">
+      <thead>
+        <tr>
+          <th>Subscription</th>
+          <th>Description</th>
+          <th>Next billing date</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ invoice.plan }}</td>
+          <td>{{ invoice.description }}</td>
+          <td>
+            <time class="short-date" data-datetime="{{ invoice.next_bill_on }}">
+              {{ invoice.next_bill_on }}
+            </time>
+          </td>
+          <td>
+            ${{ invoice.amount_due | format_currency }}
+            <span class="color--muted"> / {{ invoice.interval }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+{%- endmacro %}
+
+
+{% macro invoices(invoices) -%}
+  <h2>Recent billing history</h2>
+  {% if invoices.count() == 0 %}
+    <h4>No invoices found</h4>
+    <p>This isn't an error. You just haven't been invoiced yet.</p>
+  {% else %}
+    <table class="table table-striped sm-margin-bottom">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Method</th>
+          <th>Description</th>
+          <th>Service period</th>
+          <th>Tax</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for invoice in invoices %}
+        <tr>
+          <td>
+            <time class="from-now" data-datetime="{{ invoice.created_on }}">
+              {{ invoice.created_on }}
+            </time>
+          </td>
+          <td class="small">
+            {{ invoice.brand }} ****{{ invoice.last4 }}
+          </td>
+          <td class="small">{{ invoice.description }}</td>
+          <td>
+            <time class="short-date" data-datetime="{{ invoice.period_start_on }}">
+              {{ invoice.period_start_on }}
+            </time>
+            <span class="text-info">&mdash;</span>
+            <time class="short-date" data-datetime="{{ invoice.period_end_on }}">
+              {{ invoice.period_end_on }}
+            </time>
+          </td>
+          <td title="{{ (invoice.tax_percent | round(2)) | string + '%' if invoice.tax_percent }}">
+            {{ '$' + invoice.tax | format_currency if invoice.tax }}
+          </td>
+          <td title="{{ invoice.currency }}">
+            ${{ invoice.total | format_currency }}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{%- endmacro %}

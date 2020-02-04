@@ -1,0 +1,55 @@
+@mixin popper-theme-arrows($arrow-size: 16px, $arrow-pointer-events: null, $text-bg: $shepherd-text-background, $header-bg: $shepherd-header-background) {
+  .tippy-arrow {
+    border: $arrow-size solid transparent;
+    content: '';
+    display: block;
+    height: 0;
+    pointer-events: $arrow-pointer-events;
+    position: absolute;
+    width: 0;
+  }
+
+  // Centers and middles
+
+  &[x-placement^='top'] {
+    margin-bottom: $arrow-size;
+
+    .tippy-arrow {
+      border-bottom: 0;
+      border-top-color: $text-bg;
+      left: calc(50% - #{$arrow-size});
+    }
+  }
+
+  &[x-placement^='bottom'] {
+    margin-top: $arrow-size;
+
+    .tippy-arrow {
+      border-bottom-color: $header-bg;
+      border-top: 0;
+      left: calc(50% - #{$arrow-size});
+    }
+  }
+
+  &[x-placement^='left'] {
+    margin-right: $arrow-size;
+
+    .tippy-arrow {
+      border-left-color: $text-bg;
+      border-right: 0;
+      margin-top: -$arrow-size;
+      top: calc(50% - #{$arrow-size});
+    }
+  }
+
+  &[x-placement^='right'] {
+    margin-left: $arrow-size;
+
+    .tippy-arrow {
+      border-left: 0;
+      border-right-color: $text-bg;
+      top: calc(50% - #{$arrow-size});
+    }
+  }
+}
+

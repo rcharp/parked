@@ -1,0 +1,88 @@
+{% extends 'layouts/app.html' %}
+{% import 'macros/form.html' as f with context %}
+{% import 'billing/macros/billing.html' as billing with context %}
+
+{% block title %}Pricing - Domain{% endblock %}
+{% block meta_description %}Different plans for different needs.{% endblock %}
+
+{% block heading %}
+  {% if current_user.subscription %}
+    <h2 class="text-center" style="font-family:'Gotham', sans-serif !important; font-weight:200">You're about to change plans.</h2>
+    <div class="alert alert-danger text-center margin-bottom">
+      Note: If you downgrade from a higher plan to a lower one, all of your integrations will be deactivated and you'll have to reactivate the ones you want, up to the new limit.
+      <br /><b>Please be sure you want to do this.</b>
+    </div>
+    <!--<div class="alert alert-warning text-center margin-bottom">
+      Your plan will change <strong>immediately</strong> after clicking
+      'Change plan'.
+    </div>-->
+  {% else %}
+    <h2 class="text-center">Choose a Plan</h2>
+    <h3 class="text-center text-muted">
+      Select the plan that best fits your needs.
+    </h3>
+    <h6 class="text-center text-muted lg-margin-bottom">
+        All plans come with a free 14-day trial. No credit card required.
+    </h6>
+  {% endif %}
+{% endblock %}
+
+{% block body %}
+  {% call f.form_tag('billing.update', class='text-center') %}
+    {% if current_user.subscription %}
+      <div class="lg-margin-bottom">
+        <div class="coupon-code" style="display:none">
+          {{ form.coupon_code.label }}
+          {{ f.field(form.coupon_code) }}
+          <div id="coupon_code_status"
+               class="small alert alert-small alert-success">
+          </div>
+        </div>
+      </div>
+    {% endif %}
+      {% if current_user.id == 1 %}
+        {% call billing.plan(plans['0']) %}
+        <ul class="list-group list-group-flush text-center">
+          <li class="list-group-item">0 active integrations</li>
+          <li class="list-group-item">0 step integrations</li>
+          <li class="list-group-item">Access to all apps</li>
+          <li class="list-group-item">Email support</li>
+        </ul>
+      {% endcall %}
+      {% endif %}
+      {% call billing.plan(plans['1']) %}
+        <ul class="list-group list-group-flush text-center">
+          <li class="list-group-item">5 active integrations</li>
+          <li class="list-group-item">2 step integrations</li>
+          <li class="list-group-item">Access to all apps</li>
+          <li class="list-group-item">Email support</li>
+        </ul>
+      {% endcall %}
+      {% call billing.plan(plans['2']) %}
+        <ul class="list-group list-group-flush text-center">
+          <li class="list-group-item" >20 active integrations</li>
+          <li class="list-group-item">3+ step integrations</li>
+          <li class="list-group-item">Access to all apps</li>
+          <li class="list-group-item">Email support</li>
+        </ul>
+      {% endcall %}
+      {% call billing.plan(plans['3']) %}
+        <ul class="list-group list-group-flush text-center">
+          <li class="list-group-item" >50 active integrations</li>
+          <li class="list-group-item">3+ step integrations</li>
+          <li class="list-group-item">Access to all apps</li>
+          <li class="list-group-item">Email support</li>
+        </ul>
+      {% endcall %}
+      {% call billing.plan(plans['4']) %}
+        <ul class="list-group list-group-flush text-center">
+          <li class="list-group-item" >Unlimited integrations</li>
+          <li class="list-group-item">3+ step integrations</li>
+          <li class="list-group-item">Access to all apps</li>
+          <li class="list-group-item">Priority support</li>
+        </ul>
+      {% endcall %}
+
+  {% endcall %}
+    <!--<h2 class="text-center">More plans coming soon!</h2>-->
+{% endblock %}
