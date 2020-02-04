@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Settings - Airform</title>
+        <title>Settings - Parked</title>
 
         <meta name="description" content="OneUI - Admin Settings Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -148,7 +148,7 @@
                     <li>
                         <a href="{{ url_for('page.home') }}">
                           <img src="{{ url_for('static', filename='assets/images/logos/quickflow.png') }}"
-                               height="40" title="Airform" alt="Airform"/>
+                               height="40" title="Parked" alt="Parked"/>
                         </a>
                     </li>
                 </ul>
@@ -211,7 +211,7 @@
                                             </div>
                                             <div class="col-md-5 col-md-offset-1">
                                               {% if current_user.subscription %}
-                                                <h3> Airform {{ current_user.subscription.plan | title }}
+                                                <h3> Parked {{ current_user.subscription.plan | title }}
                                                   Plan</h3>
                                                 <h4 class="text-muted margin-bottom">
                                                   {{ current_user.credit_card.brand }}
@@ -279,7 +279,7 @@
                                             </div>
                                         </div><br /><br /><br />
                                         <h3 class="font-w400 push-15" style="margin-bottom:5px !important;">Connected Accounts</h3>
-                                        <h4 class="font-w300 push-15">All of the accounts that you've authorized Airform to connect to.</h4>
+                                        <h4 class="font-w300 push-15">All of the accounts that you've authorized Parked to connect to.</h4>
                                         <hr />
                                         <!-- Header BG Table -->
                                         <div class="block">

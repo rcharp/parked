@@ -1,4 +1,4 @@
 
         [console_scripts]
-        airform=cli.cli:cli
+        parked=cli.cli:cli
     

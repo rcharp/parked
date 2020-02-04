@@ -32,7 +32,7 @@ services:
     env_file:
       - '.env'
     volumes:
-      - '.:/airform'
+      - '.:/parked'
     ports:
       - '5000:5000'
 
@@ -42,7 +42,7 @@ services:
     env_file:
       - '.env'
     volumes:
-      - '.:/airform'
+      - '.:/parked'
 
 volumes:
   postgres:

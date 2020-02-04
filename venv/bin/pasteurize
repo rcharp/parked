@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/Ricky/Library/Mobile Documents/com~apple~CloudDocs/Airform/airform/venv/bin/python" "$0" "$@"
+'''exec' "/Users/Ricky/Library/Mobile Documents/com~apple~CloudDocs/Parked/parked/venv/bin/python" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

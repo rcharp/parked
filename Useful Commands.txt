@@ -7,10 +7,10 @@ webhook: celery -A app.blueprints.billing.webhooks worker -B -l info --loglevel=
 Heroku Backup Database
 =====================
 # Manual database backup
-heroku pg:backups:capture --app getairform
+heroku pg:backups:capture --app getparked
 
 # Get database backup URL
-heroku pg:backups:url b001 --app getairform
+heroku pg:backups:url b001 --app getparked
 
 Ngrok
 ==============
@@ -97,34 +97,34 @@ Docker DB commands
 =================
 
 # Docker db commands
-docker-compose exec website airform db [command_name]
+docker-compose exec website parked db [command_name]
 
 # Reset db
-docker-compose exec website airform db reset
+docker-compose exec website parked db reset
 
 # Show tables in db
 docker exec -it $(docker-compose ps -q postgres9 ) psql -Upostgres -c '\z'
 
 # Add fake users
-docker-compose exec website airform add all
+docker-compose exec website parked add all
 
 # Test coverage
-docker-compose exec website airform cov
+docker-compose exec website parked cov
 
 # Generate a secret key for production
-docker-compose exec website airform secret
+docker-compose exec website parked secret
 
 # Generate secret key 64 bytes
-docker-compose exec website airform secret 64
+docker-compose exec website parked secret 64
 
 # All website's routes
-docker-compose exec website airform routes
+docker-compose exec website parked routes
 
 # Count lines of code
-docker-compose exec website airform loc
+docker-compose exec website parked loc
 
 # List all stripe charges
-docker-compose exec website airform stripe list_charges
+docker-compose exec website parked stripe list_charges
 
 
 Changes

@@ -1,10 +1,10 @@
 setup.py
-Airform_CLI.egg-info/PKG-INFO
-Airform_CLI.egg-info/SOURCES.txt
-Airform_CLI.egg-info/dependency_links.txt
-Airform_CLI.egg-info/entry_points.txt
-Airform_CLI.egg-info/requires.txt
-Airform_CLI.egg-info/top_level.txt
+Parked_CLI.egg-info/PKG-INFO
+Parked_CLI.egg-info/SOURCES.txt
+Parked_CLI.egg-info/dependency_links.txt
+Parked_CLI.egg-info/entry_points.txt
+Parked_CLI.egg-info/requires.txt
+Parked_CLI.egg-info/top_level.txt
 cli/__init__.py
 cli/cli.py
 cli/commands/__init__.py
