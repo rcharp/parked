@@ -11,6 +11,8 @@ from flask import (
 import traceback
 
 from flask_login import login_required, current_user
+
+from app.blueprints.api.api_functions import print_traceback
 from config import settings
 from app.blueprints.billing.forms import CreditCardForm, \
     UpdateSubscriptionForm, CancelSubscriptionForm
@@ -82,8 +84,8 @@ def create():
 
             return redirect(url_for('user.dashboard'))
 
-        return render_template('billing/payment_method.html',
-                            form=form, plan=subscription_plan)
+        return render_template('user/checkout.html')
+        # return render_template('billing/payment_method.html', form=form, plan=subscription_plan)
     except Exception as e:
         print_traceback(e)
 
