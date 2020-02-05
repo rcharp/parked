@@ -8,9 +8,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app.app import create_app
 from app.extensions import db
 from app.blueprints.user.models import User
-from app.blueprints.api.models.apps import App
-from app.blueprints.api.models.user_integrations import UserIntegration
-from app.blueprints.api.models.app_auths import AppAuthorization
+from app.blueprints.api.models.domains import Domain
 from importlib import import_module
 from app.blueprints.api.api_functions import print_traceback
 

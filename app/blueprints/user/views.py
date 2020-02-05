@@ -32,13 +32,10 @@ import os
 import pytz
 import stripe
 import datetime
-from lib.airtable_wrapper.airtable.airtable import Airtable
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.api.api_functions import print_traceback
-from app.blueprints.api.models.bases import Base
-from app.blueprints.api.models.app_auths import AppAuthorization
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -240,9 +237,11 @@ def check_availability():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
         domains = [l for l in request.form['domains'].split('\n') if l]
-        available = check_domain_availability(domains)
+        details = check_domain_availability(domains)
 
-        return render_template('user/dashboard.html', current_user=current_user, available=available)
+        return render_template('user/dashboard.html', current_user=current_user, domain=details)
+    else:
+        return render_template('user/dashboard.html', current_user=current_user)
 
 
 # Settings -------------------------------------------------------------------

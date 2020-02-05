@@ -13,9 +13,11 @@ from app.extensions import db
 from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
-from app.blueprints.page.date import is_date
+from app.blueprints.page.date import get_dt_string
 # from app.blueprints.api.pynamecheap import namecheap as nc
-from app.blueprints.api.namecheapapi.namecheapapi.api.domains import DomainAPI
+# from app.blueprints.api.namecheapapi.namecheapapi.api.domains import DomainAPI
+# import app.blueprints.api.domain.pythonwhois
+import pythonwhois
 
 # ip_address = socket.gethostbyname(socket.gethostname())
 
@@ -79,17 +81,24 @@ def check_domain_availability(domains):
     # This is old PyNamecheap code
     # api = nc.Api(username, api_key, username, ip_address, sandbox=False)
 
-    api = DomainAPI(api_user=username, api_key=api_key, username=username, client_ip=ip_address, sandbox=False)
+    # api = DomainAPI(api_user=username, api_key=api_key, username=username, client_ip=ip_address, sandbox=False)
 
-    availability = []
+    # availability = []
+    details = dict()
 
     for domain in domains:
         try:
-            # available = api.domains_check(domain)
-            available = api.check(domain)
-            availability.append({domain: available})
+            details = pythonwhois.get_whois(domain)
+            # print(details)
+            if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
+                expires = get_dt_string(details['expiration_date'][0])
+                # availability.append({domain: False, 'expires': expires})
+                details.update({'name': domain, 'available': False, 'expires': expires})
+            else:
+                # availability.append({domain: True, 'expires': None})
+                details.update({'name': domain, 'available': True, 'expires': None})
         except Exception as e:
             print_traceback(e)
-            availability.append({domain: None})
+            details.update({'name': domain, 'available': None, 'expires': None})
 
-    return availability
+    return details

@@ -18,7 +18,6 @@ from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
 from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string
-from app.blueprints.api.models.app_auths import AppAuthorization
 from app.blueprints.billing.template_processors import (
   format_currency,
   current_year

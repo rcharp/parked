@@ -181,39 +181,56 @@
                             <!-- Block Tabs Alternative Style -->
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="settings_nav" style="padding-top:5px;min-width:140px;width:45%;display:block">
-                                        <a href="#settings"><h3>My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
+                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block">
+                                        <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                    </li>
+                                    <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
+                                        <a href="#domains"><h3>My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
-                                    <div class="tab-pane active" id="dashboard" name="tab_pane" style="min-height:250px;overflow:hidden">
+                                    <div class="tab-pane active" id="check" name="check" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                {% if available|length > 0 %}
-                                                    {% for domain in available %}
-                                                        {% for k,v in domain.items() %}
-                                                            {% if v is not none %}
-                                                                The domain {{ k }} is {% if not v %}<span style="color: red; ">NOT</span> {% endif %}available!<br />
+                                                {% if domain|length %}
+                                                    <div style="text-align:center; font-size:24px;"><br /><br />
+                                                        {% if domain['available'] is not none %}
+                                                            {% if not domain['available'] %}
+                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br />
+                                                                It expires {{ domain['expires'] }}.
+
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
+                                                                    <div class="form-group">
+                                                                        <br />
+                                                                        <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
+                                                                            <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Try again</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                                <br /><br />
                                                             {% else %}
-                                                                There was an error checking {{ k }}. Please try again.
+                                                                The domain {{ domain['name'] }} <span style="color: green; ">is available</span>!
                                                             {% endif %}
-                                                        {% endfor %}
-                                                    {% endfor %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
-                                                        <div class="form-group">
-                                                            <div class="col-xs-12">
-                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="float:right"><i class="push-5-r"></i>Try again</button>
+                                                        {% else %}
+                                                            There was an error checking {{ domain['name'] }}. Is it a vaild domain? Please try again.
+                                                        {% endif %}
+                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
+                                                            <div class="form-group">
+                                                                <br />
+                                                                <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
+                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Try again</button>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                    </div>
                                                 {% else %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
                                                         <div class="form-group">
-                                                            <h4>Check domain availability</h4>
+                                                            <h4>Enter a domain to check its availability.</h4>
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%; margin:0 auto; float:none">
-                                                                <input class="form-control" id="domains" name="domains" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domains" name="domains" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">
@@ -223,6 +240,16 @@
                                                         </div>
                                                     </form>
                                                 {% endif %}
+                                            </div>
+                                            <!-- END Bootstrap Login -->
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane" id="domains" name="domains" style="min-height:250px;overflow:hidden">
+                                        <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
+                                            <!-- Bootstrap Login -->
+                                            <div class="block block-themed">
+
                                             </div>
                                             <!-- END Bootstrap Login -->
                                         </div>

@@ -8,9 +8,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app.app import create_app
 from app.extensions import db
 from app.blueprints.user.models import User
-from app.blueprints.api.models.app_auths import AppAuthorization
-from app.blueprints.api.models.bases import Base
-from app.blueprints.api.models.tables import Table
+from app.blueprints.api.models.domains import Domain
 from importlib import import_module
 from app.blueprints.api.api_functions import print_traceback
 
@@ -73,27 +71,6 @@ def seed():
     return User(**params).save()
 
 
-@click.command()
-def seedauth():
-    """
-    Seed the database with a couple user auths.
-
-    :return: Nothing
-    """
-
-    # Seed auths
-    auths = app.config['SEED_AUTHS']
-
-    for auth in auths:
-        a = AppAuthorization()
-        a.user_id = 1
-        a.app_name = auth['app_name']
-        a.account = auth['account']
-        a.account_id = auth['account_id']
-        a.access_token = auth['access_token']
-
-        a.save()
-
 
 @click.command()
 def seedintegrations():
@@ -141,5 +118,4 @@ def backup():
 
 cli.add_command(init)
 cli.add_command(seed)
-cli.add_command(seedauth)
 cli.add_command(reset)

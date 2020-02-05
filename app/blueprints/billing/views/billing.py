@@ -164,13 +164,7 @@ def cancel():
 
             # Delete the user.
             from app.blueprints.billing.tasks import delete_users, delete_auth
-            from app.blueprints.api.models.app_auths import AppAuthorization
             ids = [current_user.id]
-
-            # Delete the app auths
-            for id in ids:
-                auths = [x.id for x in AppAuthorization.query.filter(AppAuthorization.user_id == id).all()]
-                delete_auth.delay(auths)
 
             # Delete the user
             delete_users.delay(ids)

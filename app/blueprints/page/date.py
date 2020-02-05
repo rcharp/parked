@@ -72,6 +72,7 @@ def get_datetime_string(timestamp):
 
 
 def get_dt_string(dt):
+    dt = dt.replace(tzinfo=None)
     return dt.strftime("%B %d, %Y %H:%M:%S")
 
 
@@ -211,66 +212,3 @@ def json_serial(obj):
 
 def jsonify(datetime_obj):
     return dumps(datetime_obj, default=json_serial)
-
-##DateTime formatting##########################################################
-"""
-def pretty_date(time=False):
-
-    Get a datetime object or a int() Epoch timestamp and return a
-    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
-    'just now', etc
-    ""
-    from datetime import datetime
-
-    #time = time.replace(tzinfo=None)
-    now = datetime.now()
-    diff = now - datetime.today()
-
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time,datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
-
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return ''
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return "Just now"
-        if second_diff < 60:
-            return str(second_diff) + " seconds ago"
-        if second_diff < 120:
-            return "A minute ago"
-        if second_diff < 3600:
-            return str(second_diff / 60) + " minutes ago"
-        if second_diff < 7200:
-            return "An hour ago"
-        if second_diff < 86400:
-            return "About " + str(second_diff / 3600) + " hours ago"
-    if day_diff == 1:
-        return "Yesterday"
-    if day_diff < 7:
-        if day_diff == 1:
-            return str(day_diff) + " day ago"
-        else:
-            return str(day_diff) + " days ago"
-    if day_diff < 31:
-        if day_diff / 7 == 1:
-            return "About a week ago"
-        else:
-            return str(day_diff / 7) + " weeks ago"
-    if day_diff < 365:
-        if day_diff / 30 == 1:
-            return str(day_diff / 30) + " month ago"
-        else:
-            return str(day_diff / 30) + " months ago"
-    if day_diff / 365 == 1:
-        return "About a year ago"
-    else:
-        return str(day_diff / 365) + " years ago"
-"""
