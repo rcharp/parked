@@ -206,15 +206,15 @@
                                                 {% else %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
                                                         <div class="form-group">
-                                                            <h4>Check a domains</h4><br />
+                                                            <h4>Check a domain</h4><br />
                                                             <label class="col-md-12" for="domains">Enter domain</label>
-                                                            <div class="col-md-12" style="width:80%">
+                                                            <div class="col-md-12" style="width:80%; margin:0 auto; float:none">
                                                                 <input class="form-control" id="domains" name="domains" />
-                                                            </div>
+                                                                </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <div class="col-xs-12">
-                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="float:right"><i class="fa fa-arrow-right push-5-r"></i> Check</button>
+                                                            <div class="col-xs-12" style="width:40%;margin:0 auto;float:none">
+                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;margin:0 auto;float:none"><i class="fa fa-arrow-right push-5-r"></i> Check</button>
                                                             </div>
                                                         </div>
                                                     </form>

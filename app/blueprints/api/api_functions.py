@@ -14,13 +14,15 @@ from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
 from app.blueprints.page.date import is_date
-from app.blueprints.api.pynamecheap import namecheap as nc
+# from app.blueprints.api.pynamecheap import namecheap as nc
+from app.blueprints.api.namecheapapi.namecheapapi.api.domains import DomainAPI
 
 # ip_address = socket.gethostbyname(socket.gethostname())
 
+
 # Create a distinct integration id for the integration.
 def generate_id(size=8, chars=string.digits):
-
+    return
     # # Generate a random 8-character user id
     # new_id = int(''.join(random.choice(chars) for _ in range(size)))
     #
@@ -31,22 +33,21 @@ def generate_id(size=8, chars=string.digits):
     #     return integration_id
     # else:
     #     generate_integration_id()
-    return
 
 
 # Create a distinct auth id for the auth.
 def generate_auth_id(size=6, chars=string.digits):
     return
     # Generate a random 8-character user id
-    auth_id = int(''.join(random.choice(chars) for _ in range(size)))
-
-    from app.blueprints.api.models.app_auths import AppAuthorization
-
-    # Check to make sure there isn't already that id in the database
-    if not db.session.query(exists().where(AppAuthorization.id == auth_id)).scalar():
-        return auth_id
-    else:
-        generate_auth_id()
+    # auth_id = int(''.join(random.choice(chars) for _ in range(size)))
+    #
+    # from app.blueprints.api.models.app_auths import AppAuthorization
+    #
+    # # Check to make sure there isn't already that id in the database
+    # if not db.session.query(exists().where(AppAuthorization.id == auth_id)).scalar():
+    #     return auth_id
+    # else:
+    #     generate_auth_id()
 
 
 # Create a distinct integration id for the integration.
@@ -73,15 +74,19 @@ def check_domain_availability(domains):
     username = current_app.config.get('NAMECHEAP_USERNAME')
     api_key = current_app.config.get('NAMECHEAP_API_KEY')
     ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
-    print("IP address is: " + ip_address)
+    # print("IP address is: " + ip_address)
 
-    api = nc.Api(username, api_key, username, ip_address, sandbox=False)
+    # This is old PyNamecheap code
+    # api = nc.Api(username, api_key, username, ip_address, sandbox=False)
+
+    api = DomainAPI(api_user=username, api_key=api_key, username=username, client_ip=ip_address, sandbox=False)
 
     availability = []
 
     for domain in domains:
         try:
-            available = api.domains_check(domain)
+            # available = api.domains_check(domain)
+            available = api.check(domain)
             availability.append({domain: available})
         except Exception as e:
             print_traceback(e)
