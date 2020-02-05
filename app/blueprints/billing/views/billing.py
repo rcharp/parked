@@ -55,7 +55,7 @@ def create():
             flash('Sorry, that plan did not exist.', 'error')
             return redirect(url_for('billing.pricing'))
 
-        stripe_key = current_app.config.get('STRIPE_PUBLISHABLE_KEY')
+        stripe_key = current_app.config.get('STRIPE_KEY')
         form = CreditCardForm(stripe_key=stripe_key, plan=plan)
 
         if form.validate_on_submit():
@@ -193,7 +193,7 @@ def update_payment_method():
         current_user.subscription.plan)
 
     card = current_user.credit_card
-    stripe_key = current_app.config.get('STRIPE_PUBLISHABLE_KEY')
+    stripe_key = current_app.config.get('STRIPE_KEY')
     form = CreditCardForm(stripe_key=stripe_key,
                           plan=active_plan,
                           name=current_user.name)
