@@ -18,6 +18,7 @@ from app.blueprints.page.date import get_dt_string
 # from app.blueprints.api.namecheapapi.namecheapapi.api.domains import DomainAPI
 # import app.blueprints.api.domain.pythonwhois
 import pythonwhois
+import tldextract
 
 # ip_address = socket.gethostbyname(socket.gethostname())
 
@@ -88,6 +89,9 @@ def check_domain_availability(domains):
 
     for domain in domains:
         try:
+            ext = tldextract.extract(domain)
+            domain = ext.registered_domain
+
             details = pythonwhois.get_whois(domain)
             # print(details)
             if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
