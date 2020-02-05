@@ -73,6 +73,7 @@ def check_domain_availability(domains):
     username = current_app.config.get('NAMECHEAP_USERNAME')
     api_key = current_app.config.get('NAMECHEAP_API_KEY')
     ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
+    print("IP address is: " + ip_address)
 
     api = nc.Api(username, api_key, username, ip_address, sandbox=False)
 
