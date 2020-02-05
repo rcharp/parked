@@ -193,7 +193,11 @@
                                                 {% if available|length > 0 %}
                                                     {% for domain in available %}
                                                         {% for k,v in domain.items() %}
-                                                            The domain {{ k }} is {% if not v %}<span style="color: red; ">NOT</span> {% endif %}available!<br />
+                                                            {% if v is not none %}
+                                                                The domain {{ k }} is {% if not v %}<span style="color: red; ">NOT</span> {% endif %}available!<br />
+                                                            {% else %}
+                                                                There was an error checking {{ k }}. Please try again.
+                                                            {% endif %}
                                                         {% endfor %}
                                                     {% endfor %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">

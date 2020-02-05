@@ -70,7 +70,12 @@ class Session:
         return self.gmt_offset
 
     def _form_query(self, command: str, query: dict) -> str:
-
+        print("params are: ")
+        print(urlencode({
+            **self._base_params,
+            "Command": command,
+            **query
+        }))
         return urlencode({
             **self._base_params,
             "Command": command,
@@ -107,7 +112,7 @@ class Session:
 
         # TODO remove
         print(url)
-        print(raw_xml)
+        # print(raw_xml)
 
         xml = fromstring(raw_xml)
 
