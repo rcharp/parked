@@ -86,7 +86,7 @@ class Card(object):
         :type stripe_token: str
         :return: Stripe customer
         """
-        stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         customer = stripe.Customer.retrieve(customer_id)
         customer.source = stripe_token
 
@@ -128,7 +128,7 @@ class Subscription(object):
         :type plan: str
         :return: Stripe customer
         """
-        stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         params = {
             'source': token,
             'email': email,
@@ -156,7 +156,7 @@ class Subscription(object):
         :type plan: str
         :return: Stripe subscription
         """
-        stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         customer = stripe.Customer.retrieve(customer_id)
         subscription_id = customer.subscriptions.data[0].id
         subscription = customer.subscriptions.retrieve(subscription_id)
@@ -180,7 +180,7 @@ class Subscription(object):
         :type customer_id: int
         :return: Stripe subscription object
         """
-        stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         customer = stripe.Customer.retrieve(customer_id)
         subscription_id = customer.subscriptions.data[0].id
 
@@ -200,7 +200,7 @@ class Plan(object):
         :type plan: str
         :return: Stripe plan
         """
-        stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         try:
             return stripe.Plan.retrieve(plan)
         except stripe.error.StripeError as e:

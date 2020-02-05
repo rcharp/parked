@@ -107,8 +107,13 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
                                 <li>
+                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
+                                        <i class="si si-check pull-right"></i>Check A Domain
+                                    </a>
+                                </li>
+                                <li>
                                     <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-                                        <i class="si si-grid pull-right"></i>Dashboard
+                                        <i class="si si-grid pull-right"></i>My Dashboard
                                     </a>
                                 </li>
                                 <li>
@@ -124,11 +129,6 @@
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.logout') }}">
                                         <i class="si si-logout pull-right"></i>Log out
-                                    </a>
-                                </li>
-                                <li>
-                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Check Domain Availability
                                     </a>
                                 </li>
                             </ul>
@@ -200,7 +200,7 @@
                                                                 The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br />
                                                                 It expires {{ domain['expires'] }}.
 
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain' ) }}" method="get">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
@@ -231,7 +231,7 @@
                                                             <h4>Enter a domain to check its availability.</h4>
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domains" name="domains" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">

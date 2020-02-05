@@ -117,7 +117,7 @@ def create_app(settings_override=None):
     if settings_override:
         app.config.update(settings_override)
 
-    stripe.api_key = app.config.get('STRIPE_SECRET_KEY')
+    stripe.api_key = app.config.get('STRIPE_KEY')
     stripe.api_version = '2018-02-28'
 
     middleware(app)

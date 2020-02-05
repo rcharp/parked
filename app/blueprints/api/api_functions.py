@@ -73,7 +73,7 @@ def print_traceback(e):
     print(e)
 
 
-def check_domain_availability(domains):
+def check_domain_availability(domain):
     username = current_app.config.get('NAMECHEAP_USERNAME')
     api_key = current_app.config.get('NAMECHEAP_API_KEY')
     ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
@@ -82,27 +82,26 @@ def check_domain_availability(domains):
     # This is old PyNamecheap code
     # api = nc.Api(username, api_key, username, ip_address, sandbox=False)
 
+    # Old Namecheapapi code
     # api = DomainAPI(api_user=username, api_key=api_key, username=username, client_ip=ip_address, sandbox=False)
 
     # availability = []
     details = dict()
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
 
-    for domain in domains:
-        try:
-            ext = tldextract.extract(domain)
-            domain = ext.registered_domain
-
-            details = pythonwhois.get_whois(domain)
-            # print(details)
-            if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
-                expires = get_dt_string(details['expiration_date'][0])
-                # availability.append({domain: False, 'expires': expires})
-                details.update({'name': domain, 'available': False, 'expires': expires})
-            else:
-                # availability.append({domain: True, 'expires': None})
-                details.update({'name': domain, 'available': True, 'expires': None})
-        except Exception as e:
-            print_traceback(e)
-            details.update({'name': domain, 'available': None, 'expires': None})
+        details = pythonwhois.get_whois(domain)
+        # print(details)
+        if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
+            expires = get_dt_string(details['expiration_date'][0])
+            # availability.append({domain: False, 'expires': expires})
+            details.update({'name': domain, 'available': False, 'expires': expires})
+        else:
+            # availability.append({domain: True, 'expires': None})
+            details.update({'name': domain, 'available': True, 'expires': None})
+    except Exception as e:
+        print_traceback(e)
+        details.update({'name': domain, 'available': None, 'expires': None})
 
     return details

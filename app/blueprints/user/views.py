@@ -236,8 +236,26 @@ def dashboard():
 def check_availability():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
-        domains = [l for l in request.form['domains'].split('\n') if l]
-        details = check_domain_availability(domains)
+
+        # Uncomment this when ready to check multiple domains at once
+        # domains = [l for l in request.form['domains'].split('\n') if l]
+        
+        domain = request.form['domain']
+        details = check_domain_availability(domain)
+
+        return render_template('user/dashboard.html', current_user=current_user, domain=details)
+    else:
+        return render_template('user/dashboard.html', current_user=current_user)
+
+
+@user.route('/reserve_domain', methods=['GET','POST'])
+@login_required
+@csrf.exempt
+def reserve_domain():
+    if request.method == 'POST':
+        from app.blueprints.api.api_functions import check_domain_availability
+        domain = request.form['domain']
+        details = check_domain_availability(domain)
 
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:

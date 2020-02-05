@@ -126,13 +126,18 @@ WEBHOOK_URL = 'https://www.domain.com/webhook'
 
 # Billing.
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', None)
+STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY', None)
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', None)
 STRIPE_API_VERSION = '2018-02-28'
 STRIPE_AUTHORIZATION_LINK = os.environ.get('STRIPE_CONNECT_AUTHORIZE_LINK', None)
+
+# Change this to the live key when ready to take payments
+STRIPE_KEY = STRIPE_TEST_SECRET_KEY
+
 STRIPE_PLANS = {
     '0': {
         'id': 'free',
-        'name': 'Forever Free',
+        'name': 'Free',
         'amount': 0000,
         'currency': 'usd',
         'interval': 'month',
@@ -141,72 +146,72 @@ STRIPE_PLANS = {
         'statement_descriptor': 'FREE',
         'metadata': {}
     },
-    '1': {
-        'id': 'hobby',
-        'name': 'Hobby',
-        'amount': 700,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'HOBBY',
-        'metadata': {}
-    },
-    '2': {
-        'id': 'startup',
-        'name': 'Startup',
-        'amount': 2000,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'STARTUP',
-        'metadata': {
-            'recommended': True
-        }
-    },
-    '3': {
-        'id': 'professional',
-        'name': 'Professional',
-        'amount': 5000,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'PROFESSIONAL',
-        'metadata': {}
-    },
-    '4': {
-        'id': 'premium',
-        'name': 'Premium',
-        'amount': 12000,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'PREMIUM',
-        'metadata': {}
-    },
-    '5': {
-        'id': 'enterprise',
-        'name': 'Enterprise',
-        'amount': 25000,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'ENTERPRISE',
-        'metadata': {}
-    },
-    '6': {
-        'id': 'developer',
-        'name': 'Developer',
-        'amount': 1,
-        'currency': 'usd',
-        'interval': 'month',
-        'interval_count': 1,
-        'trial_period_days': 0,
-        'statement_descriptor': 'DEVELOPER',
-        'metadata': {}
-    }
+    # '1': {
+    #     'id': 'hobby',
+    #     'name': 'Hobby',
+    #     'amount': 700,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'HOBBY',
+    #     'metadata': {}
+    # },
+    # '2': {
+    #     'id': 'startup',
+    #     'name': 'Startup',
+    #     'amount': 2000,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'STARTUP',
+    #     'metadata': {
+    #         'recommended': True
+    #     }
+    # },
+    # '3': {
+    #     'id': 'professional',
+    #     'name': 'Professional',
+    #     'amount': 5000,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'PROFESSIONAL',
+    #     'metadata': {}
+    # },
+    # '4': {
+    #     'id': 'premium',
+    #     'name': 'Premium',
+    #     'amount': 12000,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'PREMIUM',
+    #     'metadata': {}
+    # },
+    # '5': {
+    #     'id': 'enterprise',
+    #     'name': 'Enterprise',
+    #     'amount': 25000,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'ENTERPRISE',
+    #     'metadata': {}
+    # },
+    # '6': {
+    #     'id': 'developer',
+    #     'name': 'Developer',
+    #     'amount': 1,
+    #     'currency': 'usd',
+    #     'interval': 'month',
+    #     'interval_count': 1,
+    #     'trial_period_days': 0,
+    #     'statement_descriptor': 'DEVELOPER',
+    #     'metadata': {}
+    # }
 }
