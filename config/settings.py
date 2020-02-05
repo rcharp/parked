@@ -146,72 +146,72 @@ STRIPE_PLANS = {
         'statement_descriptor': 'FREE',
         'metadata': {}
     },
-    # '1': {
-    #     'id': 'hobby',
-    #     'name': 'Hobby',
-    #     'amount': 700,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'HOBBY',
-    #     'metadata': {}
-    # },
-    # '2': {
-    #     'id': 'startup',
-    #     'name': 'Startup',
-    #     'amount': 2000,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'STARTUP',
-    #     'metadata': {
-    #         'recommended': True
-    #     }
-    # },
-    # '3': {
-    #     'id': 'professional',
-    #     'name': 'Professional',
-    #     'amount': 5000,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'PROFESSIONAL',
-    #     'metadata': {}
-    # },
-    # '4': {
-    #     'id': 'premium',
-    #     'name': 'Premium',
-    #     'amount': 12000,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'PREMIUM',
-    #     'metadata': {}
-    # },
-    # '5': {
-    #     'id': 'enterprise',
-    #     'name': 'Enterprise',
-    #     'amount': 25000,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'ENTERPRISE',
-    #     'metadata': {}
-    # },
-    # '6': {
-    #     'id': 'developer',
-    #     'name': 'Developer',
-    #     'amount': 1,
-    #     'currency': 'usd',
-    #     'interval': 'month',
-    #     'interval_count': 1,
-    #     'trial_period_days': 0,
-    #     'statement_descriptor': 'DEVELOPER',
-    #     'metadata': {}
-    # }
+    '1': {
+        'id': 'hobby',
+        'name': 'Hobby',
+        'amount': 700,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'HOBBY',
+        'metadata': {}
+    },
+    '2': {
+        'id': 'startup',
+        'name': 'Startup',
+        'amount': 2000,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'STARTUP',
+        'metadata': {
+            'recommended': True
+        }
+    },
+    '3': {
+        'id': 'professional',
+        'name': 'Professional',
+        'amount': 5000,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'PROFESSIONAL',
+        'metadata': {}
+    },
+    '4': {
+        'id': 'premium',
+        'name': 'Premium',
+        'amount': 12000,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'PREMIUM',
+        'metadata': {}
+    },
+    '5': {
+        'id': 'enterprise',
+        'name': 'Enterprise',
+        'amount': 25000,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'ENTERPRISE',
+        'metadata': {}
+    },
+    '6': {
+        'id': 'developer',
+        'name': 'Developer',
+        'amount': 1,
+        'currency': 'usd',
+        'interval': 'month',
+        'interval_count': 1,
+        'trial_period_days': 0,
+        'statement_descriptor': 'DEVELOPER',
+        'metadata': {}
+    }
 }
