@@ -210,7 +210,7 @@
                                               </div>
                                             </div>
                                             <div class="col-md-5 col-md-offset-1">
-                                              {% if current_user.customer %}
+                                              {% if current_user.customer and current_user.credit_card %}
                                                 <h3> Parked {{ current_user.customer.name | title }}
                                                   Plan</h3>
                                                 <h4 class="text-muted margin-bottom">
