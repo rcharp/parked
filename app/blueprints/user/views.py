@@ -251,7 +251,7 @@ def check_availability():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
-@user.route('/stripe_checkout', methods=['GET','POST'])
+@user.route('/reserve_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
 def reserve_domain():
