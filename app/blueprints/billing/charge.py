@@ -1,5 +1,5 @@
 import stripe
-from flask import current_app, url_for
+from flask import current_app, url_for, flash
 from app.blueprints.api.api_functions import print_traceback
 
 # Change to Live key when done testing
@@ -20,12 +20,12 @@ def reserve_domain(email):
                 'currency': 'usd',
                 'quantity': 1,
             }],
-            success_url=site_url + url_for('user.checkout', session_id='{CHECKOUT_SESSION_ID}'),
+            success_url=site_url + url_for('user.dashboard'),
+            # success_url=site_url + url_for('user.checkout', session_id='{CHECKOUT_SESSION_ID}'),
             cancel_url=site_url + url_for('user.settings'),
-            # success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
-            # cancel_url='https://example.com/cancel',
         )
         print("Session was created successful")
+        flash("Domain was successfully reserved.")
         return session.id
     except Exception as e:
         print("Session wasn't created")
