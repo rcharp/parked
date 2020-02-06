@@ -251,7 +251,7 @@ def check_availability():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
-@user.route('/reserve_domain', methods=['GET','POST'])
+@user.route('/stripe_checkout', methods=['GET','POST'])
 @login_required
 @csrf.exempt
 def reserve_domain():
@@ -262,8 +262,8 @@ def reserve_domain():
         details = check_domain_availability(domain)
 
         if details['available']:
-            from app.blueprints.billing.charge import reserve_domain
-            session_id = reserve_domain(current_user.email, domain)
+            from app.blueprints.billing.charge import stripe_checkout
+            session_id = stripe_checkout(current_user.email, domain)
             return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
         return render_template('user/dashboard.html', current_user=current_user)
     else:

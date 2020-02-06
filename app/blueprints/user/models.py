@@ -14,7 +14,8 @@ from itsdangerous import URLSafeTimedSerializer, \
 
 from lib.util_sqlalchemy import ResourceMixin, AwareDateTime
 from app.blueprints.billing.models.credit_card import CreditCard
-from app.blueprints.billing.models.subscription import Subscription
+# from app.blueprints.billing.models.subscription import Subscription
+from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from app.extensions import db
 
@@ -31,7 +32,9 @@ class User(UserMixin, ResourceMixin, db.Model):
     # Relationships.
     credit_card = db.relationship(CreditCard, uselist=False, backref='users', lazy='subquery',
                                   passive_deletes=True)
-    subscription = db.relationship(Subscription, uselist=False, lazy='subquery',
+    # subscription = db.relationship(Subscription, uselist=False, lazy='subquery',
+    #                                backref='users', passive_deletes=True)
+    customer = db.relationship(Customer, uselist=False, lazy='subquery',
                                    backref='users', passive_deletes=True)
     domain = db.relationship(Domain, uselist=False, backref='users', lazy='subquery',
                                         passive_deletes=True)
@@ -196,15 +199,14 @@ class User(UserMixin, ResourceMixin, db.Model):
             if user is None:
                 continue
 
-            if user.subscription is None:
+            if user.customer is None:
                 user.delete()
             else:
-                subscription = Subscription()
-                cancelled = subscription.cancel(user=user)
+                customer = Customer()
+                cancelled = customer.cancel(user=user)
 
                 # If successful, delete it locally.
                 if cancelled:
-
                     user.delete()
 
             delete_count += 1

@@ -186,6 +186,73 @@ class Subscription(object):
         return customer.subscriptions.retrieve(subscription_id).delete()
 
 
+class Customer(object):
+    @classmethod
+    def create(cls, token=None, email=None, name=None):
+        """
+        Create a new subscription.
+
+        API Documentation:
+          https://stripe.com/docs/api#create_subscription
+
+        :param token: Token returned by JavaScript
+        :type token: str
+        :param email: E-mail address of the customer
+        :type email: str
+        :param name: Customer name
+        :return: Stripe customer
+        """
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
+        params = {
+            'source': token,
+            'email': email,
+            'name': name
+        }
+
+        return stripe.Customer.create(**params)
+
+    @classmethod
+    def update(cls, customer_id=None, name=None, email=None):
+        """
+        Update an existing customer.
+
+        API Documentation:
+          https://stripe.com/docs/api/python#update_subscription
+
+        :param customer_id: Customer id
+        :type customer_id: str
+        :param coupon: Coupon code
+        :type coupon: str
+        :param plan: Plan identifier
+        :type plan: str
+        :return: Stripe subscription
+        """
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
+        customer = stripe.Customer.retrieve(customer_id)
+
+        customer.name = name
+        customer.email = email
+
+        return customer.save()
+
+    @classmethod
+    def cancel(cls, customer_id=None):
+        """
+        Delete an existing customer.
+
+        API Documentation:
+          https://stripe.com/docs/api#cancel_subscription
+
+        :param customer_id: Stripe customer id
+        :type customer_id: int
+        :return: Stripe subscription object
+        """
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
+        customer = stripe.Customer.retrieve(customer_id)
+
+        return customer.delete()
+
+
 class Plan(object):
     @classmethod
     def retrieve(cls, plan):

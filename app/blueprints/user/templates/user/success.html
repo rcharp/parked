@@ -201,7 +201,7 @@
                                                     You've successfully reserved the domain {{ request.args.get('domain') }}!<br />
                                                     Your card won't be charged unless we actually secure the domain for you.
 
-                                                    Please click <a href="{{ url_for('user.reserve_domain') }}">here</a> to return to your dashboard.
+                                                    Please click <a href="{{ url_for('user.stripe_checkout') }}">here</a> to return to your dashboard.
                                                 </div>
                                             </div>
                                             <!-- END Bootstrap Login -->
