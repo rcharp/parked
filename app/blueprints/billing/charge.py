@@ -4,8 +4,6 @@ from app.blueprints.api.api_functions import print_traceback
 from sqlalchemy import exists
 from app.extensions import db
 
-site_url = current_app.config.get('SITE_URL')
-
 
 def stripe_checkout(email, domain):
     try:
@@ -25,6 +23,7 @@ def stripe_checkout(email, domain):
 
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        site_url = current_app.config.get('SITE_URL')
 
         session = stripe.checkout.Session.create(
             customer_email=email,
