@@ -6,7 +6,7 @@
 {% block meta_description %}Different plans for different needs.{% endblock %}
 
 {% block heading %}
-  {% if current_user.subscription %}
+  {% if current_user.customer %}
     <h2 class="text-center" style="font-family:'Gotham', sans-serif !important; font-weight:200">You're about to change plans.</h2>
     <div class="alert alert-danger text-center margin-bottom">
       Note: If you downgrade from a higher plan to a lower one, all of your integrations will be deactivated and you'll have to reactivate the ones you want, up to the new limit.
@@ -29,7 +29,7 @@
 
 {% block body %}
   {% call f.form_tag('billing.update', class='text-center') %}
-    {% if current_user.subscription %}
+    {% if current_user.customer %}
       <div class="lg-margin-bottom">
         <div class="coupon-code" style="display:none">
           {{ form.coupon_code.label }}

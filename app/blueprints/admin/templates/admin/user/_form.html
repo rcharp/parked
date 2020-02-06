@@ -64,26 +64,26 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <dl>
-          {% if user.subscription and user.credit_card %}
+          {% if user.customer and user.credit_card %}
             <dt>Subscribed</dt>
             <dd class="sm-margin-bottom">
               <time class="from-now"
-                    data-datetime="{{ user.subscription.created_on }}">
-                {{ user.subscription.created_on }}
+                    data-datetime="{{ user.customer.created_on }}">
+                {{ user.customer.created_on }}
               </time>
               (<a href="#billing_details"
                 data-toggle="modal"
                 data-target="#billing_details">View billing details</a>)
             </dd>
             <dt>Plan</dt>
-            <dd class="sm-margin-bottom">
-              {{ user.subscription.plan | title }}
-              {% if user.subscription.coupon %}
-                <span class="small text-muted">
-                  (coupon: {{ user.subscription.coupon }})
-                </span>
-              {% endif %}
-            </dd>
+{#            <dd class="sm-margin-bottom">#}
+{#              {{ user.subscription.plan | title }}#}
+{#              {% if user.subscription.coupon %}#}
+{#                <span class="small text-muted">#}
+{#                  (coupon: {{ user.subscription.coupon }})#}
+{#                </span>#}
+{#              {% endif %}#}
+{#            </dd>#}
             <dt>Credit card</dt>
             <dd class="sm-margin-bottom">
               {{ user.name }}<br/>

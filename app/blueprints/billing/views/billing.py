@@ -30,7 +30,7 @@ billing = Blueprint('billing', __name__, template_folder='../templates',
 @csrf.exempt
 # @cache.cached(timeout=timeout)
 def pricing():
-    if current_user.is_authenticated and current_user.subscription:
+    if current_user.is_authenticated and current_user.customer:
         return redirect(url_for('billing.update'))
 
     form = UpdateSubscriptionForm()
@@ -45,7 +45,7 @@ def pricing():
 # @csrf.exempt
 # def create():
 #     try:
-#         if current_user.subscription:
+#         if current_user.customer:
 #             flash('You already have an active subscription.', 'info')
 #             return redirect(url_for('user.dashboard'))
 #
@@ -99,7 +99,7 @@ def pricing():
 @csrf.exempt
 def create():
     try:
-        if current_user.subscription:
+        if current_user.customer:
             # flash('You already have an active subscription.', 'info')
             return redirect(url_for('user.dashboard'))
 
@@ -206,7 +206,7 @@ def cancel():
     if form.validate_on_submit():
 
         # Cancel the user's subscription
-        if current_user.subscription:
+        if current_user.customer:
             subscription = Subscription()
             canceled = subscription.cancel(user=current_user)
         else:
@@ -281,7 +281,7 @@ def update_payment_method():
 def billing_details():
     invoices = Invoice.billing_history(current_user)
 
-    if current_user.subscription:
+    if current_user.customer:
         upcoming = Invoice.upcoming(current_user.payment_id)
         coupon = None
         # coupon = Coupon.query \

@@ -216,7 +216,7 @@ def dashboard():
 
     # Get settings trial information
     trial_days_left = -1
-    if not current_user.subscription and not current_user.trial and current_user.role == 'member':
+    if not current_user.customer and not current_user.trial and current_user.role == 'member':
         flash(Markup("Your free trial has expired. Please <a href='/subscription/update'>sign up</a> for a plan to continue."), category='error')
 
     if current_user.trial and current_user.role == 'member':
@@ -293,7 +293,7 @@ def settings():
 
     # Get settings trial information
     trial_days_left = -1
-    if not current_user.subscription and not current_user.trial and current_user.role == 'member':
+    if not current_user.customer and not current_user.trial and current_user.role == 'member':
         flash(Markup("Your free trial has expired. Please <a href='/subscription/update'>sign up</a> for a plan to continue."), category='error')
 
     if current_user.trial and current_user.role == 'member':

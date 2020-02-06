@@ -71,7 +71,7 @@ def users_edit(id):
     form = UserForm(obj=user)
 
     invoices = Invoice.billing_history(current_user)
-    if current_user.subscription:
+    if current_user.customer:
         upcoming = Invoice.upcoming(current_user.payment_id)
         # coupon = Coupon.query \
         #     .filter(Coupon.code == current_user.subscription.coupon).first()

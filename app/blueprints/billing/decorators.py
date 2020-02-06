@@ -13,7 +13,7 @@ def subscription_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.subscription:
+        if not current_user.customer:
             return redirect(url_for('billing.pricing'))
 
         return f(*args, **kwargs)

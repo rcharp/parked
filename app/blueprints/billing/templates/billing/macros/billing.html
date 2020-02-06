@@ -1,6 +1,6 @@
 {% macro card_expiring_warning() -%}
   {% if current_user.is_authenticated and 
-        current_user.subscription and current_user.credit_card.is_expiring %}
+        current_user.customer and current_user.credit_card.is_expiring %}
     <div class="alert alert-warning" role="alert">
       <div class="container">
         Your credit card is going to expire soon,
@@ -35,7 +35,7 @@
         {{ caller () }}
 
         {% if current_user.is_authenticated %}
-          {% if current_user.subscription %}
+          {% if current_user.customer %}
             {% if plan == active_plan %}
               <strong class="btn btn-default btn-lg btn-block">
                 Current plan
