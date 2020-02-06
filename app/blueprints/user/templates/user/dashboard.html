@@ -200,7 +200,7 @@
                                                                 The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br /><br />
                                                                 It expires {{ domain['expires'] }}.
 
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain' ) }}" method="get">
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
@@ -212,6 +212,14 @@
                                                                 - or -
                                                             {% else %}
                                                                 The domain {{ domain['name'] }} <span style="color: green; ">is available</span>!
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                                    <div class="form-group">
+                                                                        <br />
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
                                                             {% endif %}
                                                         {% else %}
                                                             There was an error checking {{ domain['name'] }}. Is it a vaild domain? Please try again.

@@ -257,11 +257,23 @@ def reserve_domain():
         # domain = request.form['domain']
         details = check_domain_availability('getparked.io')
 
-        print(request.form)
+        if details['available']:
+            from app.blueprints.billing.charge import reserve_domain
+            session_id = reserve_domain(current_user.email)
 
-        return render_template('user/dashboard.html', current_user=current_user, domain=details)
+            flash('Domain successfully reserved.')
+            return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
+        return render_template('user/dashboard.html', current_user=current_user)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
+
+
+@user.route('/checkout/<session_id>', methods=['GET','POST'])
+@csrf.exempt
+def checkout(session_id):
+    print("session ID is")
+    print(session_id)
+    return render_template('user/checkout.html', current_user=current_user)
 
 
 # Settings -------------------------------------------------------------------

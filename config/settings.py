@@ -116,7 +116,7 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://www.domain.com'
+SITE_URL = 'https://getparked.herokuapp.com'
 
 # Webhook
 WEBHOOK_URL = 'https://www.domain.com/webhook'

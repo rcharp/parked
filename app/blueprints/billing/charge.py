@@ -1,14 +1,33 @@
 import stripe
-from flask import current_app
+from flask import current_app, url_for
+from app.blueprints.api.api_functions import print_traceback
 
 # Change to Live key when done testing
-stripe.api_key = current_app.config.get('STRIPE_TEST_PUBLISHABLE_KEY')
+stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+site_url = current_app.config.get('SITE_URL')
 
 
-def create_payment():
-    intent = stripe.PaymentIntent.create(
-        amount=9900,
-        currency='usd',
-    )
-
-    return intent
+def reserve_domain(email):
+    try:
+        session = stripe.checkout.Session.create(
+            # customer=customer.id,
+            customer_email=email,
+            payment_method_types=['card'],
+            line_items=[{
+                'name': 'Parked',
+                'description': 'Reserve your domain',
+                'amount': 9900,
+                'currency': 'usd',
+                'quantity': 1,
+            }],
+            success_url=site_url + url_for('user.checkout', session_id='{CHECKOUT_SESSION_ID}'),
+            cancel_url=site_url + url_for('user.settings'),
+            # success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
+            # cancel_url='https://example.com/cancel',
+        )
+        print("Session was created successful")
+        return session.id
+    except Exception as e:
+        print("Session wasn't created")
+        print_traceback(e)
+        return None
