@@ -4,8 +4,6 @@ from app.blueprints.api.api_functions import print_traceback
 from sqlalchemy import exists
 from app.extensions import db
 
-# Change to Live key when done testing
-stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 site_url = current_app.config.get('SITE_URL')
 
 
@@ -24,6 +22,9 @@ def stripe_checkout(email, domain):
             c.user_id = u.id
             c.email = email
             c.save()
+
+        # Change to Live key when done testing
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
         session = stripe.checkout.Session.create(
             customer_email=email,
@@ -45,6 +46,9 @@ def stripe_checkout(email, domain):
 
 
 def update_customer(session_id, domain):
+    # Change to Live key when done testing
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+
     session = stripe.checkout.Session.retrieve(session_id)
     customer = session.customer
 
