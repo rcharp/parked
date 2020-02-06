@@ -259,19 +259,16 @@ def reserve_domain():
 
         if details['available']:
             from app.blueprints.billing.charge import reserve_domain
-            reserve_domain(current_user.email)
-            # return render_template('user/checkout.html', current_user=current_user)
-            return redirect(url_for('user.checkout'))
+            session_id = reserve_domain(current_user.email)
+            return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
         return render_template('user/dashboard.html', current_user=current_user)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
 
-@user.route('/checkout/<session_id>', methods=['GET','POST'])
+@user.route('/checkout', methods=['GET','POST'])
 @csrf.exempt
-def checkout(session_id):
-    print("session ID is")
-    print(session_id)
+def checkout():
     return render_template('user/checkout.html', current_user=current_user)
 
 
