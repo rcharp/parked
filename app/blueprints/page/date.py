@@ -108,22 +108,7 @@ def get_datetime(timestamp):
 def get_datetime_from_string(time_string):
     time_string = str(time_string)
     time_string = time_string.replace('T', ' ').replace('Z', '').replace('+00:00', '')
-    dt = dtime.strptime(time_string, '%Y-%m-%d %H:%M:%S.%f')
-    return dt
-
-
-def get_tsheets_datetime_from_string(time_string):
-    time_string = str(time_string)
-    dt = dtime.strptime(time_string, '%Y-%m-%dT%H:%M')
-    return dt
-
-
-def adjust_tsheets_datetime(time_string, direction, hours, minutes):
-    dt = get_tsheets_datetime_from_string(time_string) + timedelta(hours=hours, minutes=minutes) if direction == 'forward' else get_tsheets_datetime_from_string(
-        time_string) - timedelta(hours=hours, minutes=minutes) if direction == 'backward' else time_string
-
-    dt = str(dt)
-    dt = dt.replace(' ', 'T').replace(dt[-3:], '')
+    dt = dtime.strptime(time_string, '%Y-%m-%d %H:%M:%S')
     return dt
 
 

@@ -204,6 +204,7 @@
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                                         </div>
                                                                     </div>
@@ -216,6 +217,7 @@
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                                         </div>
                                                                     </div>
@@ -259,7 +261,50 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-
+                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
+                                                    <thead>
+                                                        <tr role="row">
+                                                            <th class="text-center sorting_asc hidden" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
+                                                            <th class="sorting name-header" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
+                                                            <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
+                                                            <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
+                                                            <th class="sorting_disabled" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <div id="domain_list">
+                                                    {% for domain in domains|sort(attribute='created_on', reverse=true) %}
+                                                    </div>
+{#                                                        {% if not loop.last %}#}
+{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px; border-bottom:1px solid #d3d3d3;">#}
+{#                                                        {% else %}#}
+{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px;">#}
+{#                                                        {% endif %}#}
+                                                            <td class="text-center sorting_1 hidden">1</td>
+                                                            <td style="min-width:200px;padding-top:20px;">
+                                                                <h5 class="font-w400 text-muted">{{ domain.name }}</h5>
+                                                            </td>
+                                                            <td style="min-width:200px;padding-top:20px;"><h5 class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</h5></td>
+                                                            <td style="min-width:200px;padding-top:20px;"><h5 class="font-w400 text-muted">{{ domain.expires }} UTC</h5></td>
+                                                            <td style="min-width:150px;padding-top:20px;">
+{#                                                                <div class="btn-group">#}
+{#                                                                    <button class="btn btn-sm btn-default" id="{{ integration.id }}" onclick="window.location.href='{{ url_for('user.edit_integration', integration_id=integration.id) }}'" data-toggle="tooltip" title="View/Edit Integration" style="margin-right:5px;">#}
+{#                                                                        <i class="fa fa-pencil"></i>#}
+{#                                                                    </button>#}
+{#                                                                    <button class="btn btn-sm btn-primary push-5-r push-10" id="{{ integration.id }}"#}
+{#                                                                            type="button" data-toggle="tooltip" title="Duplicate Integration" onclick="ConfirmCopyIntegration(this);">#}
+{#                                                                        <i class="fa fa-copy"></i>#}
+{#                                                                    </button>#}
+{#                                                                    <button class="btn btn-sm btn-danger push-5-r push-10" id="{{ integration.id }}"#}
+{#                                                                            type="button" data-toggle="tooltip" title="Delete Integration" onclick="ConfirmDeleteIntegration(this);">#}
+{#                                                                        <i class="fa fa-times"></i>#}
+{#                                                                    </button>#}
+{#                                                                </div>#}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                             <!-- END Bootstrap Login -->
                                         </div>

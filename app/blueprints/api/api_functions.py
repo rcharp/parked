@@ -71,10 +71,9 @@ def print_traceback(e):
 
 
 def check_domain_availability(domain):
-    username = current_app.config.get('NAMECHEAP_USERNAME')
-    api_key = current_app.config.get('NAMECHEAP_API_KEY')
-    ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
-    # print("IP address is: " + ip_address)
+    # username = current_app.config.get('NAMECHEAP_USERNAME')
+    # api_key = current_app.config.get('NAMECHEAP_API_KEY')
+    # ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
 
     # This is old PyNamecheap code
     # api = nc.Api(username, api_key, username, ip_address, sandbox=False)
@@ -111,7 +110,7 @@ def save_domain(user_id, domain, expires, reserve_time):
     d.user_id = user_id
     d.name = domain
     d.expires = expires
-    d.created_on = reserve_time
+    d.created_on = get_dt_string(reserve_time)
 
     d.save()
     return

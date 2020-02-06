@@ -12,11 +12,10 @@ class Domain(ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
-    reserved_time = db.Column(AwareDateTime())
 
     # Relationships.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),
-                           index=True, nullable=True, primary_key=False, unique=True)
+                           index=True, nullable=True, primary_key=False, unique=False)
 
     def __init__(self, **kwargs):
         # Call Flask-SQLAlchemy's constructor.
