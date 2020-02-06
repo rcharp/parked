@@ -177,11 +177,11 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:60%; margin:0 auto; min-width:320px; float:none;">
+                        <div class="col-md-4" style="width:60%;margin:0 auto; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block">
+                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
                                         <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                     <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
@@ -197,19 +197,19 @@
                                                     <div style="text-align:center; font-size:24px;"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
-                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br />
+                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br /><br />
                                                                 It expires {{ domain['expires'] }}.
 
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain' ) }}" method="get">
                                                                     <div class="form-group">
                                                                         <br />
-                                                                        <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                             <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
                                                                 <br />
-                                                                - OR -
+                                                                - or -
                                                             {% else %}
                                                                 The domain {{ domain['name'] }} <span style="color: green; ">is available</span>!
                                                             {% endif %}
@@ -219,24 +219,25 @@
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
                                                                 <br />
-                                                                <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
+                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                     <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
                                                                 </div>
                                                             </div>
                                                         </form>
+                                                    <br />
                                                     </div>
                                                 {% else %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
                                                         <div class="form-group">
                                                             <h4>Enter a domain to check its availability.</h4>
                                                             <br /><br />
-                                                            <div class="col-md-12" style="width:80%; margin:0 auto; float:none">
+                                                            <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
                                                                 <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <div class="col-xs-12" style="width:40%;margin:0 auto;float:none;text-align:center;">
-                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
                                                             </div>
                                                         </div>
                                                     </form>
