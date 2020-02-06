@@ -7,7 +7,7 @@ stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 site_url = current_app.config.get('SITE_URL')
 
 
-def reserve_domain(email):
+def reserve_domain(email, domain):
     try:
         session = stripe.checkout.Session.create(
             # customer=customer.id,
@@ -20,14 +20,10 @@ def reserve_domain(email):
                 'currency': 'usd',
                 'quantity': 1,
             }],
-            success_url=site_url + url_for('user.dashboard'),
-            # success_url=site_url + url_for('user.checkout', session_id='{CHECKOUT_SESSION_ID}'),
-            cancel_url=site_url + url_for('user.settings'),
+            success_url=site_url + url_for('user.success', domain=domain),
+            cancel_url=site_url + url_for('user.dashboard'),
         )
-        print("Session was created successful")
-        flash("Domain was successfully reserved.")
         return session.id
     except Exception as e:
-        print("Session wasn't created")
         print_traceback(e)
         return None

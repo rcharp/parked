@@ -211,7 +211,6 @@ def update_credentials():
 @login_required
 @csrf.exempt
 def dashboard():
-
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
@@ -226,6 +225,10 @@ def dashboard():
     if trial_days_left < 0:
         current_user.trial = False
         current_user.save()
+
+    if request:
+        print("dashboard request is")
+        print(request)
 
     return render_template('user/dashboard.html', current_user=current_user)
 
@@ -255,11 +258,12 @@ def reserve_domain():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
         # domain = request.form['domain']
-        details = check_domain_availability('getparked.io')
+        domain = 'getparked.io'
+        details = check_domain_availability(domain)
 
         if details['available']:
             from app.blueprints.billing.charge import reserve_domain
-            session_id = reserve_domain(current_user.email)
+            session_id = reserve_domain(current_user.email, domain)
             return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
         return render_template('user/dashboard.html', current_user=current_user)
     else:
@@ -270,6 +274,12 @@ def reserve_domain():
 @csrf.exempt
 def checkout():
     return render_template('user/checkout.html', current_user=current_user)
+
+
+@user.route('/success', methods=['GET','POST'])
+@csrf.exempt
+def success():
+    return render_template('user/success.html', current_user=current_user)
 
 
 # Settings -------------------------------------------------------------------
