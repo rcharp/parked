@@ -275,7 +275,8 @@ def checkout():
 @user.route('/success', methods=['GET','POST'])
 @csrf.exempt
 def success():
-    args = request.argsprint(args)
+    args = request.args
+    print(args)
     return render_template('user/success.html', current_user=current_user)
 
 
