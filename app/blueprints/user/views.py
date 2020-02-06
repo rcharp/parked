@@ -255,9 +255,9 @@ def check_availability():
 def reserve_domain():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
-        domain = request.form['domain']
+        # domain = request.form['domain']
 
-        # Delete this when time to go live
+        # Delete this when time to go live, replace with domain from above
         domain = 'getparked.io'
         details = check_domain_availability(domain)
 
