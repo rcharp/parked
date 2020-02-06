@@ -38,5 +38,7 @@ def stripe_checkout(email, domain):
             success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
             cancel_url=site_url + url_for('user.dashboard'),
         )
+        return session.id
     except Exception as e:
         print_traceback(e)
+        return None

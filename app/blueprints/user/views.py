@@ -259,8 +259,8 @@ def reserve_domain():
 
         if details['available']:
             from app.blueprints.billing.charge import stripe_checkout
-            stripe_checkout(current_user.email, domain)
-            return render_template('user/checkout.html', current_user=current_user)
+            session_id = stripe_checkout(current_user.email, domain)
+            return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
         return render_template('user/dashboard.html', current_user=current_user)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
