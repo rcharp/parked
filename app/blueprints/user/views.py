@@ -32,10 +32,12 @@ import os
 import pytz
 import stripe
 import datetime
+from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.billing.charge import stripe_checkout
+from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -253,15 +255,17 @@ def check_availability():
 def reserve_domain():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
-        # domain = request.form['domain']
+        domain = request.form['domain']
+
+        # Delete this when time to go live
         domain = 'getparked.io'
         details = check_domain_availability(domain)
 
-        if details['available']:
-            from app.blueprints.billing.charge import stripe_checkout
-            session_id = stripe_checkout(current_user.email, domain)
-            return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
-        return render_template('user/dashboard.html', current_user=current_user)
+        # Display the payment screen and save the user's reserved domains list
+        session_id = stripe_checkout(current_user.email, domain)
+        save_domain(current_user.id, domain, details['expires'], dt.utcnow())
+
+        return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
@@ -275,8 +279,10 @@ def checkout():
 @user.route('/success', methods=['GET','POST'])
 @csrf.exempt
 def success():
-    args = request.args
-    print(args)
+    # Save the customer's info to db on successful charge if they don't already exist
+    if request.args.get('session_id') and request.args.get('domain'):
+        update_customer(request.args.get('session_id'), request.args.get('domain'))
+
     return render_template('user/success.html', current_user=current_user)
 
 

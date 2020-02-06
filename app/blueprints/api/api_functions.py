@@ -6,7 +6,7 @@ import string
 import random
 import requests
 import traceback
-import socket
+import stripe
 from datetime import datetime
 from collections import defaultdict
 from app.extensions import db
@@ -20,7 +20,7 @@ from app.blueprints.page.date import get_dt_string
 import pythonwhois
 import tldextract
 
-# ip_address = socket.gethostbyname(socket.gethostname())
+stripe.api_key = current_app.config.get('STRIPE_KEY')
 
 
 # Create a distinct integration id for the integration.
@@ -105,3 +105,24 @@ def check_domain_availability(domain):
         details.update({'name': domain, 'available': None, 'expires': None})
 
     return details
+
+
+def save_domain(user_id, domain, expires, reserve_time):
+    from app.blueprints.api.models.domains import Domain
+
+    d = Domain()
+    d.user_id = user_id
+    d.name = domain
+    d.expires = expires
+    d.created_on = reserve_time
+
+    d.save()
+    return
+
+
+def update_customer(session_id, domain):
+    session = stripe.checkout.Session.retrieve(session_id)
+    customer = session.customer
+
+    print(customer)
+    return

@@ -20,7 +20,7 @@ class Customer(ResourceMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id',
                                                   onupdate='CASCADE',
                                                   ondelete='CASCADE'),
-                        index=True, nullable=False)
+                        index=True, unique=True, nullable=False)
 
     # Customer details.
     customer_id = db.Column(db.String(128))
