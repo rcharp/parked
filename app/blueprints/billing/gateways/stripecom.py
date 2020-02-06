@@ -1,5 +1,6 @@
 import stripe
 from flask import current_app
+from app.blueprints.api.api_functions import print_traceback
 
 
 class Event(object):
@@ -111,7 +112,7 @@ class Invoice(object):
 
 class Subscription(object):
     @classmethod
-    def create(cls, token=None, email=None, coupon=None, plan=None):
+    def create(cls, token=None, email=None, coupon=None, plan=None, name=None):
         """
         Create a new subscription.
 
@@ -132,13 +133,18 @@ class Subscription(object):
         params = {
             'source': token,
             'email': email,
-            'plan': plan
+            # 'plan': plan
+            'name': name
         }
 
         if coupon:
             params['coupon'] = coupon
 
-        return stripe.Customer.create(**params)
+        try:
+            return stripe.Customer.create(**params)
+        except Exception as e:
+            print_traceback(e)
+            return stripe.Customer.create(**params)
 
     @classmethod
     def update(cls, customer_id=None, coupon=None, plan=None):

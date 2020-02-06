@@ -1,7 +1,8 @@
 {% extends 'layouts/app.html' %}
 {% import 'macros/form.html' as f with context %}
 
-{% set plan_name = request.args.get('plan', '') %}
+{#{% set plan_name = request.args.get('plan', '') %}#}
+{% set plan_name = 'Parked' %}
 {% set is_create = request.endpoint.endswith('create') %}
 {% if is_create %}
   {% set title = 'Enter payment information' %}
@@ -24,7 +25,7 @@
             {{ plan_name | title }} subscription<br/>
               <span class="small text-muted">
                 This plan costs 
-                ${{ plan.amount | format_currency }} / {{ plan.interval }}
+                ${{ 9900 | format_currency }}
               </span>
           {% else %}
             {{ title }}

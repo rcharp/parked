@@ -24,7 +24,7 @@ class Subscription(ResourceMixin, db.Model):
 
     # Subscription details.
     plan = db.Column(db.String(128))
-    coupon = db.Column(db.String(128))
+    # coupon = db.Column(db.String(128))
 
     def __init__(self, **kwargs):
         # Call Flask-SQLAlchemy's constructor.
@@ -87,7 +87,8 @@ class Subscription(ResourceMixin, db.Model):
 
         customer = PaymentSubscription.create(token=token,
                                               email=user.email,
-                                              plan=plan,
+                                              name=user.name,
+                                              # plan=plan,
                                               coupon=self.coupon)
 
         # Update the user account.
