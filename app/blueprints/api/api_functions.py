@@ -6,7 +6,6 @@ import string
 import random
 import requests
 import traceback
-import stripe
 from datetime import datetime
 from collections import defaultdict
 from app.extensions import db
@@ -19,8 +18,6 @@ from app.blueprints.page.date import get_dt_string
 # import app.blueprints.api.domain.pythonwhois
 import pythonwhois
 import tldextract
-
-stripe.api_key = current_app.config.get('STRIPE_KEY')
 
 
 # Create a distinct integration id for the integration.
@@ -121,8 +118,6 @@ def save_domain(user_id, domain, expires, reserve_time):
 
 
 def update_customer(session_id, domain):
-    session = stripe.checkout.Session.retrieve(session_id)
-    customer = session.customer
-
-    print(customer)
+    from app.blueprints.billing.charge import update_customer
+    update_customer(session_id, domain)
     return

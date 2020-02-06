@@ -42,3 +42,10 @@ def stripe_checkout(email, domain):
     except Exception as e:
         print_traceback(e)
         return None
+
+
+def update_customer(session_id, domain):
+    session = stripe.checkout.Session.retrieve(session_id)
+    customer = session.customer
+
+    print(customer)
