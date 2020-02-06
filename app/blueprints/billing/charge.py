@@ -50,6 +50,11 @@ def create_session(email, site_url, domain):
     )
 
 
+def setup_intent():
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.SetupIntent.create()
+
+
 def update_customer(session_id, domain, user_id):
     try:
         # Change to Live key when done testing

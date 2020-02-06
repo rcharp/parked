@@ -60,23 +60,5 @@ def delete_users(ids):
 
 
 @celery.task()
-def delete_auth(ids):
-    """
-    Delete users and potentially cancel their subscription.
-
-    :param ids: List of ids to be deleted
-    :type ids: list
-    :return: int
-    """
-
-    for id in ids:
-        auth = AppAuthorization.query.filter(AppAuthorization.id == id).scalar()
-        auth.delete()
-
-    return
-    # return AppAuthorization.bulk_delete(ids)
-
-
-@celery.task()
 def cancel():
     return c

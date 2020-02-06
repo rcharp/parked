@@ -36,7 +36,7 @@ from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.billing.charge import stripe_checkout
+from app.blueprints.billing.charge import stripe_checkout, setup_intent
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
@@ -266,10 +266,11 @@ def reserve_domain():
         details = check_domain_availability(domain)
 
         # Display the payment screen and save the user's reserved domains list
-        session_id = stripe_checkout(current_user.email, domain)
+        # session_id = stripe_checkout(current_user.email, domain)
+        si = setup_intent()
         save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
-        return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
+        return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=si)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
