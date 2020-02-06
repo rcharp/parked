@@ -198,8 +198,10 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 <div style="text-align:center; font-size:24px;"><br /><br />
-                                                    You've successfully reserved the domain {{ domain }}!<br />
+                                                    You've successfully reserved the domain {{ request.args.get('domain') }}!<br />
                                                     Your card won't be charged unless we actually secure the domain for you.
+
+                                                    Please click <a href="{{ url_for('user.reserve_domain') }}">here</a> to return to your dashboard.
                                                 </div>
                                             </div>
                                             <!-- END Bootstrap Login -->

@@ -9,13 +9,18 @@ site_url = current_app.config.get('SITE_URL')
 
 def reserve_domain(email, domain):
     try:
+        from app.blueprints.user.models import User
+        from app.blueprints.api.models.domains import Domain
+
+        u = User.query.filter(User.email == email).scalar()
+
         session = stripe.checkout.Session.create(
             # customer=customer.id,
             customer_email=email,
             payment_method_types=['card'],
             line_items=[{
-                'name': 'Parked',
-                'description': 'Reserve your domain',
+                'name': 'GetMyDomain - Reserve ' + domain,
+                'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
                 'amount': 9900,
                 'currency': 'usd',
                 'quantity': 1,
