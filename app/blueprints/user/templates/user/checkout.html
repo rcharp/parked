@@ -60,12 +60,15 @@
         <!-- Shepherd JS -->
         <link rel="stylesheet" href="../../../../static/shepherd.js/dist/css/shepherd-theme-square.css"/>
 
+        <!-- CSS for form -->
+        <link rel="stylesheet" href="../../../../static/form/form.css"/>
+
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
         <!-- END Stylesheets -->
 
         <!-- Load Stripe.js on your website. -->
-        <script src="https://js.stripe.com/v3"></script>
+        <script src="https://js.stripe.com/v3/"></script>
 
     </head>
     <body style="zoom: 80%;">
@@ -186,7 +189,7 @@
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                        <a href="#check"><h3>Checkout&nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -194,13 +197,41 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                <!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
-                                                <button
-                                                  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
-                                                  id="checkout-button-sku_GgHcHF5jj9hrX0"
-                                                  role="link">Checkout</button>
-
-                                                <div id="error-message"></div>
+                                                <br />
+                                                <div class="cell example example2" id="example-2">
+                                                    <form action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                      <div data-locale-reversible="">
+                                                        <div class="row">
+                                                          <div class="field">
+                                                            <input id="example2-name" data-tid="elements_examples.form.name_placeholder" class="input empty" type="text" placeholder="Cardholder name" required>
+                                                            <label for="example2-name" data-tid="elements_examples.form.name_label">Cardholder Name</label>
+                                                            <div class="baseline"></div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                        <br />
+                                                      <div class="row">
+                                                        <div class="field">
+                                                          <div id="example2-card-number" class="input empty StripeElement"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe frameborder="0" allowtransparency="true" scrolling="no" name="__privateStripeFrame8" allowpaymentrequest="true" src="https://js.stripe.com/v3/elements-inner-card-858faacfb0c723bc20d829e1351032dd.html#style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;locale=en&amp;componentName=cardNumber&amp;wait=true&amp;rtl=false&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;origin=https%3A%2F%2Fstripe.dev&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController1" title="Secure payment input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: 0px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+                                                          <label for="example2-card-number" data-tid="elements_examples.form.card_number_label">Card number</label>
+                                                          <div class="baseline"></div>
+                                                        </div>
+                                                      </div>
+                                                      <div class="row">
+                                                        <div class="field half-width">
+                                                          <div id="example2-card-expiry" class="input StripeElement empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe frameborder="0" allowtransparency="true" scrolling="no" name="__privateStripeFrame9" allowpaymentrequest="true" src="https://js.stripe.com/v3/elements-inner-card-858faacfb0c723bc20d829e1351032dd.html#style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;locale=en&amp;componentName=cardExpiry&amp;wait=true&amp;rtl=false&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;origin=https%3A%2F%2Fstripe.dev&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController1" title="Secure payment input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: 0px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+                                                          <label for="example2-card-expiry" data-tid="elements_examples.form.card_expiry_label">Expiration</label>
+                                                          <div class="baseline"></div>
+                                                        </div>
+                                                        <div class="field half-width">
+                                                          <div id="example2-card-cvc" class="input empty StripeElement"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe frameborder="0" allowtransparency="true" scrolling="no" name="__privateStripeFrame10" allowpaymentrequest="true" src="https://js.stripe.com/v3/elements-inner-card-858faacfb0c723bc20d829e1351032dd.html#style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;locale=en&amp;componentName=cardCvc&amp;wait=true&amp;rtl=false&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;origin=https%3A%2F%2Fstripe.dev&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController1" title="Secure payment input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: 0px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+                                                          <label for="example2-card-cvc" data-tid="elements_examples.form.card_cvc_label">CVC</label>
+                                                          <div class="baseline"></div>
+                                                        </div>
+                                                      </div><br /><br />
+                                                        <button class="btn btn-sm btn-success" id="submit-button" type="submit" data-tid="elements_examples.form.pay_button" style="width:40%;min-width:220px;min-height:50px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                    </form>
+                                                  </div>
                                             </div>
                                             <!-- END Bootstrap Login -->
                                         </div>
@@ -275,35 +306,91 @@
         <!-- Stripe -->
 
         <script>
+            var stripe = Stripe('pk_test_DX6xHgQH53sA1l78sasUZ9gA');
             (function() {
-              var stripe = Stripe('pk_live_Nwbqc3RiygVrl3aRrPSnG0Jj');
+              'use strict';
 
-              var checkoutButton = document.getElementById('checkout-button-sku_GgHcHF5jj9hrX0');
-              checkoutButton.addEventListener('click', function () {
-                // When the customer clicks on the button, redirect
-                // them to Checkout.
-                stripe.redirectToCheckout({
-                  items: [{sku: 'sku_GgHcHF5jj9hrX0', quantity: 1}],
+              var elements = stripe.elements({
+                fonts: [
+                  {
+                    cssSrc: 'https://fonts.googleapis.com/css?family=Source+Code+Pro',
+                  },
+                ],
+                // Stripe's examples are localized to specific languages, but if
+                // you wish to have Elements automatically detect your user's locale,
+                // use `locale: 'auto'` instead.
+                locale: window.__exampleLocale
+              });
 
-                  // Do not rely on the redirect to the successUrl for fulfilling
-                  // purchases, customers may not always reach the success_url after
-                  // a successful payment.
-                  // Instead use one of the strategies described in
-                  // https://stripe.com/docs/payments/checkout/fulfillment
-                  successUrl: 'https://www.getquickflow.com/success',
-                  cancelUrl: 'https://www.getquickflow.com/canceled',
-                })
-                .then(function (result) {
-                  if (result.error) {
-                    // If `redirectToCheckout` fails due to a browser or network
-                    // error, display the localized error message to your customer.
-                    var displayError = document.getElementById('error-message');
-                    displayError.textContent = result.error.message;
+              // Floating labels
+              var inputs = document.querySelectorAll('.cell.example.example2 .input');
+              Array.prototype.forEach.call(inputs, function(input) {
+                input.addEventListener('focus', function() {
+                  input.classList.add('focused');
+                });
+                input.addEventListener('blur', function() {
+                  input.classList.remove('focused');
+                });
+                input.addEventListener('keyup', function() {
+                  if (input.value.length === 0) {
+                    input.classList.add('empty');
+                  } else {
+                    input.classList.remove('empty');
                   }
                 });
               });
+
+              var elementStyles = {
+                base: {
+                  color: '#32325D',
+                  fontWeight: 500,
+                  fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
+                  fontSize: '16px',
+                  fontSmoothing: 'antialiased',
+
+                  '::placeholder': {
+                    color: '#CFD7DF',
+                  },
+                  ':-webkit-autofill': {
+                    color: '#e39f48',
+                  },
+                },
+                invalid: {
+                  color: '#E25950',
+
+                  '::placeholder': {
+                    color: '#FFCCA5',
+                  },
+                },
+              };
+
+              var elementClasses = {
+                focus: 'focused',
+                empty: 'empty',
+                invalid: 'invalid',
+              };
+
+              var cardNumber = elements.create('cardNumber', {
+                style: elementStyles,
+                classes: elementClasses,
+              });
+              cardNumber.mount('#example2-card-number');
+
+              var cardExpiry = elements.create('cardExpiry', {
+                style: elementStyles,
+                classes: elementClasses,
+              });
+              cardExpiry.mount('#example2-card-expiry');
+
+              var cardCvc = elements.create('cardCvc', {
+                style: elementStyles,
+                classes: elementClasses,
+              });
+              cardCvc.mount('#example2-card-cvc');
+
+              registerElements([cardNumber, cardExpiry, cardCvc], 'example2');
             })();
-            </script>
+        </script>
 
         <!-- Page JS Code -->
         <script src="../../../../static/oneui/assets/js/pages/base_forms_pickers_more.js"></script>

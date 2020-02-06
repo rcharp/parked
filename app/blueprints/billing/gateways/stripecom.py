@@ -112,7 +112,7 @@ class Invoice(object):
 
 class Subscription(object):
     @classmethod
-    def create(cls, token=None, email=None, coupon=None, plan=None, name=None):
+    def create(cls, token=None, email=None, name=None, plan=None, coupon=None):
         """
         Create a new subscription.
 
@@ -133,18 +133,11 @@ class Subscription(object):
         params = {
             'source': token,
             'email': email,
-            # 'plan': plan
+            # 'plan': plan,
             'name': name
         }
 
-        if coupon:
-            params['coupon'] = coupon
-
-        try:
-            return stripe.Customer.create(**params)
-        except Exception as e:
-            print_traceback(e)
-            return stripe.Customer.create(**params)
+        return stripe.Customer.create(**params)
 
     @classmethod
     def update(cls, customer_id=None, coupon=None, plan=None):

@@ -254,8 +254,10 @@ def check_availability():
 def reserve_domain():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import check_domain_availability
-        domain = request.form['domain']
-        details = check_domain_availability(domain)
+        # domain = request.form['domain']
+        details = check_domain_availability('getparked.io')
+
+        print(request.form)
 
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:

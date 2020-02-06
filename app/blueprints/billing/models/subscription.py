@@ -82,14 +82,17 @@ class Subscription(ResourceMixin, db.Model):
         if token is None:
             return False
 
-        if coupon:
-            self.coupon = coupon.upper()
+        # if coupon:
+        #     self.coupon = coupon.upper()
 
         customer = PaymentSubscription.create(token=token,
                                               email=user.email,
                                               name=user.name,
-                                              # plan=plan,
-                                              coupon=self.coupon)
+                                              plan=plan)
+                                              # coupon=self.coupon)
+
+        print('customer is')
+        print(customer)
 
         # Update the user account.
         user.payment_id = customer.id

@@ -114,30 +114,32 @@ def create():
         stripe_key = current_app.config.get('STRIPE_KEY')
         form = CreditCardForm(stripe_key=stripe_key)
 
-        if form.validate_on_submit():
-            subscription = Subscription()
-            created = subscription.create(user=current_user,
-                                          name=request.form.get('name'),
-                                          # plan=request.form.get('plan'),
-                                          #  coupon=request.form.get('coupon_code'),
-                                        token=request.form.get('stripe_token'))
+        # if form.validate_on_submit():
+        #     subscription = Subscription()
+        #
+        #     created = subscription.create(user=current_user,
+        #                                   name=request.form.get('name'),
+        #                                   token=request.form.get('stripe_token'))
+        #                                   # token=request.form.get('stripe_token'))
+        #                                   # plan=request.form.get('plan'),
+        #                                   #  coupon=request.form.get('coupon_code'),
+        #
+        #     if created:
+        #         current_user.trial = False
+        #         current_user.save()
+        #
+        #         # from app.blueprints.user.tasks import send_plan_signup_email
+        #         # send_plan_signup_email.delay(current_user.email, subscription.plan)
+        #
+        #         flash('Your account has been upgraded!', 'success')
+        #     else:
+        #         flash('You must enable JavaScript for this request.', 'warning')
+        #
+        #     return redirect(url_for('user.dashboard'))
 
-            if created:
-                current_user.trial = False
-                current_user.save()
-
-                # from app.blueprints.user.tasks import send_plan_signup_email
-                # send_plan_signup_email.delay(current_user.email, subscription.plan)
-
-                flash('Your account has been upgraded!', 'success')
-            else:
-                flash('You must enable JavaScript for this request.', 'warning')
-
-            return redirect(url_for('user.dashboard'))
-
-        # return render_template('user/checkout.html')
+        return render_template('user/checkout.html')
         # return render_template('billing/payment_method.html', form=form, plan=subscription_plan)
-        return render_template('billing/payment_method.html', form=form)
+        # return render_template('billing/payment_method.html', form=form)
     except Exception as e:
         print_traceback(e)
 
