@@ -19,17 +19,13 @@ def stripe_checkout(email, domain):
         u = User.query.filter(User.email == email).scalar()
 
         # Create the Stripe customer if they don't already exist
-        if not db.session.query(exists().where(Customer.id == u.customer_id)).scalar():
+        if not db.session.query(exists().where(Customer.id == u.payment_id)).scalar():
             c = Customer()
             c.user_id = u.id
-
+            c.email = email
             c.save()
-            customer = c
-        else:
-            customer = Customer.query.filter(Customer.id == u.customer_id).scalar()
 
         session = stripe.checkout.Session.create(
-            customer=customer.id,
             customer_email=email,
             payment_method_types=['card'],
             line_items=[{
@@ -39,11 +35,9 @@ def stripe_checkout(email, domain):
                 'currency': 'usd',
                 'quantity': 1,
             }],
-            success_url=site_url + url_for('user.success', domain=domain),
+            success_url=site_url + url_for('user.success', domain=domain, session_id='{CHECKOUT_SESSION_ID}'),
             cancel_url=site_url + url_for('user.dashboard'),
         )
-        print("session is ")
-        print(session)
         return session.id
     except Exception as e:
         print_traceback(e)

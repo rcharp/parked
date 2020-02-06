@@ -226,10 +226,6 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
-    if request:
-        print("dashboard request is")
-        print(request)
-
     return render_template('user/dashboard.html', current_user=current_user)
 
 
