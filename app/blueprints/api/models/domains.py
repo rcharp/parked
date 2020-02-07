@@ -12,6 +12,7 @@ class Domain(ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    customer_id = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
 
     # Relationships.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),

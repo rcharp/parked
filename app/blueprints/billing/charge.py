@@ -22,52 +22,31 @@ def stripe_checkout(email, domain):
             c.email = email
             c.save()
 
-            customer = None
-        else:
-            c = Customer.query.filter(Customer.user_id == u.id).scalar()
-            customer = c.customer_id
-
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
         site_url = current_app.config.get('SITE_URL')
 
-        session = create_session(email, site_url, domain, customer)
+        session = create_session(email, site_url, domain)
         return session.id
     except Exception as e:
         print_traceback(e)
         return None
 
 
-def create_session(email, site_url, domain, customer=None):
-    if customer:
-        return stripe.checkout.Session.create(
-            customer=customer,
-            payment_method_types=['card'],
-            line_items=[{
-                'name': 'GetMyDomain - Reserve ' + domain,
-                'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
-                'amount': 9900,
-                'currency': 'usd',
-                'quantity': 1,
-            }],
-            success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=site_url + url_for('user.dashboard'),
-        )
-    else:
-        return stripe.checkout.Session.create(
-            customer_email=email,
-            payment_method_types=['card'],
-            mode='setup',
-            line_items=[{
-                'name': 'GetMyDomain - Reserve ' + domain,
-                'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
-                'amount': 9900,
-                'currency': 'usd',
-                'quantity': 1,
-            }],
-            success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=site_url + url_for('user.dashboard'),
-        )
+def create_session(email, site_url, domain):
+    return stripe.checkout.Session.create(
+        customer_email=email,
+        payment_method_types=['card'],
+        line_items=[{
+            'name': 'GetMyDomain - Reserve ' + domain,
+            'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
+            'amount': 9900,
+            'currency': 'usd',
+            'quantity': 1,
+        }],
+        success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
+        cancel_url=site_url + url_for('user.dashboard'),
+    )
 
 
 def update_customer(session_id, domain):

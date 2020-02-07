@@ -280,27 +280,29 @@
 {#                                                        {% else %}#}
 {#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px;">#}
 {#                                                        {% endif %}#}
-                                                            <td class="text-center sorting_1 hidden">1</td>
-                                                            <td style="min-width:200px;padding-top:20px;">
-                                                                <h5 class="font-w400 text-muted">{{ domain.name }}</h5>
-                                                            </td>
-                                                            <td style="min-width:200px;padding-top:20px;"><h5 class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</h5></td>
-                                                            <td style="min-width:200px;padding-top:20px;"><h5 class="font-w400 text-muted">{{ domain.expires }} UTC</h5></td>
-                                                            <td style="min-width:150px;padding-top:20px;">
-{#                                                                <div class="btn-group">#}
-{#                                                                    <button class="btn btn-sm btn-default" id="{{ integration.id }}" onclick="window.location.href='{{ url_for('user.edit_integration', integration_id=integration.id) }}'" data-toggle="tooltip" title="View/Edit Integration" style="margin-right:5px;">#}
-{#                                                                        <i class="fa fa-pencil"></i>#}
-{#                                                                    </button>#}
-{#                                                                    <button class="btn btn-sm btn-primary push-5-r push-10" id="{{ integration.id }}"#}
-{#                                                                            type="button" data-toggle="tooltip" title="Duplicate Integration" onclick="ConfirmCopyIntegration(this);">#}
-{#                                                                        <i class="fa fa-copy"></i>#}
-{#                                                                    </button>#}
-{#                                                                    <button class="btn btn-sm btn-danger push-5-r push-10" id="{{ integration.id }}"#}
-{#                                                                            type="button" data-toggle="tooltip" title="Delete Integration" onclick="ConfirmDeleteIntegration(this);">#}
-{#                                                                        <i class="fa fa-times"></i>#}
-{#                                                                    </button>#}
-{#                                                                </div>#}
-                                                            </td>
+                                                            <span style="font-size:20px">
+                                                                <td class="text-center sorting_1 hidden">1</td>
+                                                                <td style="min-width:200px;padding-top:20px;">
+                                                                    <p class="font-w400 text-muted">{{ domain.name }}</p>
+                                                                </td>
+                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</p></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.expires }} UTC</p></td>
+                                                                <td style="min-width:150px;padding-top:20px;">
+    {#                                                                <div class="btn-group">#}
+    {#                                                                    <button class="btn btn-sm btn-default" id="{{ integration.id }}" onclick="window.location.href='{{ url_for('user.edit_integration', integration_id=integration.id) }}'" data-toggle="tooltip" title="View/Edit Integration" style="margin-right:5px;">#}
+    {#                                                                        <i class="fa fa-pencil"></i>#}
+    {#                                                                    </button>#}
+    {#                                                                    <button class="btn btn-sm btn-primary push-5-r push-10" id="{{ integration.id }}"#}
+    {#                                                                            type="button" data-toggle="tooltip" title="Duplicate Integration" onclick="ConfirmCopyIntegration(this);">#}
+    {#                                                                        <i class="fa fa-copy"></i>#}
+    {#                                                                    </button>#}
+    {#                                                                    <button class="btn btn-sm btn-danger push-5-r push-10" id="{{ integration.id }}"#}
+    {#                                                                            type="button" data-toggle="tooltip" title="Delete Integration" onclick="ConfirmDeleteIntegration(this);">#}
+    {#                                                                        <i class="fa fa-times"></i>#}
+    {#                                                                    </button>#}
+    {#                                                                </div>#}
+                                                                </td>
+                                                            </span>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
