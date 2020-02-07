@@ -275,11 +275,7 @@
                                                     <div id="domain_list">
                                                     {% for domain in domains|sort(attribute='created_on', reverse=true) %}
                                                     </div>
-{#                                                        {% if not loop.last %}#}
-{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px; border-bottom:1px solid #d3d3d3;">#}
-{#                                                        {% else %}#}
-{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px;">#}
-{#                                                        {% endif %}#}
+                                                        <tr>
                                                             <span style="font-size:20px">
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
@@ -287,20 +283,15 @@
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</p></td>
                                                                 <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.expires }} UTC</p></td>
-                                                                <td style="min-width:150px;padding-top:20px;">
-    {#                                                                <div class="btn-group">#}
-    {#                                                                    <button class="btn btn-sm btn-default" id="{{ integration.id }}" onclick="window.location.href='{{ url_for('user.edit_integration', integration_id=integration.id) }}'" data-toggle="tooltip" title="View/Edit Integration" style="margin-right:5px;">#}
-    {#                                                                        <i class="fa fa-pencil"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                    <button class="btn btn-sm btn-primary push-5-r push-10" id="{{ integration.id }}"#}
-    {#                                                                            type="button" data-toggle="tooltip" title="Duplicate Integration" onclick="ConfirmCopyIntegration(this);">#}
-    {#                                                                        <i class="fa fa-copy"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                    <button class="btn btn-sm btn-danger push-5-r push-10" id="{{ integration.id }}"#}
-    {#                                                                            type="button" data-toggle="tooltip" title="Delete Integration" onclick="ConfirmDeleteIntegration(this);">#}
-    {#                                                                        <i class="fa fa-times"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                </div>#}
+                                                                <td style="min-width:150px;">
+                                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
+                                                                        <div class="form-group">
+                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                            <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
+                                                                                        style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;">
+                                                                                    <i class="push-5-r"></i> Delete</button>
+                                                                        </div>
+                                                                    </form>
                                                                 </td>
                                                             </span>
                                                         </tr>
@@ -393,6 +384,12 @@
                 // Init page helpers (Slick Slider plugin)
                 App.initHelpers('slick');
             });
+        </script>
+
+        <script>
+            function ConfirmDeleteReservation() {
+                return confirm("Are you sure you want to delete this reservation? This can't be undone.");
+            }
         </script>
 
         <script>

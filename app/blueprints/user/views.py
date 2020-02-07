@@ -256,11 +256,13 @@ def check_availability():
 @csrf.exempt
 def reserve_domain():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import check_domain_availability
         domain = request.form['domain']
 
-        # Delete this when time to go live, replace with domain from above
-        # domain = 'getparked.io'
+        if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
+            flash('You already have this domain reserved!', 'error')
+            return redirect(url_for('user.dashboard'))
+
+        from app.blueprints.api.api_functions import check_domain_availability
         details = check_domain_availability(domain)
 
         # Display the payment screen and save the user's reserved domains list
@@ -270,6 +272,26 @@ def reserve_domain():
         return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=session_id)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
+
+
+@user.route('/delete_domain', methods=['GET','POST'])
+@csrf.exempt
+def delete_domain():
+
+    # Get and delete the domain
+    if request.method == 'POST':
+        domain_id = request.form['domain']
+        domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+        domain.delete()
+
+        # Ensure the domain has been deleted
+        d = Domain.query.get(domain_id)
+        if d is None:
+            flash('This domain reservation was successfully deleted.', 'success')
+        else:
+            flash('There was a problem deleting your reservation. Please try again.', 'error')
+
+    return redirect(url_for('user.dashboard'))
 
 
 @user.route('/checkout', methods=['GET','POST'])
@@ -283,9 +305,11 @@ def checkout():
 def success():
     # Save the customer's info to db on successful charge if they don't already exist
     if request.args.get('session_id') and request.args.get('domain'):
-        update_customer(request.args.get('session_id'), request.args.get('domain'))
-
-    return render_template('user/success.html', current_user=current_user)
+        if update_customer(request.args.get('session_id'), request.args.get('domain'), current_user.id):
+            flash('Your domain was successfully reserved!', 'success')
+            return render_template('user/success.html', current_user=current_user)
+    flash('There was a problem reserving your domain. Please try again.', 'error')
+    return redirect(url_for('user.dashboard'))
 
 
 # Settings -------------------------------------------------------------------

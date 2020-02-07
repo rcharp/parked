@@ -116,7 +116,6 @@ def save_domain(user_id, domain, expires, reserve_time):
     return
 
 
-def update_customer(session_id, domain):
+def update_customer(session_id, domain, user_id):
     from app.blueprints.billing.charge import update_customer
-    update_customer(session_id, domain)
-    return
+    return update_customer(session_id, domain, user_id)

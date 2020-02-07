@@ -2,7 +2,8 @@ import stripe
 from flask import current_app, url_for
 from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.billing.models.customer import Customer
-from sqlalchemy import exists
+from app.blueprints.api.models.domains import Domain
+from sqlalchemy import exists, and_
 from app.extensions import db
 
 
@@ -49,17 +50,28 @@ def create_session(email, site_url, domain):
     )
 
 
-def update_customer(session_id, domain):
-    # Change to Live key when done testing
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+def update_customer(session_id, domain, user_id):
+    try:
+        # Change to Live key when done testing
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
-    # Get and update the customer in the database to have the Stripe customer ID
-    session = stripe.checkout.Session.retrieve(session_id)
-    session_customer = session.customer
+        # Get and update the customer in the database to have the Stripe customer ID
+        session = stripe.checkout.Session.retrieve(session_id)
+        session_customer = session.customer
 
-    customer = stripe.Customer.retrieve(session_customer)
+        customer = stripe.Customer.retrieve(session_customer)
 
-    c = Customer.query.filter(Customer.email == customer.email).scalar()
-    c.customer_id = customer.id
+        # Get the customer and update its ID
+        c = Customer.query.filter(Customer.email == customer.email).scalar()
+        c.customer_id = customer.id
+        c.save()
 
-    c.save()
+        # Update the domain and add the Stripe customer ID to it
+        d = Domain.query.filter(and_(Domain.user_id == user_id), Domain.name == domain).scalar()
+        d.customer_id = customer.id
+        d.save()
+
+        return True
+    except Exception as e:
+        print_traceback(e)
+        return False
