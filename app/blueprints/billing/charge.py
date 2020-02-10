@@ -25,10 +25,11 @@ def stripe_checkout(email, domain):
 
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-        site_url = current_app.config.get('SITE_URL')
+        # site_url = current_app.config.get('SITE_URL')
 
-        session = create_session(email, site_url, domain)
-        return session.id
+        # session = create_session(email, site_url, domain)
+        payment = create_payment(domain)
+        return payment.client_secret
     except Exception as e:
         print_traceback(e)
         return None
@@ -53,7 +54,7 @@ def create_session(email, site_url, domain):
 def create_payment(domain):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
     return stripe.PaymentIntent.create(
-        amount=1200,
+        amount=1000,
         currency="usd",
         description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
         payment_method_types=["card"]

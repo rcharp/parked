@@ -210,17 +210,26 @@
 {##}
 {#                                                    <button id="submit">Pay</button>#}
 {#                                                </form>#}
-                                                <div class="sr-root">
-                                                  <div class="sr-main">
+                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:320px;display:block" class="col-md-12"><br><br>
+                                                    Reserve google.com -- $99
+                                                </div>
+                                                <div class="sr-root" style="text-align:center; font-size:24px;">
+                                                  <div class="sr-main" style="display:block;padding:40px;min-width:320px;">
+                                                      <div style="text-align:center; font-size:18px;">
+                                                            Please enter your card details
+                                                      </div><br />
                                                     <form id="payment-form" class="sr-payment-form">
                                                       <div class="sr-combo-inputs-row">
                                                         <div class="sr-input sr-card-element" id="card-element"></div>
                                                       </div>
                                                       <div class="sr-field-error" id="card-errors" role="alert"></div>
-                                                      <button id="submit">
+                                                      <button id="submit" onsubmit="SubmitPayment()">
                                                         <div class="spinner hidden" id="spinner"></div>
-                                                        <span id="button-text">Pay</span><span id="order-amount"></span>
+                                                        <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
+                                                        <div style="text-align:center; font-size:14px;"><br /><br />
+                                                            Please note that your card won't be charged unless we secure {{ domain }} for you.
+                                                      </div>
                                                     </form>
                                                     <div class="sr-result hidden">
                                                       <p>Payment completed<br /></p>

@@ -267,11 +267,14 @@ def reserve_domain():
 
         # Display the payment screen and save the user's reserved domains list
         # session_id = stripe_checkout(current_user.email, domain)
-        # pi = create_payment(domain)
-        save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+        pi = create_payment(domain)
+
+        # Only save the domain reservation if the card was captured.
+        if pi is not None:
+            save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
         # return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=pi)
-        return render_template('user/checkout.html', current_user=current_user)
+        return render_template('user/checkout.html', current_user=current_user, domain=domain)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
