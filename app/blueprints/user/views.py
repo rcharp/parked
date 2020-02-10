@@ -259,22 +259,24 @@ def reserve_domain():
         domain = request.form['domain']
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
-            flash('You already have this domain reserved!', 'error')
-            return redirect(url_for('user.dashboard'))
+
+            # Deletes the domain if it already exists. For testing purposes.
+            d = Domain.query.filter(Domain.name == domain).scalar()
+            d.delete()
+
+            # flash('You already have this domain reserved!', 'error')
+            # return redirect(url_for('user.dashboard'))
 
         from app.blueprints.api.api_functions import check_domain_availability
         details = check_domain_availability(domain)
 
         # Display the payment screen and save the user's reserved domains list
-        # session_id = stripe_checkout(current_user.email, domain)
-        pi = create_payment(domain)
+        pi = stripe_checkout(current_user.email, domain)
 
         # Only save the domain reservation if the card was captured.
         if pi is not None:
-            save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
-
-        # return render_template('user/checkout.html', current_user=current_user, CHECKOUT_SESSION_ID=pi)
-        return render_template('user/checkout.html', current_user=current_user, domain=domain)
+            # save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+            return render_template('user/checkout.html', current_user=current_user, domain=domain, pi=pi, email=current_user.email)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 

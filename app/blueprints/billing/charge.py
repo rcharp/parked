@@ -28,11 +28,30 @@ def stripe_checkout(email, domain):
         # site_url = current_app.config.get('SITE_URL')
 
         # session = create_session(email, site_url, domain)
-        payment = create_payment(domain)
-        return payment.client_secret
+        # payment = create_payment(domain)
+        si = setup_intent(domain)
+        return si.client_secret
     except Exception as e:
         print_traceback(e)
         return None
+
+
+def create_payment(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        currency="usd",
+        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
+
+
+def setup_intent(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.SetupIntent.create(
+        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
 
 
 def create_session(email, site_url, domain):
@@ -48,16 +67,6 @@ def create_session(email, site_url, domain):
         }],
         success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
         cancel_url=site_url + url_for('user.dashboard'),
-    )
-
-
-def create_payment(domain):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.PaymentIntent.create(
-        amount=1000,
-        currency="usd",
-        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
-        payment_method_types=["card"]
     )
 
 
