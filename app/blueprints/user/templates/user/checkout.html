@@ -355,6 +355,14 @@
                     } else {
                       // The payment has been processed!
                       if (result.setupIntent.status === 'succeeded') {
+                          $.ajax({
+                              url: '{{ url_for("user.success") }}',
+                              type: 'POST',
+                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}'},
+                              success: function (response) {
+                              }
+                          });
+
                           alert("Payment was successful for {{ domain }}");
                         // Show a success message to your customer
                         // There's a risk of the customer closing the window before callback

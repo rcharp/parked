@@ -310,11 +310,23 @@ def checkout():
 @user.route('/success', methods=['GET','POST'])
 @csrf.exempt
 def success():
-    # Save the customer's info to db on successful charge if they don't already exist
-    if request.args.get('session_id') and request.args.get('domain'):
-        if update_customer(request.args.get('session_id'), request.args.get('domain'), current_user.id):
-            flash('Your domain was successfully reserved!', 'success')
-            return render_template('user/success.html', current_user=current_user)
+    if request.method == 'POST':
+        print(request.args)
+        # Save the customer's info to db on successful charge if they don't already exist
+        if request.args.get('pm') and request.args.get('domain'):
+
+            pm = request.args.get('pm')
+            domain = request.args.get('domain')
+
+            if update_customer(pm, domain, current_user.id):
+
+                # Save the domain after payment
+                from app.blueprints.api.api_functions import check_domain_availability
+                details = check_domain_availability(domain)
+                save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+
+                flash('Your domain was successfully reserved!', 'success')
+                return render_template('user/success.html', current_user=current_user)
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
 
