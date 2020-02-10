@@ -18,10 +18,9 @@ def stripe_checkout(email, domain):
 
         # Create the Stripe customer if they don't already exist
         if not db.session.query(exists().where(Customer.user_id == u.id)).scalar():
-            c = Customer()
-            c.user_id = u.id
-            c.email = email
-            c.save()
+            customer = create_customer(u, email)
+        else:
+            customer = Customer.query.filter(Customer.user_id == u.id).scalar()
 
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -29,7 +28,7 @@ def stripe_checkout(email, domain):
 
         # session = create_session(email, site_url, domain)
         # payment = create_payment(domain)
-        si = setup_intent(domain)
+        si = setup_intent(domain, customer.id)
         return si.client_secret
     except Exception as e:
         print_traceback(e)
@@ -46,9 +45,25 @@ def create_payment(domain):
     )
 
 
-def setup_intent(domain):
+# Create the customer
+def create_customer(u, email):
+    c = Customer()
+    c.user_id = u.id
+    c.email = email
+    c.save()
+
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    customer = stripe.Customer.create(
+        email=email
+    )
+
+    return customer.id
+
+
+def setup_intent(domain, customer_id):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
     return stripe.SetupIntent.create(
+        customer=customer_id,
         description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
         payment_method_types=["card"]
     )
