@@ -18,9 +18,10 @@ def stripe_checkout(email, domain):
 
         # Create the Stripe customer if they don't already exist
         if not db.session.query(exists().where(Customer.user_id == u.id)).scalar():
-            customer = create_customer(u, email)
+            customer_id = create_customer(u, email)
         else:
-            customer = Customer.query.filter(Customer.user_id == u.id).scalar()
+            c = Customer.query.filter(Customer.user_id == u.id).scalar()
+            customer_id = c.id
 
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -28,7 +29,7 @@ def stripe_checkout(email, domain):
 
         # session = create_session(email, site_url, domain)
         # payment = create_payment(domain)
-        si = setup_intent(domain, customer.id)
+        si = setup_intent(domain, customer_id)
         return si.client_secret
     except Exception as e:
         print_traceback(e)
