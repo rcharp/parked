@@ -101,8 +101,21 @@ REMEMBER_COOKIE_DURATION = timedelta(days=90)
 
 # Namecheap
 NAMECHEAP_API_KEY = os.environ.get('NAMECHEAP_API_KEY', None)
+NAMECHEAP_SANDBOX_API_KEY = os.environ.get('NAMECHEAP_SANDBOX_API_KEY', None)
 NAMECHEAP_USERNAME = os.environ.get('NAMECHEAP_USERNAME', None)
-NAMECHEAP_IP_ADDRESS = os.environ.get('NAMECHEAP_IP_ADDRESS', None)
+NAMECHEAP_REGISTRATION = {
+    'FirstName': os.environ.get('FirstName', None),
+    'LastName': os.environ.get('LastName', None),
+    'Address1': os.environ.get('Address1', None),
+    'City': os.environ.get('City', None),
+    'StateProvince': os.environ.get('StateProvince', None),
+    'PostalCode': os.environ.get('PostalCode', None),
+    'Country': os.environ.get('Country', None),
+    'Phone': os.environ.get('Phone', None),
+    'EmailAddress': os.environ.get('EmailAddress', None)
+}
+HOME_IP_ADDRESS = os.environ.get('HOME_IP_ADDRESS', None)
+WORK_IP_ADDRESS = os.environ.get('WORK_IP_ADDRESS', None)
 
 # Mailgun.
 # MAILGUN_LOGIN = os.environ.get('MAILGUN_LOGIN', None)

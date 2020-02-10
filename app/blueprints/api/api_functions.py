@@ -79,10 +79,8 @@ def check_domain_availability(domain):
         details = pythonwhois.get_whois(domain)
         if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
             expires = get_dt_string(details['expiration_date'][0])
-            # availability.append({domain: False, 'expires': expires})
             details.update({'name': domain, 'available': False, 'expires': expires})
         else:
-            # availability.append({domain: True, 'expires': None})
             details.update({'name': domain, 'available': True, 'expires': None})
     except Exception as e:
         print_traceback(e)
