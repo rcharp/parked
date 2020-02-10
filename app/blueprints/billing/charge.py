@@ -21,7 +21,10 @@ def stripe_checkout(email, domain):
             customer_id = create_customer(u, email)
         else:
             c = Customer.query.filter(Customer.user_id == u.id).scalar()
-            customer_id = c.id
+            customer_id = c.customer_id
+
+            if customer_id is None:
+                create_customer(u, email, False)
 
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -47,12 +50,16 @@ def create_payment(domain):
 
 
 # Create the customer
-def create_customer(u, email):
-    c = Customer()
-    c.user_id = u.id
-    c.email = email
-    c.save()
+def create_customer(u, email, create_db=True):
 
+    # Create the customer in the database
+    if create_db:
+        c = Customer()
+        c.user_id = u.id
+        c.email = email
+        c.save()
+
+    # Create the customer in Stripe
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
     customer = stripe.Customer.create(
         email=email
