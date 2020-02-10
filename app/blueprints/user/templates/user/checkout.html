@@ -354,7 +354,7 @@
                       console.log(result.error.message);
                     } else {
                       // The payment has been processed!
-                      if (result.paymentIntent.status === 'succeeded') {
+                      if (result.setupIntent.status === 'succeeded') {
                           alert("Payment was successful for {{ domain }}");
                         // Show a success message to your customer
                         // There's a risk of the customer closing the window before callback
