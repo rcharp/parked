@@ -31,7 +31,7 @@ wtforms-alchemy==0.16.8
 flask-paginate==0.5.2
 
 # Payments.
-stripe==2.21.0
+stripe==2.42.0
 
 # Utils.
 tzlocal==1.5.1
