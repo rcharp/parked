@@ -50,9 +50,14 @@ def create_session(email, site_url, domain):
     )
 
 
-def setup_intent():
+def create_payment(domain):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.SetupIntent.create()
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        currency="usd",
+        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
 
 
 def update_customer(session_id, domain, user_id):
