@@ -239,13 +239,15 @@ def dashboard():
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import check_domain_availability
+        from app.blueprints.api.api_functions import check_domain_availability, save_search
 
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
         domain = request.form['domain']
         details = check_domain_availability(domain)
+
+        save_search(domain, details['expires'])
 
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:
