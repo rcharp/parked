@@ -18,6 +18,7 @@ from app.blueprints.user import user
 from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
+from app.blueprints.errors import errors
 from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date
 from app.blueprints.billing.template_processors import (
   format_currency,
@@ -130,6 +131,7 @@ def create_app(settings_override=None):
     app.register_blueprint(user)
     app.register_blueprint(api)
     app.register_blueprint(billing)
+    app.register_blueprint(errors)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_error)
     template_processors(app)
@@ -146,11 +148,11 @@ def create_app(settings_override=None):
 
 
 def page_not_found(e):
-    return render_template(url_for('errors/404.html')), 404
+    return render_template('errors/404.html'), 404
 
 
 def internal_error(e):
-    return render_template(url_for('errors/500.html')), 500
+    return render_template('errors/500.html'), 500
 
 
 def extensions(app):
