@@ -316,7 +316,6 @@ def view_domain():
 
         return render_template('user/view.html', current_user=current_user, domain=domain.name, details=details)
 
-    flash("An error occurred. Please try again.", "error")
     return redirect(url_for('user.dashboard'))
 
 

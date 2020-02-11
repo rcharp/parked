@@ -167,7 +167,7 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
                                 View details for {{ domain }}
                             </h1>
@@ -189,7 +189,7 @@
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
-                                        <a href="#check"><h3>Success!&nbsp;&nbsp;<span color="green"><i class="si si-check"></i></span></h3></a>
+                                        <a href="#check"><h3>Domain Information&nbsp;&nbsp;<span color="green"><i class="si si-list"></i></span></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -204,9 +204,15 @@
                                                     <span style="font-size:18px">
                                                         {% for k,v in details.items() %}
                                                             <b>{{ k|replace('_', ' ')|capitalize }}:</b>
-                                                            {% if v|list_filter %}
+                                                            {% if v|dict_filter %}
+                                                                <br />
+                                                                {% for key, val in v.items() %}
+                                                                    &nbsp;&nbsp;&nbsp;<b>{{ key|capitalize }}:</b> {{ val }}<br />
+                                                                {% endfor %}
+                                                            {% elif v|list_filter %}
+                                                                {% if v|length > 1 %}<br />{% endif %}
                                                                 {% for item in v %}
-                                                                    {{ item }}<br />
+                                                                    &nbsp;&nbsp;&nbsp;{{ item|pretty_date_filter }}<br />
                                                                 {% endfor %}
                                                             {% else %}
                                                                 {{ v }}

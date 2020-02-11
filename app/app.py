@@ -1,8 +1,9 @@
 import logging
-import os
+import pytz
 from logging.handlers import SMTPHandler
 
 import stripe
+import datetime
 
 from werkzeug.contrib.fixers import ProxyFix
 from flask import Flask, render_template
@@ -17,7 +18,7 @@ from app.blueprints.user import user
 from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
-from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string
+from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date
 from app.blueprints.billing.template_processors import (
   format_currency,
   current_year
@@ -170,6 +171,8 @@ def template_processors(app):
     app.jinja_env.filters['pretty_date_filter'] = pretty_date_filter
     app.jinja_env.filters['logo_filter'] = logo_filter
     app.jinja_env.filters['list_filter'] = list_filter
+    app.jinja_env.filters['dict_filter'] = dict_filter
+    app.jinja_env.filters['today_filter'] = today_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -282,10 +285,21 @@ def logo_filter(arg, k):
 
 def pretty_date_filter(arg):
     time_string = str(arg)
-    dt = get_datetime_from_string(time_string)
 
-    return get_dt_string(dt)
+    if is_date(time_string):
+        dt = get_datetime_from_string(time_string)
+        return get_dt_string(dt) + ' UTC'
+
+    return arg
 
 
 def list_filter(arg):
     return isinstance(arg, list)
+
+
+def dict_filter(arg):
+    return isinstance(arg, dict)
+
+
+def today_filter(arg):
+    return arg - datetime.timedelta(hours=24) <= pytz.utc.localize(datetime.datetime.utcnow())

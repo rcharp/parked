@@ -160,7 +160,7 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
                                 Dashboard
                             </h1>
@@ -269,7 +269,7 @@
                                                             <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
                                                             <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
                                                             <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Registered">Registered</th>
-                                                            <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
+                                                            <th class="sorting_disabled text-center" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -289,33 +289,39 @@
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>
                                                                     {% endif %}
                                                                 </td>
-                                                                <td class="text-center" style="min-width:150px;">
+                                                                <td class="text-center" style="min-width:200px;max-width:200px;width:200px;">
                                                                     {% if not domain.registered %}
-                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
-                                                                            <div class="form-group">
-                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
-                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
-                                                                                </button>
-                                                                            </div>
-                                                                        </form>
-                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
-                                                                            <div class="form-group">
-                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
-                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Delete
-                                                                                </button>
-                                                                            </div>
-                                                                        </form>
+                                                                        <div style="width:50%;float:left">
                                                                     {% endif %}
-                                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.view_domain' ) }}" method="post">
-                                                                        <div class="form-group">
-                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit"
-                                                                                        style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> View
-                                                                            </button>
+                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.view_domain' ) }}" method="post">
+                                                                            <div class="form-group">
+                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit"
+                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> View
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    {% if not domain.registered %}
                                                                         </div>
-                                                                    </form>
+{#                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">#}
+{#                                                                            <div class="form-group">#}
+{#                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
+{#                                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit"#}
+{#                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register#}
+{#                                                                                </button>#}
+{#                                                                            </div>#}
+{#                                                                        </form>#}
+                                                                        <div style="width:50%;float:right">
+                                                                            <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
+                                                                                <div class="form-group">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
+                                                                                                style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Delete
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    {% endif %}
                                                                 </td>
                                                             </span>
                                                         </tr>

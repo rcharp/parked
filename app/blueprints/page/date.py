@@ -42,6 +42,7 @@ def convert_end_time(int_time):
     return time_tuple
 """
 
+
 def is_date(string, fuzzy=False):
     try:
         parse(string, fuzzy=fuzzy)
@@ -51,6 +52,7 @@ def is_date(string, fuzzy=False):
         return False
     except Exception:
         return False
+
 
 # Time conversions ###################################
 def get_short_date_string(timestamp):
