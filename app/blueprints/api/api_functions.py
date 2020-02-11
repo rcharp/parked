@@ -71,24 +71,12 @@ def print_traceback(e):
 
 
 def check_domain_availability(domain):
-    # username = current_app.config.get('NAMECHEAP_USERNAME')
-    # api_key = current_app.config.get('NAMECHEAP_API_KEY')
-    # ip_address = current_app.config.get('NAMECHEAP_IP_ADDRESS')
-
-    # This is old PyNamecheap code
-    # api = nc.Api(username, api_key, username, ip_address, sandbox=False)
-
-    # Old Namecheapapi code
-    # api = DomainAPI(api_user=username, api_key=api_key, username=username, client_ip=ip_address, sandbox=False)
-
-    # availability = []
     details = dict()
     try:
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
 
         details = pythonwhois.get_whois(domain)
-        # print(details)
         if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
             expires = get_dt_string(details['expiration_date'][0])
             # availability.append({domain: False, 'expires': expires})
@@ -103,7 +91,7 @@ def check_domain_availability(domain):
     return details
 
 
-def save_domain(user_id, domain, expires, reserve_time):
+def save_domain(user_id, customer_id, domain, expires, reserve_time):
     from app.blueprints.api.models.domains import Domain
 
     d = Domain()
@@ -111,11 +99,12 @@ def save_domain(user_id, domain, expires, reserve_time):
     d.name = domain
     d.expires = expires
     d.created_on = get_dt_string(reserve_time)
+    d.customer_id = customer_id
 
     d.save()
     return
 
 
-def update_customer(session_id, domain, user_id):
+def update_customer(pm, customer_id):
     from app.blueprints.billing.charge import update_customer
-    return update_customer(session_id, domain, user_id)
+    return update_customer(pm, customer_id)

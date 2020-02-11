@@ -102,7 +102,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0;padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -151,7 +151,7 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
@@ -213,7 +213,7 @@
                                                         <div class="sr-input sr-card-element" id="card-element"></div>
                                                       </div>
                                                       <div class="sr-field-error" id="card-errors" role="alert"></div>
-                                                      <button id="submit">
+                                                      <button id="submit" style="padding:15px;">
                                                         <div class="spinner hidden" id="spinner"></div>
                                                         <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
@@ -327,18 +327,10 @@
                 });
 
                 var form = document.getElementById('payment-form');
-                var clientSecret = '{{ pi }}';
+                var clientSecret = '{{ si.client_secret }}';
 
                 form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
-                  //stripe.confirmCardPayment(clientSecret, {
-                    //payment_method: {
-                      //card: card,
-                      //billing_details: {
-                        //email: '{{ email }}'
-                      //}
-                    //}
-                  //}
                   stripe.confirmCardSetup(clientSecret, {
                     payment_method: {
                       card: card,
@@ -356,14 +348,14 @@
                       // The payment has been processed!
                       if (result.setupIntent.status === 'succeeded') {
                           $.ajax({
-                              url: '{{ url_for("user.success") }}',
+                              url: '{{ url_for("user.save_intent") }}',
                               type: 'POST',
-                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}'},
+                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
+                                  var domain = '{{ domain }}';
+                                  window.location.href='{{ url_for('user.success', domain=domain) }}';
                               }
                           });
-
-                          alert("Payment was successful for {{ domain }}");
                         // Show a success message to your customer
                         // There's a risk of the customer closing the window before callback
                         // execution. Set up a webhook or plugin to listen for the

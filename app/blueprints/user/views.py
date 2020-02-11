@@ -260,23 +260,27 @@ def reserve_domain():
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
-            # Deletes the domain if it already exists. For testing purposes.
+            # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
             d = Domain.query.filter(Domain.name == domain).scalar()
             d.delete()
 
             # flash('You already have this domain reserved!', 'error')
             # return redirect(url_for('user.dashboard'))
 
-        from app.blueprints.api.api_functions import check_domain_availability
-        details = check_domain_availability(domain)
+        try:
+            # Setup the payment method
+            si = stripe_checkout(current_user.email, domain)
 
-        # Display the payment screen and save the user's reserved domains list
-        pi = stripe_checkout(current_user.email, domain)
-
-        # Only save the domain reservation if the card was captured.
-        if pi is not None:
-            # save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
-            return render_template('user/checkout.html', current_user=current_user, domain=domain, pi=pi, email=current_user.email)
+            # Redirect to the payment page
+            if si is not None:
+                return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+            else:
+                flash("There was an error reserving this domain. Please try again.", 'error')
+                return redirect(url_for('user.dashboard'))
+        except Exception as e:
+            print_traceback(e)
+            flash("There was an error reserving this domain. Please try again.", 'error')
+            return redirect(url_for('user.dashboard'))
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
@@ -307,28 +311,37 @@ def checkout():
     return render_template('user/checkout.html', current_user=current_user)
 
 
-@user.route('/success', methods=['GET','POST'])
+@user.route('/save_intent', methods=['GET','POST'])
 @csrf.exempt
-def success():
+def save_intent():
     if request.method == 'POST':
-        print(request.args)
         # Save the customer's info to db on successful charge if they don't already exist
-        if request.args.get('pm') and request.args.get('domain'):
+        if 'pm' in request.form and 'domain' in request.form and 'email' in request.form and 'customer_id' in request.form:
 
-            pm = request.args.get('pm')
-            domain = request.args.get('domain')
+            pm = request.form['pm']
+            domain = request.form['domain']
+            # email = request.form['email']
+            customer_id = request.form['customer_id']
 
-            if update_customer(pm, domain, current_user.id):
+            if update_customer(pm, customer_id):
 
                 # Save the domain after payment
                 from app.blueprints.api.api_functions import check_domain_availability
                 details = check_domain_availability(domain)
-                save_domain(current_user.id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                save_domain(current_user.id, customer_id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
+
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
+
+
+@user.route('/success', methods=['GET','POST'])
+@csrf.exempt
+def success():
+    flash('Your domain was successfully reserved!', 'success')
+    return render_template('user/success.html', current_user=current_user)
 
 
 # Settings -------------------------------------------------------------------

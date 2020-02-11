@@ -268,7 +268,7 @@
                                                             <th class="sorting name-header" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
                                                             <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
                                                             <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
-                                                            <th class="sorting_disabled" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
+                                                            <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -283,7 +283,7 @@
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</p></td>
                                                                 <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.expires }} UTC</p></td>
-                                                                <td style="min-width:150px;">
+                                                                <td class="text-center" style="min-width:150px;">
                                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                         <div class="form-group">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
