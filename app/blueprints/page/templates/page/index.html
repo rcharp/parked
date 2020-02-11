@@ -49,6 +49,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
@@ -94,12 +95,12 @@
 
         <div class="cover">
             <!-- Header -->
-            <header class="header border-bottom border-color-light-gray">
+            <header class="header border-bottom border-color-light-gray" style="background-color:#007fd8">
                 <div class="header-inner">
                     <nav class="navbar navbar-expand-lg py-1">
                         <div class="container-fluid">
                             <a href="/" style="max-width:70%;">
-                                <img src="../../../../static/assets/images/logos/domain.png" class="img-responsive" style="max-width:80%" title="Domain" alt="Domain">
+                                <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:48px;color:white;">getparked.io</span>
                             </a>
                             <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="base-color fas fa-bars xl-font-size"></span>
@@ -107,22 +108,22 @@
                             <div class="collapse navbar-collapse mt-3 mt-lg-0 sm-font-size" id="main-menu">
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item">
-                                        <a href="#info" class="nav-link text-dark-gray font-family-secondary font-weight__700 mx-lg-4">
+                                        <a href="#info" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
                                             How It Works
                                         </a>
                                     </li>
 {#                                    <li class="nav-item">#}
-{#                                        <a href="#features" class="nav-link text-dark-gray font-family-secondary font-weight__700 mx-lg-4">#}
+{#                                        <a href="#features" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">#}
 {#                                            Features#}
 {#                                        </a>#}
 {#                                    </li>#}
                                     <li class="nav-item">
-                                        <a href="#pricing" class="nav-link text-dark-gray font-family-secondary font-weight__700 mx-lg-4">
+                                        <a href="#pricing" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
                                             Pricing
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ url_for('user.contact') }}" class="nav-link text-dark-gray font-family-secondary font-weight__700 mx-lg-4">
+                                        <a href="{{ url_for('user.contact') }}" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
                                             Contact Us
                                         </a>
                                     </li>
@@ -134,12 +135,12 @@
                                         </a>
                                     </li>
                                     <li class="nav-item d-block d-lg-none">
-                                        <a href="{{ url_for('user.signup') }}" class="nav-link text-dark-gray font-family-secondary font-weight__700">
+                                        <a href="{{ url_for('user.signup') }}" class="nav-link text-white font-family-secondary font-weight__700">
                                             Sign up
                                         </a>
                                     </li>
                                     <li class="nav-item ml-lg-3">
-                                        <a href="{{ url_for('user.login') }}" class="nav-link text-dark-gray font-family-secondary font-weight__700">
+                                        <a href="{{ url_for('user.login') }}" class="nav-link text-white font-family-secondary font-weight__700">
                                             Login
                                         </a>
                                     </li>
@@ -444,7 +445,7 @@
         <!--/ End CTA -->
 
         <!-- Footer -->
-        <footer class="footer section bg-light-primary text-gray pt-2">
+        <footer class="footer section bg-light-gray text-gray pt-2">
             <div class="container" style="min-width:80%; max-width:95%;">
                 <!-- Empty Space --
                 <div class="lg-space"></div>
