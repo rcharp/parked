@@ -1,6 +1,8 @@
 from app.blueprints.api.domain.namecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback
 from flask import current_app
+import pythonwhois
+import tldextract
 
 
 def purchase_domain(domain, sandbox=True):
@@ -27,6 +29,24 @@ def purchase_domain(domain, sandbox=True):
     except Exception as e:
         print_traceback(e)
         return False
+
+
+def get_domain_details(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+
+        details = pythonwhois.get_whois(domain)
+
+        # Remove the raw data
+        del details['raw']
+
+        # Format the entries
+
+        return details
+    except Exception as e:
+        print_traceback(e)
+        return None
 
 
 def check_domain(domain, sandbox=True):

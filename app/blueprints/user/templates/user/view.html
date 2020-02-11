@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Dashboard - Parked</title>
+        <title>View {{ domain }} - Parked</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -60,9 +60,16 @@
         <!-- Shepherd JS -->
         <link rel="stylesheet" href="../../../../static/shepherd.js/dist/css/shepherd-theme-square.css"/>
 
+        <!-- CSS for form -->
+        <link rel="stylesheet" href="../../../../static/form/form.css"/>
+
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
         <!-- END Stylesheets -->
+
+        <!-- Load Stripe.js on your website. -->
+        <script src="https://js.stripe.com/v3/"></script>
+
     </head>
     <body style="zoom: 80%;">
         <!-- Page Container -->
@@ -162,7 +169,7 @@
                     <div class="row items-push">
                         <div class="col-sm-7">
                             <h1 class="font-w300 text-white">
-                                Dashboard
+                                View details for {{ domain }}
                             </h1>
                         </div>
                     </div>
@@ -177,151 +184,37 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:80%;margin:0 auto; min-width:450px; float:none;">
+                        <div class="col-md-4" style="width:60%; margin:0 auto; min-width:320px; float:none;">
                             <!-- Block Tabs Alternative Style -->
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
-                                        <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
-                                    </li>
-                                    <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#domains"><h3>My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
+                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
+                                        <a href="#check"><h3>Success!&nbsp;&nbsp;<span color="green"><i class="si si-check"></i></span></h3></a>
                                     </li>
                                 </ul>
-                                <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
+                                <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
                                     <div class="tab-pane active" id="check" name="check" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;"><br /><br />
-                                                        {% if domain['available'] is not none %}
-                                                            {% if not domain['available'] %}
-                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
-                                                                It expires {{ domain['expires'] }} UTC.
-
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
-                                                                    <div class="form-group">
-                                                                        <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                                <br />
-                                                                - or -
+                                                <div style="text-align:center; font-size:24px;"><br /><br />
+                                                    WhoIs information for {{ domain }}<br /><br />
+                                                </div>
+                                                <div>
+                                                    <span style="font-size:18px">
+                                                        {% for k,v in details.items() %}
+                                                            <b>{{ k|replace('_', ' ')|capitalize }}:</b>
+                                                            {% if v|list_filter %}
+                                                                {% for item in v %}
+                                                                    {{ item }}<br />
+                                                                {% endfor %}
                                                             {% else %}
-                                                                The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
-                                                                    <div class="form-group">
-                                                                        <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
+                                                                {{ v }}
                                                             {% endif %}
-                                                        {% else %}
-                                                            There was an error checking {{ domain['name'] }}. Is it a vaild domain? Please try again.
-                                                        {% endif %}
-                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
-                                                            <div class="form-group">
-                                                                <br />
-                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    <br />
-                                                    </div>
-                                                {% else %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
-                                                        <div class="form-group">
-                                                            <h4>Enter a domain to check its availability.</h4>
-                                                            <br /><br />
-                                                            <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                {% endif %}
-                                            </div>
-                                            <!-- END Bootstrap Login -->
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane" id="domains" name="domains" style="min-height:250px;overflow:hidden">
-                                        <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
-                                            <!-- Bootstrap Login -->
-                                            <div class="block block-themed">
-                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
-                                                    <thead>
-                                                        <tr role="row">
-                                                            <th class="text-center sorting_asc hidden" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
-                                                            <th class="sorting name-header" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
-                                                            <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
-                                                            <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Registered">Registered</th>
-                                                            <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <div id="domain_list">
-                                                    {% for domain in domains|sort(attribute='created_on', reverse=true) %}
-                                                    </div>
-                                                        <tr>
-                                                            <span>
-                                                                <td class="text-center sorting_1 hidden">1</td>
-                                                                <td style="min-width:200px;padding-top:20px;">
-                                                                    <span class="font-w400 text-muted" style="font-size:16px;">{{ domain.name }}</span>
-                                                                </td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{{ domain.created_on|pretty_date_filter }} UTC</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{% if domain.expires %}{{ domain.expires }} UTC{% else %}N/A{% endif %}</span></td>
-                                                                <td class="text-center" style="min-width:75px;padding:10px 0;">
-                                                                    {% if domain.registered %}
-                                                                        <span style="color:green"><i class="si si-check fa-2x"></i></span>
-                                                                    {% endif %}
-                                                                </td>
-                                                                <td class="text-center" style="min-width:150px;">
-                                                                    {% if not domain.registered %}
-                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
-                                                                            <div class="form-group">
-                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
-                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
-                                                                                </button>
-                                                                            </div>
-                                                                        </form>
-                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
-                                                                            <div class="form-group">
-                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
-                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Delete
-                                                                                </button>
-                                                                            </div>
-                                                                        </form>
-                                                                    {% endif %}
-                                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.view_domain' ) }}" method="post">
-                                                                        <div class="form-group">
-                                                                            <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit"
-                                                                                        style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> View
-                                                                            </button>
-                                                                        </div>
-                                                                    </form>
-                                                                </td>
-                                                            </span>
-                                                        </tr>
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
+                                                            <br />
+                                                        {% endfor %}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <!-- END Bootstrap Login -->
                                         </div>
@@ -408,12 +301,6 @@
                 // Init page helpers (Slick Slider plugin)
                 App.initHelpers('slick');
             });
-        </script>
-
-        <script>
-            function ConfirmDeleteReservation() {
-                return confirm("Are you sure you want to delete this reservation? This can't be undone.");
-            }
         </script>
 
         <script>

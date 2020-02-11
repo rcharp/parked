@@ -169,6 +169,7 @@ def template_processors(app):
     app.jinja_env.filters['format_currency'] = format_currency
     app.jinja_env.filters['pretty_date_filter'] = pretty_date_filter
     app.jinja_env.filters['logo_filter'] = logo_filter
+    app.jinja_env.filters['list_filter'] = list_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -284,3 +285,7 @@ def pretty_date_filter(arg):
     dt = get_datetime_from_string(time_string)
 
     return get_dt_string(dt)
+
+
+def list_filter(arg):
+    return isinstance(arg, list)
