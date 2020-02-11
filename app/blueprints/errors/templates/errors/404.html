@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>View {{ domain }} - Parked</title>
+        <title>Dashboard - Parked</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -169,7 +169,7 @@
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                View details for {{ domain }}
+                                Dashboard
                             </h1>
                         </div>
                     </div>
@@ -188,67 +188,20 @@
                             <!-- Block Tabs Alternative Style -->
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="view_nav" class="active" style="padding-top:5px;min-width:420px;width:50%;display:block">
-                                        <a href="#view"><h3>Domain Information&nbsp;&nbsp;<span color="green"><i class="si si-list"></i></span></h3></a>
-                                    </li>
-                                    <li id="update_nav" style="padding-top:5px;min-width:420px;width:50%;display:block">
-                                        <a href="#update"><h3>Update DNS Records&nbsp;&nbsp;<span color="green"><i class="si si-energy"></i></span></h3></a>
+                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
+                                        <a href="#check"><h3>404 Error</h3></a>
                                     </li>
                                 </ul>
-                                <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
-                                    <div class="tab-pane active" id="view" name="view" style="min-height:250px;overflow:hidden">
+                                <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
+                                    <div class="tab-pane active" id="check" name="check" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                <div style="text-align:center; font-size:24px;"><br />
-                                                    WhoIs information for {{ domain }}<br /><br />
-                                                </div>
-                                                <div>
-                                                    <span style="font-size:18px">
-                                                        {% for k,v in details.items() %}
-                                                            <b>{{ k|replace('_', ' ')|capitalize }}:</b>
-                                                            {% if v|dict_filter %}
-                                                                <br />
-                                                                {% for key, val in v.items() %}
-                                                                    &nbsp;&nbsp;&nbsp;<b>{{ key|capitalize }}:</b> {{ val }}<br />
-                                                                {% endfor %}
-                                                            {% elif v|list_filter %}
-                                                                {% if v|length > 1 %}<br />
-                                                                    {% for item in v %}
-                                                                        &nbsp;&nbsp;&nbsp;{{ item|pretty_date_filter }}<br />
-                                                                    {% endfor %}
-                                                                {% else %}
-                                                                    {% for item in v %}
-                                                                        {{ item|pretty_date_filter }}<br />
-                                                                    {% endfor %}
-                                                                {% endif %}
-                                                            {% else %}
-                                                                {{ v }}
-                                                            {% endif %}
-                                                            <br />
-                                                        {% endfor %}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <!-- END Bootstrap Login -->
-                                        </div>
-                                    </div>
+                                                <div style="text-align:center; font-size:24px;"><br /><br />
+                                                    Sorry, the page you were looking for wasn't found!<br /><br />
 
-                                    <div class="tab-pane" id="update" name="update" style="min-height:250px;overflow:hidden">
-                                        <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
-                                            <!-- Bootstrap Login -->
-                                            <div class="block block-themed">
-                                                {% if not registered %}
-                                                    <div style="text-align:center; font-size:24px;"><br /><br />
-                                                        You can only update DNS records for domains that you own.<br /><br />
-
-                                                        Please click <a href="{{ url_for('user.dashboard') }}">here</a> to return to your dashboard.
-                                                    </div>
-                                                {% else %}
-                                                    <div style="text-align:center; font-size:24px;"><br />
-                                                    Update DNS records for {{ domain }}<br /><br />
+                                                    Please click <a href="{{ url_for('user.dashboard') }}">here</a> to return to your dashboard.
                                                 </div>
-                                                {% endif %}
                                             </div>
                                             <!-- END Bootstrap Login -->
                                         </div>

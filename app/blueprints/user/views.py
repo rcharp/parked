@@ -313,8 +313,9 @@ def view_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
         details = get_domain_details(domain.name)
+        registered = domain.registered
 
-        return render_template('user/view.html', current_user=current_user, domain=domain.name, details=details)
+        return render_template('user/view.html', current_user=current_user, domain=domain.name, details=details, registered=registered)
 
     return redirect(url_for('user.dashboard'))
 
