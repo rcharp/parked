@@ -6,7 +6,7 @@ import stripe
 import datetime
 
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from celery import Celery
 from itsdangerous import URLSafeTimedSerializer
 from flask_compress import Compress
@@ -130,6 +130,8 @@ def create_app(settings_override=None):
     app.register_blueprint(user)
     app.register_blueprint(api)
     app.register_blueprint(billing)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_error)
     template_processors(app)
     extensions(app)
     authentication(app, User)
@@ -141,6 +143,14 @@ def create_app(settings_override=None):
     Compress(app)
 
     return app
+
+
+def page_not_found(e):
+    return render_template(url_for('errors/404.html')), 404
+
+
+def internal_error(e):
+    return render_template(url_for('errors/500.html')), 500
 
 
 def extensions(app):
