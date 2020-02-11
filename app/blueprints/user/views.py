@@ -246,6 +246,12 @@ def check_availability():
         domain = request.form['domain']
         details = check_domain_availability(domain)
 
+        # from app.blueprints.api.domain import register_domain, check_domain
+        # if register_domain('getparked.io'):
+        #     print("Domain registered")
+        # else:
+        #     print("Domain NOT registered")
+
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
@@ -316,11 +322,10 @@ def checkout():
 def save_intent():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'email' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             domain = request.form['domain']
-            # email = request.form['email']
             customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id):

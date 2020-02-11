@@ -62,6 +62,16 @@ def create_payment(domain):
     )
 
 
+def confirm_payment(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        currency="usd",
+        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
+
+
 # Create the customer
 def create_customer(u, email, create_db=True):
 
