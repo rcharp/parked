@@ -277,20 +277,28 @@
                                                     {% for domain in domains|sort(attribute='created_on', reverse=true) %}
                                                     </div>
                                                         <tr>
-                                                            <span style="font-size:20px">
+                                                            <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <p class="font-w400 text-muted">{{ domain.name }}</p>
+                                                                    <span class="font-w400 text-muted" style="font-size:16px;">{{ domain.name }}</span>
                                                                 </td>
-                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</p></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.expires }} UTC</p></td>
-                                                                <td class="text-center" style="min-width:150px;">
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{{ domain.created_on|pretty_date_filter }} UTC</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{% if domain.expires %}{{ domain.expires }} UTC{% else %}N/A{% endif %}</span></td>
+                                                                <td class="text-center" style="min-width:75px;padding:10px 0;">
                                                                     {% if domain.registered %}
-                                                                        <span style="color:green"><i class="si si-check"></i></span>
+                                                                        <span style="color:green"><i class="si si-check fa-2x"></i></span>
                                                                     {% endif %}
                                                                 </td>
                                                                 <td class="text-center" style="min-width:150px;">
                                                                     {% if not domain.registered %}
+                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
+                                                                            <div class="form-group">
+                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
+                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
                                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                             <div class="form-group">
                                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />

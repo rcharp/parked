@@ -38,7 +38,7 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
-from app.blueprints.api.domain.domain import register_domain, check_domain
+from app.blueprints.api.domain.domain import purchase_domain, check_domain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -247,11 +247,6 @@ def check_availability():
         domain = request.form['domain']
         details = check_domain_availability(domain)
 
-        if register_domain(domain):
-            print("Domain registered")
-        else:
-            print("Domain NOT registered")
-
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
@@ -289,6 +284,25 @@ def reserve_domain():
             return redirect(url_for('user.dashboard'))
     else:
         return render_template('user/dashboard.html', current_user=current_user)
+
+
+@user.route('/register_domain', methods=['GET','POST'])
+@csrf.exempt
+def register_domain():
+    # Get and register the domain
+    if request.method == 'POST':
+        domain_id = request.form['domain']
+        domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+
+        if purchase_domain(domain.name):
+            domain.registered = True
+            domain.save()
+
+            flash('This domain has been registered.', 'success')
+        else:
+            flash('This domain has not been registered.', 'error')
+
+    return redirect(url_for('user.dashboard'))
 
 
 @user.route('/delete_domain', methods=['GET','POST'])

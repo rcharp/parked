@@ -3,7 +3,7 @@ from app.blueprints.api.api_functions import print_traceback
 from flask import current_app
 
 
-def register_domain(domain, sandbox=True):
+def purchase_domain(domain, sandbox=True):
     try:
         username = current_app.config.get('NAMECHEAP_USERNAME')
         ip_address = current_app.config.get('HOME_IP_ADDRESS')
