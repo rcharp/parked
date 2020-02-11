@@ -3,13 +3,13 @@ from app.blueprints.api.api_functions import print_traceback
 from flask import current_app
 
 
-def register_domain(domain):
+def register_domain(domain, sandbox=True):
     try:
         username = current_app.config.get('NAMECHEAP_USERNAME')
-        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY')
         ip_address = current_app.config.get('HOME_IP_ADDRESS')
+        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY') if sandbox else current_app.config.get('NAMECHEAP_API_KEY')
 
-        api = Api(username, api_key, username, ip_address, sandbox=True)
+        api = Api(username, api_key, username, ip_address, sandbox=sandbox)
         registration = current_app.config.get('NAMECHEAP_REGISTRATION')
 
         api.domains_create(DomainName=domain,
@@ -29,13 +29,13 @@ def register_domain(domain):
         return False
 
 
-def check_domain(domain):
+def check_domain(domain, sandbox=True):
     try:
         username = current_app.config.get('NAMECHEAP_USERNAME')
-        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY')
         ip_address = current_app.config.get('HOME_IP_ADDRESS')
+        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY') if sandbox else current_app.config.get('NAMECHEAP_API_KEY')
 
-        api = Api(username, api_key, username, ip_address, sandbox=True)
+        api = Api(username, api_key, username, ip_address, sandbox=sandbox)
 
         api.domains_check(domain)
 

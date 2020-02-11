@@ -13,9 +13,6 @@ from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
 from app.blueprints.page.date import get_dt_string
-# from app.blueprints.api.pynamecheap import namecheap as nc
-# from app.blueprints.api.namecheapapi.namecheapapi.api.domains import DomainAPI
-# import app.blueprints.api.domain.pythonwhois
 import pythonwhois
 import tldextract
 

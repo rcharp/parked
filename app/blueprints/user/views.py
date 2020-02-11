@@ -38,6 +38,7 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
+from app.blueprints.api.domain.domain import register_domain, check_domain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -246,11 +247,10 @@ def check_availability():
         domain = request.form['domain']
         details = check_domain_availability(domain)
 
-        # from app.blueprints.api.domain import register_domain, check_domain
-        # if register_domain('getparked.io'):
-        #     print("Domain registered")
-        # else:
-        #     print("Domain NOT registered")
+        if register_domain(domain):
+            print("Domain registered")
+        else:
+            print("Domain NOT registered")
 
         return render_template('user/dashboard.html', current_user=current_user, domain=details)
     else:
