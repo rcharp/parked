@@ -130,8 +130,8 @@ def create_app(settings_override=None):
     app.register_blueprint(user)
     app.register_blueprint(api)
     app.register_blueprint(billing)
-    # app.register_error_handler(404, page_not_found)
-    # app.register_error_handler(500, internal_error)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_error)
     template_processors(app)
     extensions(app)
     authentication(app, User)
@@ -142,13 +142,15 @@ def create_app(settings_override=None):
     COMPRESS_MIN_SIZE = 500
     Compress(app)
 
+    return app
 
-# def page_not_found(e):
-#     return render_template(url_for('errors/404.html')), 404
-#
-#
-# def internal_error(e):
-#     return render_template(url_for('errors/500.html')), 500
+
+def page_not_found(e):
+    return render_template(url_for('errors/404.html')), 404
+
+
+def internal_error(e):
+    return render_template(url_for('errors/500.html')), 500
 
 
 def extensions(app):
