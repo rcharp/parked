@@ -1,7 +1,7 @@
 {% extends 'layouts/login.html' %}
 {% import 'macros/form.html' as f with context %}
 
-{% block title %}Login - Domain{% endblock %}
+{% block title %}Login - {{ 'site_name'|site_name_filter|capitalize }}{% endblock %}
 
 {% block body %}
   <div class="row">
