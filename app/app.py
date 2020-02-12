@@ -2,6 +2,7 @@ import logging
 import pytz
 from logging.handlers import SMTPHandler
 
+import os
 import stripe
 import datetime
 
@@ -18,6 +19,7 @@ from app.blueprints.user import user
 from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
+from app.blueprints.errors import errors
 from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date
 from app.blueprints.billing.template_processors import (
   format_currency,
@@ -130,6 +132,7 @@ def create_app(settings_override=None):
     app.register_blueprint(user)
     app.register_blueprint(api)
     app.register_blueprint(billing)
+    app.register_blueprint(errors)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_error)
     template_processors(app)
@@ -146,11 +149,11 @@ def create_app(settings_override=None):
 
 
 def page_not_found(e):
-    return render_template(url_for('errors/404.html')), 404
+    return render_template('errors/404.html'), 404
 
 
 def internal_error(e):
-    return render_template(url_for('errors/500.html')), 500
+    return render_template('errors/500.html'), 500
 
 
 def extensions(app):
@@ -183,6 +186,7 @@ def template_processors(app):
     app.jinja_env.filters['list_filter'] = list_filter
     app.jinja_env.filters['dict_filter'] = dict_filter
     app.jinja_env.filters['today_filter'] = today_filter
+    app.jinja_env.filters['site_name_filter'] = site_name_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -313,3 +317,7 @@ def dict_filter(arg):
 
 def today_filter(arg):
     return arg - datetime.timedelta(hours=24) <= pytz.utc.localize(datetime.datetime.utcnow())
+
+
+def site_name_filter(arg):
+    return 'getparked.io'

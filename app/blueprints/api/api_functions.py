@@ -100,6 +100,18 @@ def save_domain(user_id, customer_id, domain, expires, reserve_time):
     return
 
 
+def save_search(domain, expires):
+    from app.blueprints.api.models.searched import SearchedDomain
+
+    if not db.session.query(exists().where(SearchedDomain.name == domain)).scalar():
+        s = SearchedDomain()
+        s.name = domain
+        s.expires = expires
+
+        s.save()
+    return
+
+
 def update_customer(pm, customer_id):
     from app.blueprints.billing.charge import update_customer
     return update_customer(pm, customer_id)

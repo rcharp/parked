@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Domain: Workflow automation made simple</title>
-    <meta name="description" content="Domain allows you to you automate your workflows and move data to where you need it.">
+    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
     <meta name="keywords" content="Domain">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,22 +24,23 @@
     <![endif]-->
 
     <!-- Facebook Open Graph -->
-    <meta property="og:title" content="Domain: Workflow automation made simple" />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
     <meta property="og:url" content="https://www.domain.com" />
     <meta property="og:image" content="../../../../static/favicon128x128.png" />
-    <meta property="og:site_name" content="Domain: Automate your workflows" />
-    <meta property="og:description" content="Domain allows you to you automate your workflows and move data to where you need it." />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="Domain: Automate your workflows">
-    <meta name="twitter:description" content="Domain allows you to you automate your workflows and move data to where you need it.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
@@ -95,7 +96,7 @@
                         <nav class="navbar navbar-expand-lg py-1">
                             <div class="container-fluid">
                                 <a href="/">
-                                    <img src="../../../../static/assets/images/logos/domain.png" class="img-responsive" style="max-width:70%" title="Domain" alt="Domain">
+                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                                 </a>
                                 <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="base-color fas fa-bars xl-font-size"></span>
@@ -193,8 +194,7 @@
                         </li>
                         <li>
                             <a href="{{ url_for('page.home') }}">
-                              <img src="{{ url_for('static', filename='assets/images/logos/domain.png') }}"
-                                   height="40" title="Domain" alt="Domain"/>
+                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                             </a>
                         </li>
                     </ul>
