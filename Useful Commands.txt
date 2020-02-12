@@ -4,7 +4,6 @@ docker-compose exec website parked db reset
 docker rmi -f $(docker images -qf dangling=true)
 *************************************
 
-
 cd to icloud drive directory in terminal
 cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/
 
