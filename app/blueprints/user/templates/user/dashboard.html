@@ -268,10 +268,10 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    {% for domain in searched %}
+                                                                    {% for domain in searched|reverse %}
                                                                     <tr>
                                                                         <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
-                                                                        <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                        <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                     </tr>
                                                                     {% endfor %}
                                                                 </tbody>
