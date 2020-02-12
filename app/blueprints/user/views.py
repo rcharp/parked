@@ -249,12 +249,15 @@ def check_availability():
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
-        domain = request.form['domain']
-        details = check_domain_availability(domain)
+        domain_name = request.form['domain'].replace(' ','')
+        domain = check_domain_availability(domain_name)
+        details = get_domain_details(domain_name)
 
-        save_search(domain, details['expires'], current_user.id)
+        # Save the search if it is a valid domain
+        if domain['available'] is not None:
+            save_search(domain_name, domain['expires'], current_user.id)
 
-        return render_template('user/dashboard.html', current_user=current_user, domain=details)
+        return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 
