@@ -250,7 +250,34 @@
                                                                 <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
                                                             </div>
                                                         </div>
-                                                    </form>
+                                                    </form><br />
+                                                    {% if searched|length > 0 %}
+                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:420px;">
+                                                            <div style="font-size:24px;">
+                                                                <span class="text-muted" style="font-size:18px;">Recent searches
+                                                            </div><br />
+                                                            <table class="table table-borderless table-condensed">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="text-muted" style="font-size:18px;">Domain Name</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for domain in searched %}
+                                                                    <tr>
+                                                                        <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
+                                                                        <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                             <!-- END Bootstrap Login -->

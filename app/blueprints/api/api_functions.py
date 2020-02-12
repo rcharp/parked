@@ -100,15 +100,16 @@ def save_domain(user_id, customer_id, domain, expires, reserve_time):
     return
 
 
-def save_search(domain, expires):
+def save_search(domain, expires, user_id):
     from app.blueprints.api.models.searched import SearchedDomain
 
-    if not db.session.query(exists().where(SearchedDomain.name == domain)).scalar():
-        s = SearchedDomain()
-        s.name = domain
-        s.expires = expires
+    # if not db.session.query(exists().where(SearchedDomain.name == domain)).scalar():
+    s = SearchedDomain()
+    s.name = domain
+    s.expires = expires
+    s.user_id = user_id
 
-        s.save()
+    s.save()
     return
 
 
