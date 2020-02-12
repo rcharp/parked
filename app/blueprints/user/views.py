@@ -38,6 +38,7 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
+from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.domain.domain import purchase_domain, check_domain, get_domain_details
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
@@ -233,7 +234,9 @@ def dashboard():
     register = False
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains, register_domain=register)
+    searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
+
+    return render_template('user/dashboard.html', current_user=current_user, domains=domains, register_domain=register, searched=searched)
 
 
 @user.route('/check_availability', methods=['GET','POST'])
@@ -246,12 +249,15 @@ def check_availability():
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
-        domain = request.form['domain']
-        details = check_domain_availability(domain)
+        domain_name = request.form['domain'].replace(' ','')
+        domain = check_domain_availability(domain_name)
+        details = get_domain_details(domain_name)
 
-        save_search(domain, details['expires'])
+        # Save the search if it is a valid domain
+        if domain['available'] is not None:
+            save_search(domain_name, domain['expires'], current_user.id)
 
-        return render_template('user/dashboard.html', current_user=current_user, domain=details)
+        return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details)
     else:
         return render_template('user/dashboard.html', current_user=current_user)
 

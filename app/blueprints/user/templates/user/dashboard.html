@@ -194,7 +194,7 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;"><br /><br />
+                                                    <div style="text-align:center; font-size:24px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
                                                                 The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
@@ -213,18 +213,20 @@
                                                                 - or -
                                                             {% else %}
                                                                 The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
+                                                                <br />
+                                                                - or -
                                                             {% endif %}
                                                         {% else %}
-                                                            There was an error checking {{ domain['name'] }}. Is it a vaild domain? Please try again.
+                                                            There was an error checking this domain. Is it valid? Please try again.
                                                         {% endif %}
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
@@ -236,13 +238,45 @@
                                                         </form>
                                                     <br />
                                                     </div>
+                                                    {% if not domain['available'] and details is not none %}
+                                                        <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;">
+                                                            <div style="text-align:center; font-size:24px;"><br />
+                                                                WhoIs information for {{ domain['name'] }}<br /><br />
+                                                            </div>
+                                                            <div>
+                                                                <span style="font-size:18px">
+                                                                    {% for k,v in details.items() %}
+                                                                        <b>{{ k|replace('_', ' ')|capitalize }}:</b>
+                                                                        {% if v|dict_filter %}
+                                                                            <br />
+                                                                            {% for key, val in v.items() %}
+                                                                                &nbsp;&nbsp;&nbsp;<b>{{ key|capitalize }}:</b> {{ val }}<br />
+                                                                            {% endfor %}
+                                                                        {% elif v|list_filter %}
+                                                                            {% if v|length > 1 %}<br />
+                                                                                {% for item in v %}
+                                                                                    &nbsp;&nbsp;&nbsp;{{ item|pretty_date_filter }}<br />
+                                                                                {% endfor %}
+                                                                            {% else %}
+                                                                                {% for item in v %}
+                                                                                    {{ item|pretty_date_filter }}<br />
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                        {% else %}
+                                                                            {{ v }}
+                                                                        {% endif %}
+                                                                        <br />
+                                                                    {% endfor %}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                 {% else %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
                                                         <div class="form-group">
-                                                            <h4>Enter a domain to check its availability.</h4>
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">
@@ -250,7 +284,37 @@
                                                                 <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
                                                             </div>
                                                         </div>
-                                                    </form>
+                                                    </form><br />
+                                                    {% if searched|length > 0 %}
+                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:420px;">
+                                                            <div style="font-size:24px;">
+                                                                <span class="text-muted" style="font-size:18px;">Recent searches
+                                                            </div><br />
+{#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
+                                                            <div>
+                                                                <table class="table table-borderless table-condensed">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <span class="text-muted" style="font-size:18px;">Domain</span>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for domain in searched|reverse %}
+                                                                        <tr>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                             <!-- END Bootstrap Login -->

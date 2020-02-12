@@ -21,6 +21,26 @@ def home():
     return render_template('page/index.html', plans=settings.STRIPE_PLANS)
 
 
+@page.route('/availability', methods=['GET','POST'])
+@csrf.exempt
+def availability():
+    if request.method == 'POST':
+        from app.blueprints.api.api_functions import check_domain_availability, save_search
+        from app.blueprints.api.domain.domain import get_domain_details
+
+        domain_name = request.form['domain'].replace(' ', '')
+        domain = check_domain_availability(domain_name)
+        details = get_domain_details(domain_name)
+
+        # Save the search if it is a valid domain
+        # if domain['available'] is not None:
+        #     save_search(domain_name, domain['expires'], current_user.id)
+
+        return render_template('page/index.html', domain=domain, details=details)
+    else:
+        return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+
+
 @page.route('/terms')
 def terms():
     return render_template('page/terms.html')

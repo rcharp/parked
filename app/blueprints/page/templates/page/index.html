@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
     <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
-    <meta name="keywords" content="Domain">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -160,28 +160,109 @@
                 <div class="container hero-inner">
                     <div class="row align-items-center">
                         <div class="col-12 col-lg-12 mx-lg-auto">
-                            <div class="text-center">
+                            <div>
                                 <h1 class="xxxl-font-size font-weight__700 text-black text-center">
                                     Simple domain backordering.
                                 </h1>
                                 <!-- Empty Space -->
                                 <div class="md-space"></div>
                                 <!--/ End Empty Space -->
-                                <!-- Empty Space -->
-                                <div class="md-space"></div>
                                 <!--/ End Empty Space -->
-                                <p class="lead base-plus-font-size">
+                                <p class="lead base-plus-font-size text-center">
                                     Have a domain in mind that you want? Backorder it and we'll buy it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.<!--<br /><br >
-                                    Enter your email below to be notified when Domain launches.
-                                </p>
-                                <div class="col-md-6" style="margin:0 auto;float:none;">
-                                    <div class="ml-form-embed"
-                                        data-account="876269:e0v7x7y9o8"
-                                        data-form="1040848:f4v1l1"
-                                        style="min-width:80%;float:none;margin:0 auto">
+                                    Only $99 per domain.</p>
+                                {% if domain|length %}
+                                    <div class="block block-themed" style="height:450px;">
+                                        <div style="text-align:center; font-size:18px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                            {% if domain['available'] is not none %}
+                                                {% if not domain['available'] %}
+                                                    The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br />
+                                                    It expires {{ domain['expires'] }} UTC.
+
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                        <div class="form-group">
+                                                            <br />
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    - or -
+                                                {% else %}
+                                                    The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.login') }}" method="post">
+                                                        <div class="form-group">
+                                                            <br />
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    - or -
+                                                {% endif %}
+                                            {% else %}
+                                                There was an error checking this domain. Is it valid? Please try again.
+                                            {% endif %}
+                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.home' ) }}" method="get">
+                                                <div class="form-group">
+                                                    <br />
+                                                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        <br />
+                                        </div>
+                                        {% if not domain['available'] and details is not none %}
+                                            <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;height:450px;overflow:auto;border-bottom:1px solid #e3e3e3">
+                                                <div style="text-align:center; font-size:20px;"><br />
+                                                    WhoIs information for {{ domain['name'] }}<br /><br />
+                                                </div>
+                                                <div>
+                                                    <span style="font-size:18px;text-align:left;">
+                                                        {% for k,v in details.items() %}
+                                                            <b>{{ k|replace('_', ' ')|capitalize }}:</b>
+                                                            {% if v|dict_filter %}
+                                                                <br />
+                                                                {% for key, val in v.items() %}
+                                                                    &nbsp;&nbsp;&nbsp;<b>{{ key|capitalize }}:</b> {{ val }}<br />
+                                                                {% endfor %}
+                                                            {% elif v|list_filter %}
+                                                                {% if v|length > 1 %}<br />
+                                                                    {% for item in v %}
+                                                                        &nbsp;&nbsp;&nbsp;{{ item|pretty_date_filter }}<br />
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    {% for item in v %}
+                                                                        {{ item|pretty_date_filter }}<br />
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {{ v }}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                </div>-->
+                                {% else %}
+                                    <form class="form-horizontal push-5-t" action="{{ url_for('page.availability' ) }}" method="post">
+                                        <div class="form-group">
+                                            <br />
+                                            <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
+                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                </div>
+                                        </div><br />
+                                        <div class="form-group">
+                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
+                                            </div>
+                                        </div>
+                                    </form><br />
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -426,7 +507,7 @@
                                         Stay in the loop
                                     </h2>
                                     <p class="lead sm-font-size">
-                                        We'll be launching Domain soon. Enter your email address and we'll let you know when we launch!
+                                        We'll be launching {{ 'site_name'|site_name_filter|capitalize }} soon. Enter your email address and we'll let you know when we launch!
                                     </p>
                                 </div>
                             </div>
@@ -441,14 +522,12 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <!--/ End CTA -->
+        </section>-->
 
         <!-- Footer -->
-        <footer class="footer section bg-light-gray text-gray pt-2">
+        <footer class="footer section bg-light-gray text-gray pt-2" style="padding:10px 0">
             <div class="container" style="min-width:80%; max-width:95%;">
-                <!-- Empty Space --
-                <div class="lg-space"></div>
+                <!-- Empty Space -->
                 <!--/ End Empty Space --
                 <div class="row">
                     <div class="col-10 col-lg-8 mx-auto">
@@ -477,10 +556,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-                <!-- Empty Space --
-                <div class="lg-space"></div>
-                <!--/ End Empty Space -->
+                </div>-->
                 <div class="row align-items-center">
                     <div class="col-12 col-lg-4 pl-lg-0">
                         <ul class="nav sm-font-size justify-content-center justify-content-lg-start">
@@ -501,7 +577,7 @@
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2019 Domain. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

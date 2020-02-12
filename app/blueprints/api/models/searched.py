@@ -10,7 +10,7 @@ class SearchedDomain(ResourceMixin, db.Model):
 
     # Objects.
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True, index=True, nullable=True, server_default='')
+    name = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
 
     # Relationships.

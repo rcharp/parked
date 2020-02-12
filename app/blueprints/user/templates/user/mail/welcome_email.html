@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Welcome to Domain</title>
+<title>Welcome to {{ 'site_name'|site_name_filter|capitalize }}</title>
 <style>
 /* -------------------------------------
 		GLOBAL
@@ -189,7 +189,7 @@ ul li, ol li {
 				<tr>
 					<td>
 						<p>Hi,</p>
-						<p>Thank you for joining Domain!<br>
+						<p>Thank you for joining {{ 'site_name'|site_name_filter|capitalize }}!<br>
 						We're happy to help you get started with integrating all of your web services.</p>
 						<h1>What do I do next?</h1>
 						<p>Sign in to create your very first integration!<br>
@@ -202,7 +202,7 @@ ul li, ol li {
 							</tr>
 						</table>
 						<p>Thanks!</p>
-						<p>The Domain Team</p>
+						<p>The {{ 'site_name'|site_name_filter|capitalize }} Team</p>
 					</td>
 				</tr>
 			</table>
