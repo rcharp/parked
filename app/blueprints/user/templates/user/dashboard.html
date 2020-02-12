@@ -52,6 +52,7 @@
         <!-- Stylesheets -->
         <!-- Web fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
         <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
@@ -280,10 +281,10 @@
                                                             <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <span class="font-w400 text-muted" style="font-size:16px;">{{ domain.name }}</span>
+                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#007fd8;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{{ domain.created_on|pretty_date_filter }} UTC</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:16px;">{% if domain.expires %}{{ domain.expires }} UTC{% else %}N/A{% endif %}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.expires %}{{ domain.expires }}{% else %}N/A{% endif %}</span></td>
                                                                 <td class="text-center" style="min-width:75px;padding:10px 0;">
                                                                     {% if domain.registered %}
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>
@@ -303,14 +304,16 @@
                                                                         </form>
                                                                     {% if not domain.registered %}
                                                                         </div>
-{#                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">#}
-{#                                                                            <div class="form-group">#}
-{#                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
-{#                                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit"#}
-{#                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register#}
-{#                                                                                </button>#}
-{#                                                                            </div>#}
-{#                                                                        </form>#}
+                                                                        {% if register_domain %}
+                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
+                                                                                    <div class="form-group">
+                                                                                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
+                                                                                                    style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            {% endif %}
                                                                         <div style="width:50%;float:right">
                                                                             <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                                 <div class="form-group">

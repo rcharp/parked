@@ -230,8 +230,10 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
+    register = False
+
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains)
+    return render_template('user/dashboard.html', current_user=current_user, domains=domains, register_domain=register)
 
 
 @user.route('/check_availability', methods=['GET','POST'])
