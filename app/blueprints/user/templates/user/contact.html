@@ -104,8 +104,18 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
                                 <li>
+                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
+                                        <i class="si si-check pull-right"></i>Check A Domain
+                                    </a>
+                                </li>
+                                <li>
                                     <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-                                        <i class="si si-layers pull-right"></i>My Integrations
+                                        <i class="si si-grid pull-right"></i>My Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a tabindex="-1" href="{{ url_for('user.settings') }}">
+                                        <i class="si si-settings pull-right"></i>Settings
                                     </a>
                                 </li>
                                 <li>
