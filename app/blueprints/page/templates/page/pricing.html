@@ -40,6 +40,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
@@ -95,7 +96,7 @@
                         <nav class="navbar navbar-expand-lg py-1">
                             <div class="container-fluid">
                                 <a href="/">
-                                    <img src="../../../../static/assets/images/logos/domain.png" class="img-responsive" style="max-width:70%" title="Domain" alt="Domain">
+                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:white;">{{ 'site_name'|site_name_filter }}</span>
                                 </a>
                                 <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="base-color fas fa-bars xl-font-size"></span>
@@ -193,8 +194,7 @@
                         </li>
                         <li>
                             <a href="{{ url_for('page.home') }}">
-                              <img src="{{ url_for('static', filename='assets/images/logos/domain.png') }}"
-                                   height="40" title="Domain" alt="Domain"/>
+                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:white;">{{ 'site_name'|site_name_filter }}</span>
                             </a>
                         </li>
                     </ul>

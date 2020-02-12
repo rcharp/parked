@@ -2,6 +2,7 @@ import logging
 import pytz
 from logging.handlers import SMTPHandler
 
+import os
 import stripe
 import datetime
 
@@ -185,6 +186,7 @@ def template_processors(app):
     app.jinja_env.filters['list_filter'] = list_filter
     app.jinja_env.filters['dict_filter'] = dict_filter
     app.jinja_env.filters['today_filter'] = today_filter
+    app.jinja_env.filters['site_name_filter'] = site_name_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -315,3 +317,7 @@ def dict_filter(arg):
 
 def today_filter(arg):
     return arg - datetime.timedelta(hours=24) <= pytz.utc.localize(datetime.datetime.utcnow())
+
+
+def site_name_filter(arg):
+    return 'getparked.io'

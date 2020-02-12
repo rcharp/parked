@@ -2,6 +2,7 @@ from datetime import timedelta
 import os
 from celery.schedules import crontab
 
+SITE_NAME = 'getparked.io'
 
 DEBUG = True
 LOG_LEVEL = 'DEBUG'  # CRITICAL / ERROR / WARNING / INFO / DEBUG
