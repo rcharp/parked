@@ -194,7 +194,7 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                                    <div style="text-align:center; font-size:24px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
                                                                 The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
@@ -239,7 +239,7 @@
                                                     <br />
                                                     </div>
                                                     {% if not domain['available'] and details is not none %}
-                                                        <div class="block block-themed" style="float:right;width:50%;">
+                                                        <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;">
                                                             <div style="text-align:center; font-size:24px;"><br />
                                                                 WhoIs information for {{ domain['name'] }}<br /><br />
                                                             </div>
@@ -276,7 +276,7 @@
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">
