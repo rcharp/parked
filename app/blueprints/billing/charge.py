@@ -7,7 +7,7 @@ from sqlalchemy import exists, and_
 from app.extensions import db
 
 
-def stripe_checkout(email, domain):
+def stripe_checkout(email, domain, purchase=False):
     try:
         from app.blueprints.user.models import User
         from app.blueprints.api.models.domains import Domain
@@ -45,8 +45,12 @@ def stripe_checkout(email, domain):
                 customer_id = create_customer(u, email, False)
 
         if customer_id is not None:
-            si = setup_intent(domain, customer_id)
-            return si
+            if purchase:
+                p = charge_card(domain)
+                return p
+            else:
+                si = setup_intent(domain, customer_id)
+                return si
     except Exception as e:
         print_traceback(e)
         return None
@@ -68,6 +72,17 @@ def confirm_payment(domain):
         amount=9900,
         currency="usd",
         description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
+
+
+def charge_card(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        confirm="True",
+        currency="usd",
+        description="Buy " + domain + " from GetMyDomain.",
         payment_method_types=["card"]
     )
 

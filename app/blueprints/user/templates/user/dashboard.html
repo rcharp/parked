@@ -213,7 +213,7 @@
                                                                 - or -
                                                             {% else %}
                                                                 The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
@@ -272,12 +272,13 @@
                                                         </div>
                                                     {% endif %}
                                                 {% else %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout' ) }}" method="post">
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                </div>
+{#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
+                                                                <input class="form-control" id="domain" name="domain" value="getparked.io" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                            </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">

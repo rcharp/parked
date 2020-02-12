@@ -39,7 +39,7 @@ from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
-from app.blueprints.api.domain.domain import purchase_domain, check_domain, get_domain_details
+from app.blueprints.api.domain.domain import purchase_domain, check_domain, get_domain_details, get_purchase_agreement, get_tld_schema
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -272,7 +272,7 @@ def reserve_domain():
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
             # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
-            d = Domain.query.filter(Domain.name == domain).scalar()
+            d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
             d.delete()
 
             # flash('You already have this domain reserved!', 'error')
@@ -353,7 +353,33 @@ def delete_domain():
 @user.route('/checkout', methods=['GET','POST'])
 @csrf.exempt
 def checkout():
-    return render_template('user/checkout.html', current_user=current_user)
+    if request.method == 'POST':
+        domain = request.form['domain']
+
+        if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
+
+            flash('You already own this domain!', 'error')
+            return redirect(url_for('user.dashboard'))
+
+        try:
+            # get_purchase_agreement(domain)
+            get_tld_schema(domain)
+            # # Secure the domain
+            # if purchase_domain(domain):
+            #     # Setup the customer's payment method
+            #     si = stripe_checkout(current_user.email, domain, True)
+            #
+            #     # Redirect to the payment page
+            #     if si is not None:
+            #         return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+            # flash("There was an error buying this domain. Please try again.", 'error')
+            return redirect(url_for('user.dashboard'))
+        except Exception as e:
+            print_traceback(e)
+            flash("There was an error buying this domain. Please try again.", 'error')
+            return redirect(url_for('user.dashboard'))
+    else:
+        return render_template('user/dashboard.html', current_user=current_user)
 
 
 @user.route('/save_intent', methods=['GET','POST'])
