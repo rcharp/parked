@@ -50,14 +50,20 @@ def purchase_domain(domain, test=True):
         headers = {
             "Authorization": "sso-key " + api_key + ":" + api_secret,
             "Accept": "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+        }
+
+        data={
+            'body': get_tld_schema(domain),
+            'domain': domain
         }
 
         # agreed_at = datetime.datetime.now(pytz.utc)
         # agreed_by = current_app.config.get('IP_ADDRESS')
 
-        r = requests.post(url, headers=headers, data=get_tld_schema(domain))
+        r = requests.post(url, headers=headers, data=json.dumps(data).encode("utf-8"))
 
+        print(r)
         print(r.status_code)
         print(r.text)
 
@@ -125,9 +131,11 @@ def get_tld_schema(domain, test=True):
 
         # print(r.status_code)
         # print(r.text)
+        parsed = json.loads(r.text)
+        print(json.dumps(parsed, indent=4, sort_keys=True))
 
         if r.status_code == 200:
-            return json.dumps(r.text)
+            return json.loads(r.text)['properties']
     except Exception as e:
         print_traceback(e)
 

@@ -363,7 +363,8 @@ def checkout():
 
         try:
             # get_purchase_agreement(domain)
-            get_tld_schema(domain)
+            # get_tld_schema(domain)
+            purchase_domain(domain)
             # # Secure the domain
             # if purchase_domain(domain):
             #     # Setup the customer's payment method
