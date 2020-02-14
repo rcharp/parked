@@ -39,8 +39,15 @@ from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
-from app.blueprints.api.domain.domain import purchase_domain, check_domain, get_domain_details, get_purchase_agreement, get_tld_schema
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
+from app.blueprints.api.domain.domain import (
+    purchase_domain,
+    check_domain,
+    get_domain_details,
+    get_purchase_agreement,
+    get_tld_schema,
+    list_domains
+)
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -244,7 +251,7 @@ def dashboard():
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import check_domain_availability, save_search
+        from app.blueprints.api.domain.domain import check_domain_availability, save_search
 
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
@@ -362,18 +369,15 @@ def checkout():
             return redirect(url_for('user.dashboard'))
 
         try:
-            # get_purchase_agreement(domain)
-            # get_tld_schema(domain)
-            purchase_domain(domain)
-            # # Secure the domain
-            # if purchase_domain(domain):
-            #     # Setup the customer's payment method
-            #     si = stripe_checkout(current_user.email, domain, True)
-            #
-            #     # Redirect to the payment page
-            #     if si is not None:
-            #         return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
-            # flash("There was an error buying this domain. Please try again.", 'error')
+            # Secure the domain
+            if purchase_domain(domain):
+                # Setup the customer's payment method
+                si = stripe_checkout(current_user.email, domain, True)
+
+                # Redirect to the payment page
+                if si is not None:
+                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+            flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
         except Exception as e:
             print_traceback(e)
@@ -397,7 +401,7 @@ def save_intent():
             if update_customer(pm, customer_id):
 
                 # Save the domain after payment
-                from app.blueprints.api.api_functions import check_domain_availability
+                from app.blueprints.api.domain.domain import check_domain_availability
                 details = check_domain_availability(domain)
                 save_domain(current_user.id, customer_id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 

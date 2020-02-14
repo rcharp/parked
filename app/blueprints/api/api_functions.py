@@ -13,8 +13,6 @@ from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
 from app.blueprints.page.date import get_dt_string
-import pythonwhois
-import tldextract
 
 
 # Create a distinct integration id for the integration.
@@ -65,25 +63,6 @@ def generate_app_id(size=6, chars=string.digits):
 def print_traceback(e):
     traceback.print_tb(e.__traceback__)
     print(e)
-
-
-def check_domain_availability(domain):
-    details = dict()
-    try:
-        ext = tldextract.extract(domain)
-        domain = ext.registered_domain
-
-        details = pythonwhois.get_whois(domain)
-        if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
-            expires = get_dt_string(details['expiration_date'][0])
-            details.update({'name': domain, 'available': False, 'expires': expires})
-        else:
-            details.update({'name': domain, 'available': True, 'expires': None})
-    except Exception as e:
-        print_traceback(e)
-        details.update({'name': domain, 'available': None, 'expires': None})
-
-    return details
 
 
 def save_domain(user_id, customer_id, domain, expires, reserve_time):

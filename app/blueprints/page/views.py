@@ -25,8 +25,8 @@ def home():
 @csrf.exempt
 def availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import check_domain_availability, save_search
-        from app.blueprints.api.domain.domain import get_domain_details
+        from app.blueprints.api.api_functions import save_search
+        from app.blueprints.api.domain.domain import check_domain_availability, get_domain_details
 
         domain_name = request.form['domain'].replace(' ', '')
         domain = check_domain_availability(domain_name)
