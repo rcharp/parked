@@ -26,10 +26,10 @@ def home():
 def availability():
     if request.method == 'POST':
         from app.blueprints.api.api_functions import save_search
-        from app.blueprints.api.domain.domain import check_domain_availability, get_domain_details
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details
 
         domain_name = request.form['domain'].replace(' ', '')
-        domain = check_domain_availability(domain_name)
+        domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
         # Save the search if it is a valid domain

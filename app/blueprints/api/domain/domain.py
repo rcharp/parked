@@ -1,7 +1,7 @@
 from app.blueprints.api.domain.namecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.page.date import get_string_from_utc_datetime
-from flask import current_app
+from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
 import pythonwhois
 import datetime
@@ -40,8 +40,8 @@ def check_domain(domain, test=True):
         return None
 
 
-# WhoIs domain availability
-def check_domain_availability(domain):
+# Get WhoIs domain availability
+def get_domain_availability(domain):
     details = dict()
     try:
         # Check GoDaddy first
@@ -63,7 +63,8 @@ def check_domain_availability(domain):
 
     return details
 
-# GoDaddy purchase
+
+# GoDaddy purchase domain
 def purchase_domain(domain, test=True):
     try:
         # Make sure the domain is available before trying to buy it
@@ -129,8 +130,9 @@ def purchase_domain(domain, test=True):
 
             # Domain was successfully purchased
             if r.status_code == 200:
-                return r
-            return None
+                return True
+            else:
+                return json.loads(r.text)
         elif availability is not None and not availability['available']:
             return False
         else:
@@ -166,6 +168,7 @@ def list_domains(test=True):
         print_traceback(e)
 
         return None
+
 
 # Godaddy Get Purchase Agreement
 def get_purchase_agreement(domain, test=True):
@@ -247,8 +250,6 @@ def get_domain_details(domain):
 
         # Remove the raw data
         del details['raw']
-
-        # Format the entries
 
         return details
     except Exception as e:

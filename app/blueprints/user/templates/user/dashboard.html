@@ -160,18 +160,22 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7" style="margin-bottom:0;">
+                        <div class="col-sm-7" style="margin-bottom:20px;">
                             <h1 class="font-w300 text-white">
                                 Dashboard
                             </h1>
                         </div>
-                    </div>
-                    {% for message in get_flashed_messages(with_categories=True) %}
-                        {% set category = 'danger' if message[0] == 'error' else 'success' %}
-                        <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;">
-                            {{ message[1] }}
+
+                        <div style="float:right;height:100%;margin-bottom:10px;max-width:800px;">
+                            {% for message in get_flashed_messages(with_categories=True) %}
+                                {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                                <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;position:relative">
+                                    {{ message[1] }}
+                                </div>
+                                {% if not loop.last %}<br />{% endif %}
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
                 <!-- Page Content -->
                 <div class="content" style="min-height:1000px;">

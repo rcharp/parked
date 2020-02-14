@@ -251,13 +251,13 @@ def dashboard():
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':
-        from app.blueprints.api.domain.domain import check_domain_availability, save_search
+        from app.blueprints.api.domain.domain import get_domain_availability, save_search
 
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
         domain_name = request.form['domain'].replace(' ','')
-        domain = check_domain_availability(domain_name)
+        domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
         # Save the search if it is a valid domain
@@ -401,8 +401,8 @@ def save_intent():
             if update_customer(pm, customer_id):
 
                 # Save the domain after payment
-                from app.blueprints.api.domain.domain import check_domain_availability
-                details = check_domain_availability(domain)
+                from app.blueprints.api.domain.domain import get_domain_availability
+                details = get_domain_availability(domain)
                 save_domain(current_user.id, customer_id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
                 flash('Your domain was successfully reserved!', 'success')
