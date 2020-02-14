@@ -19,10 +19,10 @@ def test(domain):
     purchase = purchase_domain(domain)
 
     if purchase is None:
-        flash("An error occurred while trying to purchase this domain. Please try again.", 'error')
+        flash("An error occurred while trying to purchase " + domain + ". Please try again.", 'error')
     elif not purchase:
-        flash("This domain isn't available for purchase.", 'error')
+        flash(domain + " isn't available for purchase.", 'error')
     elif purchase is True:
-        flash("Successfully purchased domain.", 'success')
+        flash("Successfully purchased " + domain + '.', 'success')
     else:
         flash("The following error occurred: " + purchase['message'], 'error')
