@@ -38,7 +38,7 @@
           </div>
         </div>
       {% endcall %}<br />
-    <small>By signing up you agree to our <a href="https://www.domain.com/privacy">Privacy Policy</a> and <a href="https://www.domain.com/terms">Terms of Service</a></small>
+    <small>By signing up you agree to our <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> and <a href="{{ url_for('page.terms') }}">Terms of Service</a></small>
     </div>
   </div>
 {% endblock %}
