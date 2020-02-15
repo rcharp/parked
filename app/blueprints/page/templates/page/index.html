@@ -173,7 +173,7 @@
                                     Only $99 per domain.</p>
                                 {% if domain|length %}
                                     <div class="block block-themed" style="height:450px;">
-                                        <div style="text-align:center; font-size:18px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                        <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
                                                     The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br />
@@ -216,7 +216,7 @@
                                         <br />
                                         </div>
                                         {% if not domain['available'] and details is not none %}
-                                            <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;height:450px;overflow:auto;border-bottom:1px solid #e3e3e3">
+                                            <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;">
                                                 <div style="text-align:center; font-size:20px;"><br />
                                                     WhoIs information for {{ domain['name'] }}<br /><br />
                                                 </div>
@@ -476,7 +476,7 @@
                 Your card doesn't get charged unless we get the domain for you.
             </h5>
         </div>
-        <section class="pricing section">
+        <section class="pricing section" style="padding-top:10px;">
             <div class="container" style="min-width:90%;">
                 {% import 'billing/macros/billing.html' as billing with context %}
                 <div class="row">
