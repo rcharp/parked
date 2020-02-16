@@ -5,7 +5,8 @@ from app.blueprints.api.domain.domain import (
     get_domain_details,
     get_purchase_agreement,
     get_tld_schema,
-    list_domains
+    list_domains,
+    namecheap_purchase_domain
 )
 
 
@@ -16,7 +17,9 @@ def test(domain):
     # list_domains(False)
     # check_domain(domain)
 
-    purchase = purchase_domain(domain)
+    # purchase = purchase_domain(domain)
+
+    purchase = namecheap_purchase_domain(domain)
 
     if purchase is None:
         flash("An error occurred while trying to purchase " + domain + ". Please try again.", 'error')
@@ -25,4 +28,5 @@ def test(domain):
     elif purchase is True:
         flash("Successfully purchased " + domain + '.', 'success')
     else:
-        flash("The following error occurred: " + purchase['message'], 'error')
+        flash("There was an error", 'error')
+        # flash("The following error occurred: " + purchase['message'], 'error')
