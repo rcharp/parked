@@ -17,9 +17,9 @@ def test(domain):
     # list_domains(False)
     # check_domain(domain)
 
-    # purchase = purchase_domain(domain)
+    purchase = purchase_domain(domain)
 
-    purchase = namecheap_purchase_domain(domain)
+    # purchase = namecheap_purchase_domain(domain)
 
     if purchase is None:
         flash("An error occurred while trying to purchase " + domain + ". Please try again.", 'error')
