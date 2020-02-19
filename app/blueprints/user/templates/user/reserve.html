@@ -192,7 +192,7 @@
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
-                                        <a href="#check"><h3>Checkout&nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                        <a href="#check"><h3 class="font-w300">Enter Payment Details&nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -201,10 +201,11 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed" style="height:600px;">
                                                 <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:320px;display:block" class="col-md-12"><br><br>
-                                                    Reserve {{ domain }} -- $99
+                                                    Reserve <span style="color:green">{{ domain }}</span> -- $99<br />
+                                                    <span style="font-size:18px">includes the first year.</span>
                                                 </div>
                                                 <div class="sr-root" style="text-align:center; font-size:24px;">
-                                                  <div class="sr-main" style="display:block;padding:40px;min-width:320px;margin-top:-50%;">
+                                                  <div class="sr-main" style="display:block;padding:40px;min-width:320px;margin-top:-20%;">
                                                       <div style="text-align:center; font-size:18px;">
                                                             Please enter your card details
                                                       </div><br />
@@ -331,6 +332,7 @@
 
                 form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
+                  document.getElementById('submit').disabled = true;
                   stripe.confirmCardSetup(clientSecret, {
                     payment_method: {
                       card: card,
