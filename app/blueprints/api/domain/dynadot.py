@@ -38,12 +38,13 @@ def check_domain(domain):
 def register_domain(domain):
     # Ensure that the domain can be registered
     results = check_domain(domain)
+    print(results)
 
     # Only purchase the domain if it's less than $60
     if results is not None and results['price'] is not None and Decimal(results['price']) <= 60:
         api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&domain0=' + domain + ""
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + ""
         r = requests.get(url=dynadot_url)
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
         return results
     return False

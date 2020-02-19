@@ -307,23 +307,21 @@ def reserve_domain():
 
 
 @user.route('/register_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def register_domain():
-    try:
-        # Get and register the domain
-        if request.method == 'POST':
-            domain_id = request.form['domain']
-            domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+    # Get and register the domain
+    if request.method == 'POST':
+        domain_id = request.form['domain']
+        domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-            if register(domain.name):
-                domain.registered = True
-                domain.save()
+        if register(domain.name):
+            domain.registered = True
+            domain.save()
 
-                flash('This domain has been registered.', 'success')
-            else:
-                flash('This domain has not been registered.', 'error')
-    except:
-        flash('There was an error. Please try again.' 'error')
+            flash('This domain has been registered.', 'success')
+        else:
+            flash('This domain has not been registered.', 'error')
     return redirect(url_for('user.dashboard'))
 
 
