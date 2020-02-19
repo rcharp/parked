@@ -100,6 +100,9 @@ SEED_ADMIN_PASSWORD = os.environ.get('SEED_ADMIN_PASSWORD', None)
 SEED_MEMBER_EMAIL = ''
 REMEMBER_COOKIE_DURATION = timedelta(days=90)
 
+# Dynadot
+DYNADOT_API_KEY = os.environ.get('DYNADOT_API_KEY', None)
+
 # Godaddy
 GODADDY_TEST_API_KEY = os.environ.get('GODADDY_TEST_API_KEY', None)
 GODADDY_TEST_SECRET_KEY = os.environ.get('GODADDY_TEST_SECRET_KEY', None)

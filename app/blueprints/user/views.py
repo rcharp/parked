@@ -40,10 +40,12 @@ from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
-from app.blueprints.api.domain.domain import (
-    purchase_domain,
-    check_domain,
-    get_domain_details,
+from app.blueprints.api.domain.domain import get_domain_details
+from app.blueprints.api.domain.dynadot import (
+    register_domain as register,
+    check_domain
+)
+from app.blueprints.api.domain.godaddy import (
     get_purchase_agreement,
     get_tld_schema,
     list_domains
@@ -251,7 +253,8 @@ def dashboard():
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':
-        from app.blueprints.api.domain.domain import get_domain_availability, save_search
+        from app.blueprints.api.domain.domain import get_domain_availability
+        from app.blueprints.api.api_functions import save_search
 
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
@@ -306,19 +309,21 @@ def reserve_domain():
 @user.route('/register_domain', methods=['GET','POST'])
 @csrf.exempt
 def register_domain():
-    # Get and register the domain
-    if request.method == 'POST':
-        domain_id = request.form['domain']
-        domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+    try:
+        # Get and register the domain
+        if request.method == 'POST':
+            domain_id = request.form['domain']
+            domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if purchase_domain(domain.name):
-            domain.registered = True
-            domain.save()
+            if register(domain.name):
+                domain.registered = True
+                domain.save()
 
-            flash('This domain has been registered.', 'success')
-        else:
-            flash('This domain has not been registered.', 'error')
-
+                flash('This domain has been registered.', 'success')
+            else:
+                flash('This domain has not been registered.', 'error')
+    except:
+        flash('There was an error. Please try again.' 'error')
     return redirect(url_for('user.dashboard'))
 
 
