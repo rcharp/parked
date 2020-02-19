@@ -267,9 +267,10 @@ def check_availability():
         if domain['available'] is not None:
             save_search(domain_name, domain['expires'], current_user.id)
 
-        return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details)
+        domains = Domain.query.filter(Domain.user_id == current_user.id).all()
+        return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
     else:
-        return render_template('user/dashboard.html', current_user=current_user)
+        return redirect(url_for('user.dashboard'))
 
 
 @user.route('/reserve_domain', methods=['GET','POST'])
@@ -294,7 +295,7 @@ def reserve_domain():
 
             # Redirect to the payment page
             if si is not None:
-                return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+                return render_template('user/reserve.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
             else:
                 flash("There was an error reserving this domain. Please try again.", 'error')
                 return redirect(url_for('user.dashboard'))
@@ -360,6 +361,37 @@ def delete_domain():
     return redirect(url_for('user.dashboard'))
 
 
+@user.route('/purchase', methods=['GET','POST'])
+@csrf.exempt
+def purchase():
+    print(request.form)
+
+    if request.method == 'POST':
+        if 'domain' in request.form and 'customer_id' in request.form and 'email' in request.form:
+            domain = request.form['domain']
+            customer_id = request.form['customer_id']
+            email = request.form['email']
+
+            # Send a receipt email
+
+            # Create and save the domain in the db if it isn't already
+            if not db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
+                d = Domain()
+                d.user_id = current_user.id
+                d.customer_id = customer_id
+                d.registered = True
+                d.name = domain
+
+                d.save()
+            else:
+                d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
+                d.customer_id = customer_id
+                d.registered = True
+                d.save()
+
+    return redirect(url_for('user.dashboard'))
+
+
 @user.route('/checkout', methods=['GET','POST'])
 @csrf.exempt
 def checkout():
@@ -367,13 +399,11 @@ def checkout():
         domain = request.form['domain']
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
-
             flash('You already own this domain!', 'error')
             return redirect(url_for('user.dashboard'))
-
         try:
             # Secure the domain
-            if purchase_domain(domain):
+            if register(domain) or True:
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, True)
 
@@ -420,6 +450,14 @@ def save_intent():
 def success():
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
+
+
+@user.route('/purchase_success', methods=['GET','POST'])
+@csrf.exempt
+def purchase_success():
+    flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'>your dashboard</a>."),
+          category='success')
+    return render_template('user/purchase_success.html', current_user=current_user)
 
 
 # Settings -------------------------------------------------------------------

@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Success! - Parked</title>
+        <title>Reserve a Domain - Parked</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -69,10 +69,13 @@
         <!-- END Stylesheets -->
 
         <!-- Load Stripe.js on your website. -->
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/normalize.css" />
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/global.css" />
+        <script src="../../../../static/payment/using-webhooks/client/web/script.js" defer></script>
         <script src="https://js.stripe.com/v3/"></script>
 
     </head>
-    <body style="zoom: 80%;">
+    <body style="zoom: 80%;" onload="StripeCheckout()">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -100,7 +103,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0;padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -149,7 +152,7 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
@@ -189,19 +192,42 @@
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
-                                        <a href="#check"><h3>Success!&nbsp;&nbsp;<span color="green"><i class="si si-check"></i></span></h3></a>
+                                        <a href="#check"><h3>Checkout&nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
                                     <div class="tab-pane active" id="check" name="check" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
-                                            <div class="block block-themed">
-                                                <div style="text-align:center; font-size:24px;"><br /><br />
-                                                    You've successfully reserved the domain {{ request.args.get('domain') }}!<br /><br />
-                                                    Keep in mind, your card won't be charged unless we actually secure the domain for you.<br /><br />
-
-                                                    Please click <a href="{{ url_for('user.dashboard') }}">here</a> to return to your dashboard.
+                                            <div class="block block-themed" style="height:600px;">
+                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:320px;display:block" class="col-md-12"><br><br>
+                                                    Reserve {{ domain }} -- $99
+                                                </div>
+                                                <div class="sr-root" style="text-align:center; font-size:24px;">
+                                                  <div class="sr-main" style="display:block;padding:40px;min-width:320px;margin-top:-50%;">
+                                                      <div style="text-align:center; font-size:18px;">
+                                                            Please enter your card details
+                                                      </div><br />
+                                                    <form id="payment-form" class="sr-payment-form">
+                                                      <div class="sr-combo-inputs-row">
+                                                        <div class="sr-input sr-card-element" id="card-element"></div>
+                                                      </div>
+                                                      <div class="sr-field-error" id="card-errors" role="alert"></div>
+                                                      <button id="submit" style="padding:15px;">
+                                                        <div class="spinner hidden" id="spinner"></div>
+                                                        <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
+                                                      </button>
+                                                        <div style="text-align:center; font-size:14px;"><br /><br />
+                                                            Please note that your card won't be charged unless we secure {{ domain }} for you.
+                                                      </div>
+                                                    </form>
+                                                    <div class="sr-result hidden">
+                                                      <p>Payment completed<br /></p>
+                                                      <pre>
+                                                        <code></code>
+                                                      </pre>
+                                                    </div>
+                                                  </div>
                                                 </div>
                                             </div>
                                             <!-- END Bootstrap Login -->
@@ -273,6 +299,78 @@
 
         <!-- Shepherd JS -->
         <script src="../../../../static/shepherd.js/dist/js/shepherd.min.js"></script>
+
+        <!-- Stripe -->
+
+        <script>
+            function StripeCheckout() {
+                var stripe = Stripe('pk_test_DX6xHgQH53sA1l78sasUZ9gA');
+                var elements = stripe.elements();
+
+                // Set up Stripe.js and Elements to use in checkout form
+                var style = {
+                  base: {
+                    color: "#32325d",
+                  }
+                };
+
+                var card = elements.create("card", { style: style });
+                card.mount("#card-element");
+
+                card.addEventListener('change', ({error}) => {
+                  const displayError = document.getElementById('card-errors');
+                  if (error) {
+                    displayError.textContent = error.message;
+                  } else {
+                    displayError.textContent = '';
+                  }
+                });
+
+                var form = document.getElementById('payment-form');
+                var clientSecret = '{{ si.client_secret }}';
+
+                form.addEventListener('submit', function(ev) {
+                  ev.preventDefault();
+                  stripe.confirmCardSetup(clientSecret, {
+                    payment_method: {
+                      card: card,
+                      billing_details: {
+                        email: '{{ email }}'
+                      }
+                    }
+                  }
+                  ).then(function(result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                      // Show error to your customer (e.g., insufficient funds)
+                      console.log(result.error.message);
+                    } else {
+                      // The payment has been processed!
+                      if (result.setupIntent.status === 'succeeded') {
+                          $.ajax({
+                              url: '{{ url_for("user.save_intent") }}',
+                              type: 'POST',
+                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              success: function (response) {
+                                  var domain = '{{ domain }}';
+                                  window.location.href='{{ url_for('user.success', domain=domain) }}';
+                              }
+                          });
+                        // Show a success message to your customer
+                        // There's a risk of the customer closing the window before callback
+                        // execution. Set up a webhook or plugin to listen for the
+                        // payment_intent.succeeded event that handles any business critical
+                        // post-payment actions.
+                      }
+                    }
+                  });
+                });
+            }
+
+            function SubmitPayment(clientSecret){
+
+            }
+        </script>
 
         <!-- Page JS Code -->
         <script src="../../../../static/oneui/assets/js/pages/base_forms_pickers_more.js"></script>

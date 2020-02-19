@@ -201,7 +201,8 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed" style="height:600px;">
                                                 <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:320px;display:block" class="col-md-12"><br><br>
-                                                    Reserve {{ domain }} -- $99
+                                                    Buy <span style="color:green">{{ domain }}</span> -- $99<br />
+                                                    <span style="font-size:18px">for the first year.</span>
                                                 </div>
                                                 <div class="sr-root" style="text-align:center; font-size:24px;">
                                                   <div class="sr-main" style="display:block;padding:40px;min-width:320px;margin-top:-50%;">
@@ -215,10 +216,10 @@
                                                       <div class="sr-field-error" id="card-errors" role="alert"></div>
                                                       <button id="submit" style="padding:15px;">
                                                         <div class="spinner hidden" id="spinner"></div>
-                                                        <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
+                                                        <span id="button-text" style="font-size:16px;">Buy {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
                                                         <div style="text-align:center; font-size:14px;"><br /><br />
-                                                            Please note that your card won't be charged unless we secure {{ domain }} for you.
+                                                            By purchasing {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#007fd8">Terms and Conditions</span></a>.
                                                       </div>
                                                     </form>
                                                     <div class="sr-result hidden">
@@ -331,13 +332,15 @@
 
                 form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
-                  stripe.confirmCardSetup(clientSecret, {
+                  document.getElementById('submit').disabled = true;
+                  stripe.confirmCardPayment(clientSecret, {
                     payment_method: {
                       card: card,
                       billing_details: {
                         email: '{{ email }}'
                       }
-                    }
+                    },
+                      setup_future_usage: 'off_session'
                   }
                   ).then(function(result) {
                     if (result.error) {
@@ -346,14 +349,14 @@
                       console.log(result.error.message);
                     } else {
                       // The payment has been processed!
-                      if (result.setupIntent.status === 'succeeded') {
+                      if (result.paymentIntent.status === 'succeeded') {
                           $.ajax({
-                              url: '{{ url_for("user.save_intent") }}',
+                              url: '{{ url_for("user.purchase") }}',
                               type: 'POST',
-                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pm': result.paymentIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
-                                  window.location.href='{{ url_for('user.success', domain=domain) }}';
+                                  window.location.href='{{ url_for('user.purchase_success', domain=domain) }}';
                               }
                           });
                         // Show a success message to your customer

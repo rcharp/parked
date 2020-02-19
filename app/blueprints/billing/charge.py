@@ -46,7 +46,7 @@ def stripe_checkout(email, domain, purchase=False):
 
         if customer_id is not None:
             if purchase:
-                p = charge_card(domain)
+                p = create_payment(domain, customer_id)
                 return p
             else:
                 si = setup_intent(domain, customer_id)
@@ -56,12 +56,13 @@ def stripe_checkout(email, domain, purchase=False):
         return None
 
 
-def create_payment(domain):
+def create_payment(domain, customer_id):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
     return stripe.PaymentIntent.create(
         amount=9900,
+        customer=customer_id,
         currency="usd",
-        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        description="Purchase " + domain + " -- $99",
         payment_method_types=["card"]
     )
 

@@ -301,6 +301,8 @@ def pretty_date_filter(arg):
     time_string = str(arg)
 
     if is_date(time_string):
+        if '.' in time_string:
+            time_string = time_string.split('.')[0]
         dt = get_datetime_from_string(time_string)
         return get_dt_string(dt) + ' UTC'
 
