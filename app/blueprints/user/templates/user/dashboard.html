@@ -160,18 +160,22 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7" style="margin-bottom:0;">
+                        <div class="col-sm-7" style="margin-bottom:20px;">
                             <h1 class="font-w300 text-white">
                                 Dashboard
                             </h1>
                         </div>
-                    </div>
-                    {% for message in get_flashed_messages(with_categories=True) %}
-                        {% set category = 'danger' if message[0] == 'error' else 'success' %}
-                        <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;">
-                            {{ message[1] }}
+
+                        <div style="float:right;height:100%;margin-bottom:10px;max-width:800px;">
+                            {% for message in get_flashed_messages(with_categories=True) %}
+                                {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                                <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;position:relative">
+                                    {{ message[1] }}
+                                </div>
+                                {% if not loop.last %}<br />{% endif %}
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
                 <!-- Page Content -->
                 <div class="content" style="min-height:1000px;">
@@ -182,10 +186,10 @@
                             <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
-                                        <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                        <a href="#check"><h3 class="font-w300">Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                     <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#domains"><h3>My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
+                                        <a href="#domains"><h3 class="font-w300">My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -213,7 +217,7 @@
                                                                 - or -
                                                             {% else %}
                                                                 The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
@@ -272,12 +276,13 @@
                                                         </div>
                                                     {% endif %}
                                                 {% else %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                </div>
+{#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
+                                                                <input class="form-control" id="domain" name="domain" value="rickycharpentier.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                            </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
@@ -286,12 +291,12 @@
                                                         </div>
                                                     </form><br />
                                                     {% if searched|length > 0 %}
-                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:420px;">
+                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:350px;">
                                                             <div style="font-size:24px;">
                                                                 <span class="text-muted" style="font-size:18px;">Recent searches
                                                             </div><br />
 {#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
-                                                            <div>
+                                                            <div style="overflow-x: auto;">
                                                                 <table class="table table-borderless table-condensed">
                                                                     <thead>
                                                                         <tr>
@@ -328,12 +333,12 @@
                                                 <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
                                                     <thead>
                                                         <tr role="row">
-                                                            <th class="text-center sorting_asc hidden" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
-                                                            <th class="sorting name-header" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
-                                                            <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
-                                                            <th class="sorting_disabled text-center" style="width: 69px;" rowspan="1" colspan="1" aria-label="Registered">Registered</th>
-                                                            <th class="sorting_disabled text-center" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
+                                                            <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
+                                                            <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
+                                                            <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
+                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
+                                                            <th class="sorting_disabled text-center font-w300" style="width: 69px;" rowspan="1" colspan="1" aria-label="Registered">Registered</th>
+                                                            <th class="sorting_disabled text-center font-w300" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

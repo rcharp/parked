@@ -1,36 +1,42 @@
-from app.blueprints.api.domain.namecheap.namecheap import Api
+from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback
-from flask import current_app
+from app.blueprints.page.date import get_string_from_utc_datetime
+from flask import current_app, flash
+from app.blueprints.page.date import get_dt_string
 import pythonwhois
+import datetime
 import tldextract
+import pytz
+import requests
+import json
+from app.blueprints.api.domain.dynadot import check_domain
 
 
-def purchase_domain(domain, sandbox=True):
+# Get WhoIs domain availability
+def get_domain_availability(domain):
+    details = dict()
     try:
-        username = current_app.config.get('NAMECHEAP_USERNAME')
-        ip_address = current_app.config.get('HOME_IP_ADDRESS')
-        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY') if sandbox else current_app.config.get('NAMECHEAP_API_KEY')
+        # Check dynadot first
+        if check_domain(domain) is not None:
+            ext = tldextract.extract(domain)
+            domain = ext.registered_domain
 
-        api = Api(username, api_key, username, ip_address, sandbox=sandbox)
-        registration = current_app.config.get('NAMECHEAP_REGISTRATION')
-
-        api.domains_create(DomainName=domain,
-                           FirstName=registration['FirstName'],
-                           LastName=registration['LastName'],
-                           Address1=registration['Address1'],
-                           City=registration['City'],
-                           StateProvince=registration['StateProvince'],
-                           PostalCode=registration['PostalCode'],
-                           Country=registration['Country'],
-                           Phone=registration['Phone'],
-                           EmailAddress=registration['EmailAddress'],
-                           )
-        return True
+            details = pythonwhois.get_whois(domain)
+            if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
+                expires = get_dt_string(details['expiration_date'][0])
+                details.update({'name': domain, 'available': False, 'expires': expires})
+            else:
+                details.update({'name': domain, 'available': True, 'expires': None})
+        else:
+            details.update({'name': domain, 'available': None, 'expires': None})
     except Exception as e:
         print_traceback(e)
-        return False
+        details.update({'name': domain, 'available': None, 'expires': None})
+
+    return details
 
 
+# WhoIs get domain registration details
 def get_domain_details(domain):
     try:
         ext = tldextract.extract(domain)
@@ -41,25 +47,7 @@ def get_domain_details(domain):
         # Remove the raw data
         del details['raw']
 
-        # Format the entries
-
         return details
     except Exception as e:
         print_traceback(e)
         return None
-
-
-def check_domain(domain, sandbox=True):
-    try:
-        username = current_app.config.get('NAMECHEAP_USERNAME')
-        ip_address = current_app.config.get('HOME_IP_ADDRESS')
-        api_key = current_app.config.get('NAMECHEAP_SANDBOX_API_KEY') if sandbox else current_app.config.get('NAMECHEAP_API_KEY')
-
-        api = Api(username, api_key, username, ip_address, sandbox=sandbox)
-
-        api.domains_check(domain)
-
-        return True
-    except Exception as e:
-        print_traceback(e)
-        return False

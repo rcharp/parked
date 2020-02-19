@@ -84,7 +84,9 @@ def get_string_from_datetime(dt):
     return date.strftime('%Y-%m-%d %H:%M:%S.%f')
 
 
-def get_string_from_utc_datetime(dt):
+def get_string_from_utc_datetime(dt, godaddy=False):
+    if godaddy:
+        return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
     return dt.strftime('%Y-%m-%d %H:%M:%S.%f')
 
 

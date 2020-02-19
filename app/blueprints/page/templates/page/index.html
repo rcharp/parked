@@ -173,7 +173,7 @@
                                     Only $99 per domain.</p>
                                 {% if domain|length %}
                                     <div class="block block-themed" style="height:450px;">
-                                        <div style="text-align:center; font-size:18px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                        <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
                                                     The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br />
@@ -191,12 +191,12 @@
                                                     - or -
                                                 {% else %}
                                                     The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.login') }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
                                                         <div class="form-group">
                                                             <br />
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -216,7 +216,7 @@
                                         <br />
                                         </div>
                                         {% if not domain['available'] and details is not none %}
-                                            <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;height:450px;overflow:auto;border-bottom:1px solid #e3e3e3">
+                                            <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;">
                                                 <div style="text-align:center; font-size:20px;"><br />
                                                     WhoIs information for {{ domain['name'] }}<br /><br />
                                                 </div>
@@ -252,13 +252,13 @@
                                     <form class="form-horizontal push-5-t" action="{{ url_for('page.availability' ) }}" method="post">
                                         <div class="form-group">
                                             <br />
-                                            <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
+                                            <div class="col-md-12" style="width:80%;min-width:320px;max-width:90%;margin:0 auto; float:none">
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                 </div>
                                         </div><br />
                                         <div class="form-group">
                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
+                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Go!</button>
                                             </div>
                                         </div>
                                     </form><br />
@@ -352,6 +352,28 @@
                                         <!--/ End Empty Space -->
                                         <p class="lead sm-font-size text-dark-gray mb-0">
                                             When the domain expires, we'll automatically buy the domain for you. That way, you don't have to think about it.
+                                        </p>
+                                    </div>
+                                </div>
+                                <!-- Empty Space -->
+                                <div class="lg-space"></div>
+                                <!--/ End Empty Space -->
+                                <div class="row align-items-center">
+                                    <div class="text-right col-3 px-0">
+                                        <div class="icon-wrap">
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-edit" style="color:#007fd8"></i>
+                                            <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mt-3 mt-lg-0 mr-auto" style="min-width:250px;">
+                                        <h3 class="base-plus-font-size font-weight__500">
+                                            Change the DNS settings to use the domain with your site.
+                                        </h3>
+                                        <!-- Empty Space -->
+                                        <div class="sm-sapce"></div>
+                                        <!--/ End Empty Space -->
+                                        <p class="lead sm-font-size text-dark-gray mb-0">
+                                            After we secure the domain for you, you'll be able to change the domain's nameservers to point to your site, so you can start using it immediately.
                                         </p>
                                     </div>
                                 </div>
@@ -454,7 +476,7 @@
                 Your card doesn't get charged unless we get the domain for you.
             </h5>
         </div>
-        <section class="pricing section">
+        <section class="pricing section" style="padding-top:10px;">
             <div class="container" style="min-width:90%;">
                 {% import 'billing/macros/billing.html' as billing with context %}
                 <div class="row">
@@ -573,7 +595,7 @@
                     </div>
                     <div class="col-12 col-lg-8 pr-lg-0">
                         <div class="credit sm-font-size text-center text-lg-right text-dark-gray">
-                            <a href="https://www.domain.com/contact">Contact Us</a> | <a href="https://www.domain.com/privacy">Privacy Policy</a> | <a href="https://www.domain.com/terms">Terms of Service</a>
+                            <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">

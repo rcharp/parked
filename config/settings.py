@@ -100,6 +100,17 @@ SEED_ADMIN_PASSWORD = os.environ.get('SEED_ADMIN_PASSWORD', None)
 SEED_MEMBER_EMAIL = ''
 REMEMBER_COOKIE_DURATION = timedelta(days=90)
 
+# Dynadot
+DYNADOT_API_KEY = os.environ.get('DYNADOT_API_KEY', None)
+
+# Godaddy
+GODADDY_TEST_API_KEY = os.environ.get('GODADDY_TEST_API_KEY', None)
+GODADDY_TEST_SECRET_KEY = os.environ.get('GODADDY_TEST_SECRET_KEY', None)
+GODADDY_API_KEY = os.environ.get('GODADDY_API_KEY', None)
+GODADDY_SECRET_KEY = os.environ.get('GODADDY_SECRET_KEY', None)
+GODADDY_TEST_API_URL = 'https://api.ote-godaddy.com'
+GODADDY_API_URL = 'https://api.godaddy.com'
+
 # Namecheap
 NAMECHEAP_API_KEY = os.environ.get('NAMECHEAP_API_KEY', None)
 NAMECHEAP_SANDBOX_API_KEY = os.environ.get('NAMECHEAP_SANDBOX_API_KEY', None)
@@ -115,7 +126,7 @@ NAMECHEAP_REGISTRATION = {
     'Phone': os.environ.get('Phone', None),
     'EmailAddress': os.environ.get('EmailAddress', None)
 }
-HOME_IP_ADDRESS = os.environ.get('HOME_IP_ADDRESS', None)
+IP_ADDRESS = os.environ.get('HOME_IP_ADDRESS', None)
 WORK_IP_ADDRESS = os.environ.get('WORK_IP_ADDRESS', None)
 
 # Mailgun.

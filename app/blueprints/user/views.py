@@ -39,8 +39,17 @@ from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import stripe_checkout, create_payment
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
-from app.blueprints.api.domain.domain import purchase_domain, check_domain, get_domain_details
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
+from app.blueprints.api.domain.domain import get_domain_details
+from app.blueprints.api.domain.dynadot import (
+    register_domain as register,
+    check_domain
+)
+from app.blueprints.api.domain.godaddy import (
+    get_purchase_agreement,
+    get_tld_schema,
+    list_domains
+)
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -244,13 +253,14 @@ def dashboard():
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import check_domain_availability, save_search
+        from app.blueprints.api.domain.domain import get_domain_availability
+        from app.blueprints.api.api_functions import save_search
 
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
         domain_name = request.form['domain'].replace(' ','')
-        domain = check_domain_availability(domain_name)
+        domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
         # Save the search if it is a valid domain
@@ -272,7 +282,7 @@ def reserve_domain():
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
             # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
-            d = Domain.query.filter(Domain.name == domain).scalar()
+            d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
             d.delete()
 
             # flash('You already have this domain reserved!', 'error')
@@ -297,6 +307,7 @@ def reserve_domain():
 
 
 @user.route('/register_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def register_domain():
     # Get and register the domain
@@ -304,14 +315,13 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if purchase_domain(domain.name):
+        if register(domain.name):
             domain.registered = True
             domain.save()
 
             flash('This domain has been registered.', 'success')
         else:
             flash('This domain has not been registered.', 'error')
-
     return redirect(url_for('user.dashboard'))
 
 
@@ -353,7 +363,31 @@ def delete_domain():
 @user.route('/checkout', methods=['GET','POST'])
 @csrf.exempt
 def checkout():
-    return render_template('user/checkout.html', current_user=current_user)
+    if request.method == 'POST':
+        domain = request.form['domain']
+
+        if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
+
+            flash('You already own this domain!', 'error')
+            return redirect(url_for('user.dashboard'))
+
+        try:
+            # Secure the domain
+            if purchase_domain(domain):
+                # Setup the customer's payment method
+                si = stripe_checkout(current_user.email, domain, True)
+
+                # Redirect to the payment page
+                if si is not None:
+                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+            flash("There was an error buying this domain. Please try again.", 'error')
+            return redirect(url_for('user.dashboard'))
+        except Exception as e:
+            print_traceback(e)
+            flash("There was an error buying this domain. Please try again.", 'error')
+            return redirect(url_for('user.dashboard'))
+    else:
+        return render_template('user/dashboard.html', current_user=current_user)
 
 
 @user.route('/save_intent', methods=['GET','POST'])
@@ -370,8 +404,8 @@ def save_intent():
             if update_customer(pm, customer_id):
 
                 # Save the domain after payment
-                from app.blueprints.api.api_functions import check_domain_availability
-                details = check_domain_availability(domain)
+                from app.blueprints.api.domain.domain import get_domain_availability
+                details = get_domain_availability(domain)
                 save_domain(current_user.id, customer_id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
                 flash('Your domain was successfully reserved!', 'success')
