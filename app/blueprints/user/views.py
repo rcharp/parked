@@ -377,14 +377,14 @@ def update_domain():
                 d.customer_id = customer_id
                 d.registered = True
                 d.name = domain
-                d.expires = expires
+                # d.expires = expires
 
                 d.save()
             else:
                 d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
                 d.customer_id = customer_id
                 d.registered = True
-                d.expires = expires
+                # d.expires = expires
                 d.save()
 
     return redirect(url_for('user.dashboard'))
