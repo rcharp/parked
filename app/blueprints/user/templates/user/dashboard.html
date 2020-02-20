@@ -385,16 +385,6 @@
                                                                         </form>
                                                                     {% if not domain.registered %}
                                                                         </div>
-                                                                        {% if test %}
-                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
-                                                                                    <div class="form-group">
-                                                                                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
-                                                                                                    style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </form>
-                                                                            {% endif %}
                                                                         <div style="width:50%;float:right">
                                                                             <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                                 <div class="form-group">
@@ -405,6 +395,17 @@
                                                                                 </div>
                                                                             </form>
                                                                         </div>
+                                                                        {% if test %}
+                                                                            <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
+                                                                                <br /><br />
+                                                                                <div class="form-group">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
+                                                                                                style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        {% endif %}
                                                                     {% endif %}
                                                                 </td>
                                                             </span>

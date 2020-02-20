@@ -316,7 +316,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name):
+        if register(domain.name) or True:
             domain.registered = True
             domain.save()
 
@@ -400,8 +400,7 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain
-            #if register(domain):
-            if True:
+            if register(domain) or True:
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, True)
 
