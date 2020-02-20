@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Welcome to Domain</title>
+<title>Welcome to {{ 'site_name'|site_name_filter|capitalize }}</title>
 <style>
 /* -------------------------------------
 		GLOBAL
@@ -190,11 +190,11 @@ ul li, ol li {
 					<td>
 						<p>Hi,</p>
 						<p>We're sorry to see you go!<br>
-						We understand if Domain wasn't for you.</p>
+						We understand if {{ 'site_name'|site_name_filter|capitalize }} wasn't for you.</p>
 						<p>Thanks for giving us the opportunity to help you keep your apps connected.<br>
 						Hope to see you around sometime!</p>
 						<p>Sincerely,</p>
-						<p>The Domain Team</p>
+						<p>The {{ 'site_name'|site_name_filter|capitalize }} Team</p>
 					</td>
 				</tr>
 			</table>

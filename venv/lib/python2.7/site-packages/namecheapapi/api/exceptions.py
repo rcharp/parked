@@ -1,2 +1,0 @@
-class NCApiError(Exception):
-    pass

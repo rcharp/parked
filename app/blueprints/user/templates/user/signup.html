@@ -1,7 +1,7 @@
 {% extends 'layouts/app.html' %}
 {% import 'macros/form.html' as f with context %}
 
-{% block title %}Sign Up - Domain{% endblock %}
+{% block title %}Sign Up - {{ 'site_name'|site_name_filter|capitalize }}{% endblock %}
 
 {% block body %}
   <div class="row">
@@ -38,7 +38,7 @@
           </div>
         </div>
       {% endcall %}<br />
-    <small>By signing up you agree to our <a href="https://www.domain.com/privacy">Privacy Policy</a> and <a href="https://www.domain.com/terms">Terms of Service</a></small>
+    <small>By signing up you agree to our <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> and <a href="{{ url_for('page.terms') }}">Terms of Service</a></small>
     </div>
   </div>
 {% endblock %}

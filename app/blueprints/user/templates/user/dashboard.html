@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Dashboard - Parked</title>
+        <title>Dashboard - {{ 'site_name'|site_name_filter }}</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -52,6 +52,7 @@
         <!-- Stylesheets -->
         <!-- Web fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
         <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
@@ -131,6 +132,17 @@
                                         <i class="si si-logout pull-right"></i>Log out
                                     </a>
                                 </li>
+                                {% if test %}
+                                    <li class="divider"></li>
+                                    <li class="dropdown-header">Testing</li>
+                                    <li class="text-center">
+                                        <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
+                                            <input class="form-control" id="domain" name="domain" type="text" value="rickycharpentier.xyz" /><br />
+                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit">
+                                                <i class="si si-ghost pull-right"></i>Run Tests</button>
+                                        </form>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </li>
@@ -147,8 +159,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <img src="{{ url_for('static', filename='assets/images/logos/quickflow.png') }}"
-                               height="40" title="Parked" alt="Parked"/>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -160,32 +171,36 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="margin-bottom:20px;">
                             <h1 class="font-w300 text-white">
                                 Dashboard
                             </h1>
                         </div>
-                    </div>
-                    {% for message in get_flashed_messages(with_categories=True) %}
-                        {% set category = 'danger' if message[0] == 'error' else 'success' %}
-                        <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;">
-                            {{ message[1] }}
+
+                        <div style="float:right;height:100%;margin-bottom:10px;max-width:800px;">
+                            {% for message in get_flashed_messages(with_categories=True) %}
+                                {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                                <div class="ribbon-box btn-{{ category }} font-w600" style="padding:20px;min-height:56px !important;margin-top:-10px;position:relative">
+                                    {{ message[1] }}
+                                </div>
+                                {% if not loop.last %}<br />{% endif %}
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
                 <!-- Page Content -->
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:60%;margin:0 auto; min-width:450px; float:none;">
+                        <div class="col-md-4" style="width:80%;margin:0 auto; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
-                                        <a href="#check"><h3>Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                        <a href="#check"><h3 class="font-w300">Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
                                     </li>
                                     <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#domains"><h3>My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
+                                        <a href="#domains"><h3 class="font-w300">My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -194,11 +209,11 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;"><br /><br />
+                                                    <div style="text-align:center; font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
-                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">NOT</span> {% endif %}available.<br /><br />
-                                                                It expires {{ domain['expires'] }}.
+                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
+                                                                It expires {{ domain['expires'] }} UTC.
 
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                                     <div class="form-group">
@@ -212,19 +227,21 @@
                                                                 <br />
                                                                 - or -
                                                             {% else %}
-                                                                The domain {{ domain['name'] }} <span style="color: green; ">is available</span>!
-                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                                The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
+                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
+                                                                <br />
+                                                                - or -
                                                             {% endif %}
                                                         {% else %}
-                                                            There was an error checking {{ domain['name'] }}. Is it a vaild domain? Please try again.
+                                                            There was an error checking this domain. Is it valid? Please try again.
                                                         {% endif %}
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
@@ -236,21 +253,84 @@
                                                         </form>
                                                     <br />
                                                     </div>
+                                                    {% if not domain['available'] and details is not none %}
+                                                        <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;">
+                                                            <div style="text-align:center; font-size:24px;"><br />
+                                                                Registration info for {{ domain['name'] }}<br /><br />
+                                                            </div>
+                                                            <div>
+                                                                <span style="font-size:18px">
+                                                                    {% for k,v in details.items() %}
+                                                                        <b>{{ k|replace('_', ' ')|capitalize }}:</b>
+                                                                        {% if v|dict_filter %}
+                                                                            <br />
+                                                                            {% for key, val in v.items() %}
+                                                                                &nbsp;&nbsp;&nbsp;<b>{{ key|capitalize }}:</b> {{ val }}<br />
+                                                                            {% endfor %}
+                                                                        {% elif v|list_filter %}
+                                                                            {% if v|length > 1 %}<br />
+                                                                                {% for item in v %}
+                                                                                    &nbsp;&nbsp;&nbsp;{{ item|pretty_date_filter }}<br />
+                                                                                {% endfor %}
+                                                                            {% else %}
+                                                                                {% for item in v %}
+                                                                                    {{ item|pretty_date_filter }}<br />
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                        {% else %}
+                                                                            {{ v }}
+                                                                        {% endif %}
+                                                                        <br />
+                                                                    {% endfor %}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                 {% else %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability' ) }}" method="post">
                                                         <div class="form-group">
-                                                            <h4>Enter a domain to check its availability.</h4>
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                </div>
+{#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
+                                                                <input class="form-control" id="domain" name="domain" value="rickyc.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                            </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
                                                                 <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
                                                             </div>
                                                         </div>
-                                                    </form>
+                                                    </form><br />
+                                                    {% if searched|length > 0 %}
+                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:350px;">
+                                                            <div style="font-size:24px;">
+                                                                <span class="text-muted" style="font-size:18px;">Recent searches
+                                                            </div><br />
+{#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
+                                                            <div style="overflow-x: auto;">
+                                                                <table class="table table-borderless table-condensed">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <span class="text-muted" style="font-size:18px;">Domain</span>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for domain in searched|reverse %}
+                                                                        <tr>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                             <!-- END Bootstrap Login -->
@@ -264,43 +344,68 @@
                                                 <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
                                                     <thead>
                                                         <tr role="row">
-                                                            <th class="text-center sorting_asc hidden" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
-                                                            <th class="sorting name-header" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
-                                                            <th class="sorting_disabled" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="fa fa-arrow-down"></i></th>
-                                                            <th class="sorting_disabled" style="width: 69px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
+                                                            <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
+                                                            <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
+                                                            <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
+                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
+                                                            <th class="sorting_disabled text-center font-w300" style="width: 69px;" rowspan="1" colspan="1" aria-label="Owned">Owned</th>
+                                                            <th class="sorting_disabled text-center font-w300" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                     <div id="domain_list">
                                                     {% for domain in domains|sort(attribute='created_on', reverse=true) %}
                                                     </div>
-{#                                                        {% if not loop.last %}#}
-{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px; border-bottom:1px solid #d3d3d3;">#}
-{#                                                        {% else %}#}
-{#                                                        <tr class="domain-row {% if integration.active == 0 %}inactive{% endif %}" style="height:80px;">#}
-{#                                                        {% endif %}#}
-                                                            <span style="font-size:20px">
+                                                        <tr>
+                                                            <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <p class="font-w400 text-muted">{{ domain.name }}</p>
+                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#007fd8;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
-                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.created_on|pretty_date_filter }} UTC</p></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><p class="font-w400 text-muted">{{ domain.expires }} UTC</p></td>
-                                                                <td style="min-width:150px;padding-top:20px;">
-    {#                                                                <div class="btn-group">#}
-    {#                                                                    <button class="btn btn-sm btn-default" id="{{ integration.id }}" onclick="window.location.href='{{ url_for('user.edit_integration', integration_id=integration.id) }}'" data-toggle="tooltip" title="View/Edit Integration" style="margin-right:5px;">#}
-    {#                                                                        <i class="fa fa-pencil"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                    <button class="btn btn-sm btn-primary push-5-r push-10" id="{{ integration.id }}"#}
-    {#                                                                            type="button" data-toggle="tooltip" title="Duplicate Integration" onclick="ConfirmCopyIntegration(this);">#}
-    {#                                                                        <i class="fa fa-copy"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                    <button class="btn btn-sm btn-danger push-5-r push-10" id="{{ integration.id }}"#}
-    {#                                                                            type="button" data-toggle="tooltip" title="Delete Integration" onclick="ConfirmDeleteIntegration(this);">#}
-    {#                                                                        <i class="fa fa-times"></i>#}
-    {#                                                                    </button>#}
-    {#                                                                </div>#}
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.expires %}{{ domain.expires }}{% else %}N/A{% endif %}</span></td>
+                                                                <td class="text-center" style="min-width:75px;padding:10px 0;">
+                                                                    {% if domain.registered %}
+                                                                        <span style="color:green"><i class="si si-check fa-2x"></i></span>
+                                                                    {% else %}
+                                                                        <span style="color:red"><i class="si si-close fa-2x"></i></span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="text-center" style="min-width:200px;max-width:200px;width:200px;">
+                                                                    {% if not domain.registered %}
+                                                                        <div style="width:50%;float:left">
+                                                                    {% endif %}
+                                                                        <form class="form-horizontal push-5-t" action="{{ url_for('user.view_domain' ) }}" method="post">
+                                                                            <div class="form-group">
+                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit"
+                                                                                            style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> View
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    {% if not domain.registered %}
+                                                                        </div>
+                                                                        {% if test %}
+                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
+                                                                                    <div class="form-group">
+                                                                                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
+                                                                                                    style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            {% endif %}
+                                                                        <div style="width:50%;float:right">
+                                                                            <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
+                                                                                <div class="form-group">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
+                                                                                                style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Delete
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    {% endif %}
                                                                 </td>
                                                             </span>
                                                         </tr>
@@ -396,38 +501,44 @@
         </script>
 
         <script>
+            function ConfirmDeleteReservation() {
+                return confirm("Are you sure you want to delete this reservation? This can't be undone.");
+            }
+        </script>
+
+        <script>
             function ChangeSortIcon(sel) {
                 if (sel.id === 'name_header'){
-                    if (document.getElementById('name-sort-icon').classList.contains('fa-sort') || document.getElementById('name-sort-icon').classList.contains('fa-arrow-down')) {
-                        document.getElementById('name-sort-icon').classList.remove('fa-arrow-down');
-                        document.getElementById('name-sort-icon').classList.remove('fa-sort');
-                        document.getElementById('name-sort-icon').classList.add('fa-arrow-up');
+                    if (document.getElementById('name-sort-icon').classList.contains('fa-sort') || document.getElementById('name-sort-icon').classList.contains('si-arrow-down')) {
+                        document.getElementById('name-sort-icon').classList.remove('si','si-arrow-down');
+                        document.getElementById('name-sort-icon').classList.remove('fa','fa-sort');
+                        document.getElementById('name-sort-icon').classList.add('si','si-arrow-up');
                     }
-                    else if (document.getElementById('name-sort-icon').classList.contains('fa-arrow-up')) {
-                        document.getElementById('name-sort-icon').classList.remove('fa-arrow-up');
-                        document.getElementById('name-sort-icon').classList.add('fa-arrow-down');
+                    else if (document.getElementById('name-sort-icon').classList.contains('si-arrow-up')) {
+                        document.getElementById('name-sort-icon').classList.remove('si','si-arrow-up');
+                        document.getElementById('name-sort-icon').classList.add('si','si-arrow-down');
                     }
 
                     // reset the date header sort icon
-                    document.getElementById('date-sort-icon').classList.remove('fa-arrow-down');
-                    document.getElementById('date-sort-icon').classList.remove('fa-arrow-up');
-                    document.getElementById('date-sort-icon').classList.add('fa-sort');
+                    document.getElementById('date-sort-icon').classList.remove('si','si-arrow-down');
+                    document.getElementById('date-sort-icon').classList.remove('si','si-arrow-up');
+                    document.getElementById('date-sort-icon').classList.add('fa','fa-sort');
                 }
                 else if (sel.id === 'date_header'){
-                    if (document.getElementById('date-sort-icon').classList.contains('fa-sort') || document.getElementById('date-sort-icon').classList.contains('fa-arrow-down')) {
-                        document.getElementById('date-sort-icon').classList.remove('fa-arrow-down');
-                        document.getElementById('date-sort-icon').classList.remove('fa-sort');
-                        document.getElementById('date-sort-icon').classList.add('fa-arrow-up');
+                    if (document.getElementById('date-sort-icon').classList.contains('fa-sort') || document.getElementById('date-sort-icon').classList.contains('si-arrow-down')) {
+                        document.getElementById('date-sort-icon').classList.remove('si','si-arrow-down');
+                        document.getElementById('date-sort-icon').classList.remove('fa','fa-sort');
+                        document.getElementById('date-sort-icon').classList.add('si','si-arrow-up');
                     }
-                    else if (document.getElementById('date-sort-icon').classList.contains('fa-arrow-up')) {
-                        document.getElementById('date-sort-icon').classList.remove('fa-arrow-up');
-                        document.getElementById('date-sort-icon').classList.add('fa-arrow-down');
+                    else if (document.getElementById('date-sort-icon').classList.contains('si-arrow-up')) {
+                        document.getElementById('date-sort-icon').classList.remove('si','si-arrow-up');
+                        document.getElementById('date-sort-icon').classList.add('si','si-arrow-down');
                     }
 
                     // reset the name header sort icon
-                    document.getElementById('name-sort-icon').classList.remove('fa-arrow-down');
-                    document.getElementById('name-sort-icon').classList.remove('fa-arrow-up');
-                    document.getElementById('name-sort-icon').classList.add('fa-sort');
+                    document.getElementById('name-sort-icon').classList.remove('si','si-arrow-down');
+                    document.getElementById('name-sort-icon').classList.remove('si','si-arrow-up');
+                    document.getElementById('name-sort-icon').classList.add('fa','fa-sort');
                 }
             }
         </script>

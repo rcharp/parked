@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Domain: Workflow automation made simple</title>
-    <meta name="description" content="Domain allows you to you automate your workflows and move data to where you need it.">
-    <meta name="keywords" content="Domain">
+    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -24,22 +24,23 @@
     <![endif]-->
 
     <!-- Facebook Open Graph -->
-    <meta property="og:title" content="Domain: Workflow automation made simple" />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
     <meta property="og:url" content="https://www.domain.com" />
     <meta property="og:image" content="../../../../static/favicon128x128.png" />
-    <meta property="og:site_name" content="Domain: Automate your workflows" />
-    <meta property="og:description" content="Domain allows you to you automate your workflows and move data to where you need it." />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="Domain: Automate your workflows">
-    <meta name="twitter:description" content="Domain allows you to you automate your workflows and move data to where you need it.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
@@ -95,7 +96,7 @@
                         <nav class="navbar navbar-expand-lg py-1">
                             <div class="container-fluid">
                                 <a href="/">
-                                    <img src="../../../../static/assets/images/logos/domain.png" class="img-responsive" style="max-width:70%" title="Domain" alt="Domain">
+                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                                 </a>
                                 <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="base-color fas fa-bars xl-font-size"></span>
@@ -193,8 +194,7 @@
                         </li>
                         <li>
                             <a href="{{ url_for('page.home') }}">
-                              <img src="{{ url_for('static', filename='assets/images/logos/domain.png') }}"
-                                   height="40" title="Domain" alt="Domain"/>
+                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                             </a>
                         </li>
                     </ul>
@@ -205,7 +205,7 @@
         </div>
 
         <!-- Pricing -->
-        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:320px;">
+        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:420px;">
             <h3 class="xl-font-size font-weight__500">
                 Simple pricing plans to fit your needs.
             </h3>
@@ -220,7 +220,7 @@
                     <div class="col-12 col-md-12 col-lg-12 mx-auto">
                         <div class="row">
                             {% if current_user.id == 1 %}
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:320px;display:block;float:left;margin:0 auto;">
+                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
                                     <div class="d-block">
@@ -249,7 +249,7 @@
                                 <!-- End Single Price Table -->
                             </div>
                             {% endif %}
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:320px;display:block;float:left;margin:0 auto;">
+                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
                                     <div class="d-block">
@@ -277,7 +277,7 @@
                                 </div>
                                 <!-- End Single Price Table -->
                             </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:320px;display:block;float:right;margin:0 auto;">
+                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
                                     <div class="d-block">
@@ -304,7 +304,7 @@
                                 </div>
                                 <!-- End Single Price Table -->
                             </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:320px;display:block;float:right;margin:0 auto;">
+                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
                                     <div class="d-block">
@@ -331,7 +331,7 @@
                                 </div>
                                 <!-- End Single Price Table -->
                             </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:320px;display:block;float:right;margin:0 auto;">
+                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
                                     <div class="d-block">
@@ -417,11 +417,11 @@
                     </div>
                     <div class="col-12 col-lg-8 pr-lg-0">
                         <div class="credit sm-font-size text-center text-lg-right text-dark-gray">
-                            <a href="https://www.domain.com/contact">Contact Us</a> | <a href="https://www.domain.com/privacy">Privacy Policy</a> | <a href="https://www.domain.com/terms">Terms of Service</a>
+                            <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2019 Domain. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Domain: Workflow automation made simple</title>
-    <meta name="description" content="Domain allows you to you automate your workflows and move data to where you need it.">
-    <meta name="keywords" content="Domain">
+    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -24,22 +24,23 @@
     <![endif]-->
 
     <!-- Facebook Open Graph -->
-    <meta property="og:title" content="Domain: Workflow automation made simple" />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
     <meta property="og:url" content="https://www.domain.com" />
     <meta property="og:image" content="../../../../static/favicon128x128.png" />
-    <meta property="og:site_name" content="Domain: Automate your workflows" />
-    <meta property="og:description" content="Domain allows you to you automate your workflows and move data to where you need it." />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="Domain: Automate your workflows">
-    <meta name="twitter:description" content="Domain allows you to you automate your workflows and move data to where you need it.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
@@ -173,7 +174,7 @@
                                 <p class="lead base-plus-font-size">
                                     Connect the apps you use everyday, and automatically move important info between them. That way, you can spend
                                     less time moving data and more time on the things that matter most.<br /><br >
-                                    Enter your email below to be notified when Domain launches.
+                                    Enter your email below to be notified when {{ 'site_name'|site_name_filter|capitalize }} launches.
                                 </p>
                                 <div class="row">
                                     <div class="ml-form-embed"
@@ -250,26 +251,26 @@
                                     </div>
                                     <div class="col-6 mt-3 mt-lg-0 mr-auto">
                                         <h3 class="base-plus-font-size font-weight__500">
-                                            Automate your workflows
+                                            Automate your domain backordering
                                         </h3>
                                         <!-- Empty Space -->
                                         <div class="sm-sapce"></div>
                                         <!--/ End Empty Space -->
                                         <p class="lead sm-font-size text-dark-gray mb-0">
-                                            With our simple interface, you'll be able to automate your workflows in a couple of clicks. No code necessary.
+                                            With our simple interface, you'll be able to automate your domain backordering in a couple of clicks. No code necessary.
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <h2 class="xl-font-size font-weight__500">
-                                    How Domain works
+                                    How {{ 'site_name'|site_name_filter|capitalize }} works
                                 </h2>
                                 <!-- Empty Space -->
                                 <div class="sm-space"></div>
                                 <!--/ End Empty Space -->
                                 <p class="lead base-font-size text-dark-gray mb-0">
-                                    Domain allows you to connect to your favorite apps, then define workflows to send your info to where it needs to be. With Domain, you can get these processes
+                                    {{ 'site_name'|site_name_filter|capitalize }} allows you to connect to your favorite apps, then define domain backordering to send your info to where it needs to be. With Domain, you can get these processes
                                     up and running faster so you can save time and get more work done.
                                 </p>
                                 <!-- Empty Space -->
@@ -323,7 +324,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-6 mr-md-auto">
                                 <h2 class="xl-font-size font-weight__500">
-                                    Build workflows quickly and easily, without code
+                                    Build domain backordering quickly and easily, without code
                                 </h2>
                                 <!-- Empty Space -->
                                 <div class="sm-space"></div>
@@ -450,11 +451,11 @@
                     </div>
                     <div class="col-12 col-lg-8 pr-lg-0">
                         <div class="credit sm-font-size text-center text-lg-right text-dark-gray">
-                            <a href="https://www.domain.com/contact">Contact Us</a> | <a href="https://www.domain.com/privacy">Privacy Policy</a> | <a href="https://www.domain.com/terms">Terms of Service</a>
+                            <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2019 Domain. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

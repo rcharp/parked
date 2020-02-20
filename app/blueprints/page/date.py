@@ -42,6 +42,7 @@ def convert_end_time(int_time):
     return time_tuple
 """
 
+
 def is_date(string, fuzzy=False):
     try:
         parse(string, fuzzy=fuzzy)
@@ -51,6 +52,7 @@ def is_date(string, fuzzy=False):
         return False
     except Exception:
         return False
+
 
 # Time conversions ###################################
 def get_short_date_string(timestamp):
@@ -82,7 +84,9 @@ def get_string_from_datetime(dt):
     return date.strftime('%Y-%m-%d %H:%M:%S.%f')
 
 
-def get_string_from_utc_datetime(dt):
+def get_string_from_utc_datetime(dt, godaddy=False):
+    if godaddy:
+        return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
     return dt.strftime('%Y-%m-%d %H:%M:%S.%f')
 
 

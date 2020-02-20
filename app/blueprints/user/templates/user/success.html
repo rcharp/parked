@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Dashboard - Parked</title>
+        <title>Success! - {{ 'site_name'|site_name_filter }}</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -52,6 +52,7 @@
         <!-- Stylesheets -->
         <!-- Web fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
         <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
@@ -154,8 +155,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <img src="{{ url_for('static', filename='assets/images/logos/quickflow.png') }}"
-                               height="40" title="Parked" alt="Parked"/>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -167,7 +167,7 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
                                 Dashboard
                             </h1>
@@ -184,12 +184,12 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:60%; margin:0 auto; min-width:320px; float:none;">
+                        <div class="col-md-4" style="width:60%; margin:0 auto; min-width:420px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:420px;width:100%;display:block">
-                                        <a href="#check"><h3>Success!&nbsp;&nbsp;<span color="green"><i class="si si-check"></i></span></h3></a>
+                                    <li id="check_nav" class="active" style="padding-top:5px;min-width:350px;width:100%;display:block">
+                                        <a href="#check"><h3 class="font-w300">Success!&nbsp;&nbsp;<span color="green"><i class="si si-check"></i></span></h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">

@@ -1,11 +1,13 @@
 import logging
-import os
+import pytz
 from logging.handlers import SMTPHandler
 
+import os
 import stripe
+import datetime
 
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from celery import Celery
 from itsdangerous import URLSafeTimedSerializer
 from flask_compress import Compress
@@ -17,7 +19,8 @@ from app.blueprints.user import user
 from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
-from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string
+from app.blueprints.errors import errors
+from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date
 from app.blueprints.billing.template_processors import (
   format_currency,
   current_year
@@ -129,6 +132,9 @@ def create_app(settings_override=None):
     app.register_blueprint(user)
     app.register_blueprint(api)
     app.register_blueprint(billing)
+    app.register_blueprint(errors)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_error)
     template_processors(app)
     extensions(app)
     authentication(app, User)
@@ -140,6 +146,14 @@ def create_app(settings_override=None):
     Compress(app)
 
     return app
+
+
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
+
+
+def internal_error(e):
+    return render_template('errors/500.html'), 500
 
 
 def extensions(app):
@@ -169,6 +183,10 @@ def template_processors(app):
     app.jinja_env.filters['format_currency'] = format_currency
     app.jinja_env.filters['pretty_date_filter'] = pretty_date_filter
     app.jinja_env.filters['logo_filter'] = logo_filter
+    app.jinja_env.filters['list_filter'] = list_filter
+    app.jinja_env.filters['dict_filter'] = dict_filter
+    app.jinja_env.filters['today_filter'] = today_filter
+    app.jinja_env.filters['site_name_filter'] = site_name_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -281,6 +299,27 @@ def logo_filter(arg, k):
 
 def pretty_date_filter(arg):
     time_string = str(arg)
-    dt = get_datetime_from_string(time_string)
 
-    return get_dt_string(dt)
+    if is_date(time_string):
+        if '.' in time_string:
+            time_string = time_string.split('.')[0]
+        dt = get_datetime_from_string(time_string)
+        return get_dt_string(dt) + ' UTC'
+
+    return arg
+
+
+def list_filter(arg):
+    return isinstance(arg, list)
+
+
+def dict_filter(arg):
+    return isinstance(arg, dict)
+
+
+def today_filter(arg):
+    return arg - datetime.timedelta(hours=24) <= pytz.utc.localize(datetime.datetime.utcnow())
+
+
+def site_name_filter(arg):
+    return 'getparked.io'

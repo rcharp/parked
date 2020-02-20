@@ -2,11 +2,12 @@ import stripe
 from flask import current_app, url_for
 from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.billing.models.customer import Customer
-from sqlalchemy import exists
+from app.blueprints.api.models.domains import Domain
+from sqlalchemy import exists, and_
 from app.extensions import db
 
 
-def stripe_checkout(email, domain):
+def stripe_checkout(email, domain, purchase=False):
     try:
         from app.blueprints.user.models import User
         from app.blueprints.api.models.domains import Domain
@@ -17,17 +18,104 @@ def stripe_checkout(email, domain):
 
         # Create the Stripe customer if they don't already exist
         if not db.session.query(exists().where(Customer.user_id == u.id)).scalar():
-            c = Customer()
-            c.user_id = u.id
-            c.email = email
-            c.save()
+            customer_id = create_customer(u, email)
+        else:
+            # If they do exist, get the customer's ID
+            c = Customer.query.filter(Customer.user_id == u.id).scalar()
+            customer_id = c.customer_id
 
-        # Change to Live key when done testing
+            # Make sure the customer exists in Stripe. If not, delete it from the db
+            stripe_customer = stripe.Customer.retrieve(customer_id)
+
+            if stripe_customer is None or 'deleted' in stripe_customer and stripe_customer.deleted:
+                c.delete()
+
+                # After deleting the old customer from the db, update the old domains for this customer
+                domains = Domain.query.filter(Domain.customer_id == customer_id).all()
+
+                # Create a new customer in the DB
+                customer_id = create_customer(u, email)
+
+                # Update the domains to have the new customer ID
+                for domain in domains:
+                    domain.customer_id = customer_id
+                    domain.save()
+
+            elif customer_id is None:
+                customer_id = create_customer(u, email, False)
+
+        if customer_id is not None:
+            if purchase:
+                p = create_payment(domain, customer_id)
+                return p
+            else:
+                si = setup_intent(domain, customer_id)
+                return si
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def create_payment(domain, customer_id):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        customer=customer_id,
+        currency="usd",
+        description="Purchase " + domain + " -- $99",
+        payment_method_types=["card"]
+    )
+
+
+def confirm_payment(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        currency="usd",
+        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        payment_method_types=["card"]
+    )
+
+
+def charge_card(domain):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    return stripe.PaymentIntent.create(
+        amount=9900,
+        confirm="True",
+        currency="usd",
+        description="Buy " + domain + " from GetMyDomain.",
+        payment_method_types=["card"]
+    )
+
+
+# Create the customer
+def create_customer(u, email, create_db=True):
+
+    # Create the customer in Stripe
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    customer = stripe.Customer.create(
+        email=email
+    )
+
+    # Create the customer in the database
+    if create_db:
+        c = Customer()
+        c.user_id = u.id
+        c.email = email
+        c.customer_id = customer.id
+        c.save()
+
+    return customer.id
+
+
+def setup_intent(domain, customer_id):
+    try:
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-        site_url = current_app.config.get('SITE_URL')
-
-        session = create_session(email, site_url, domain)
-        return session.id
+        return stripe.SetupIntent.create(
+            customer=customer_id,
+            description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+            payment_method_types=["card"]
+        )
     except Exception as e:
         print_traceback(e)
         return None
@@ -49,17 +137,22 @@ def create_session(email, site_url, domain):
     )
 
 
-def update_customer(session_id, domain):
-    # Change to Live key when done testing
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+def update_customer(pm, customer_id):
+    try:
+        # Change to Live key when done testing
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
-    # Get and update the customer in the database to have the Stripe customer ID
-    session = stripe.checkout.Session.retrieve(session_id)
-    session_customer = session.customer
+        payment_method = stripe.PaymentMethod.retrieve(pm)
 
-    customer = stripe.Customer.retrieve(session_customer)
+        if payment_method.customer is None:
+            # Get and update the customer in Stripe with the payment method
+            stripe.PaymentMethod.attach(
+                pm,
+                customer=customer_id,
+            )
 
-    c = Customer.query.filter(Customer.email == customer.email).scalar()
-    c.customer_id = customer.id
+        return True
 
-    c.save()
+    except Exception as e:
+        print_traceback(e)
+        return False

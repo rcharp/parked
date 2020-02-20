@@ -9,6 +9,7 @@ from app.app import create_app
 from app.extensions import db
 from app.blueprints.user.models import User
 from app.blueprints.api.models.domains import Domain
+from app.blueprints.api.models.searched import SearchedDomain
 from importlib import import_module
 from app.blueprints.api.api_functions import print_traceback
 

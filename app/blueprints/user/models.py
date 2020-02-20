@@ -17,6 +17,7 @@ from app.blueprints.billing.models.credit_card import CreditCard
 # from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
+from app.blueprints.api.models.searched import SearchedDomain
 from app.extensions import db
 
 
@@ -38,6 +39,8 @@ class User(UserMixin, ResourceMixin, db.Model):
                                    backref='users', passive_deletes=True)
     domain = db.relationship(Domain, uselist=False, backref='users', lazy='subquery',
                                         passive_deletes=True)
+    searched_domain = db.relationship(SearchedDomain, uselist=False, backref='users', lazy='subquery',
+                             passive_deletes=True)
 
     # Authentication.
     role = db.Column(db.Enum(*ROLE, name='role_types', native_enum=False),

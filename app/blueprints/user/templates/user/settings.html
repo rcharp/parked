@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Settings - Parked</title>
+        <title>Settings - {{ 'site_name'|site_name_filter }}</title>
 
         <meta name="description" content="OneUI - Admin Settings Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -52,6 +52,7 @@
         <!-- Stylesheets -->
         <!-- Web fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
         <link rel="stylesheet" href="../../../../static/oneui/assets/css/bootstrap.min.css">
@@ -147,8 +148,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <img src="{{ url_for('static', filename='assets/images/logos/quickflow.png') }}"
-                               height="40" title="Parked" alt="Parked"/>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -160,7 +160,7 @@
             <main id="main-container">
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
                     <div class="row items-push">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
                                 Settings
                             </h1>
@@ -179,9 +179,9 @@
                     <div class="row" style="margin-bottom:150px;">
                         <div class="col-lg-12" style="width:90%; margin:0 auto; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
-                                    <li id="settings_nav" style="padding-top:5px;min-width:140px;width:15%;display:block">
+                                    <li id="settings_nav" style="padding-top:5px;min-width:140px;width:100%;display:block">
                                         <a href="#settings"><h3>My Settings &nbsp;&nbsp;<i class="si si-settings"></i></h3></a>
                                     </li>
                                 </ul>
@@ -275,41 +275,42 @@
                                                 <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary" style="margin-right:10px;">
                                                     <input id="send_failure_email" style="display:inline-block;" name="send_failure_email" type="checkbox" class="checkbox" onclick="UpdateSendFailureEmail(this)" {% if current_user.send_failure_email %}checked{% endif %} /><span></span>
                                                 </label>
-                                                <span class="h4 font-w400 text-muted" style="word-wrap:break-word">Send me an email when an integration fails<br /></span>
+                                                <span class="h4 font-w400 text-muted" style="word-wrap:break-word">Send me an email when a domain I have reserved gets purchased.<br /></span>
                                             </div>
-                                        </div><br /><br /><br />
-                                        <h3 class="font-w400 push-15" style="margin-bottom:5px !important;">Connected Accounts</h3>
-                                        <h4 class="font-w300 push-15">All of the accounts that you've authorized Parked to connect to.</h4>
-                                        <hr />
-                                        <!-- Header BG Table -->
-                                        <div class="block">
-                                            <div class="block-content" style="padding:0;overflow-x:auto;overflow-y:auto;">
-                                            {% if auths|length > 0 %}
-                                                <table class="table-responsive table-hover table-condensed" style="width:100%;min-width:250px;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="text-transform:capitalize;max-width:10%;min-width:100px;">App</th>
-                                                            <th style="text-transform:capitalize;max-width:10%;min-width:100px;">Account</th>
-                                                            <!--<th style="text-align:right;text-transform:capitalize">Disconnect this account</th>-->
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for auth in auths|sort(attribute='app_name') %}
-                                                        <tr>
-                                                            <td>{{ auth.app_fullname }}</td>
-                                                            <td>{{ auth.account }}</td>
-                                                            <!--<td style="text-align:right;"><button class="js-notify btn btn-sm btn-danger" id="{{ auth.id }}" onclick="return ConfirmDeleteAuthAccount(this);">Revoke Access</button></td>-->
-                                                        </tr>
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            {% else %}
-                                                <div style="text-align:center;margin-top:50px;"><b>You don't have any connected accounts yet.</b><br /><br/></div>
-                                            {% endif %}
-                                            </div>
-                                        </div><br /><br /><br />
+                                        </div>
+                                        <br /><br /><br />
+{#                                        <h3 class="font-w400 push-15" style="margin-bottom:5px !important;">Connected Accounts</h3>#}
+{#                                        <h4 class="font-w300 push-15">All of the accounts that you've authorized Parked to connect to.</h4>#}
+{#                                        <hr />#}
+{#                                        <!-- Header BG Table -->#}
+{#                                        <div class="block">#}
+{#                                            <div class="block-content" style="padding:0;overflow-x:auto;overflow-y:auto;">#}
+{#                                            {% if auths|length > 0 %}#}
+{#                                                <table class="table-responsive table-hover table-condensed" style="width:100%;min-width:250px;">#}
+{#                                                    <thead>#}
+{#                                                        <tr>#}
+{#                                                            <th style="text-transform:capitalize;max-width:10%;min-width:100px;">App</th>#}
+{#                                                            <th style="text-transform:capitalize;max-width:10%;min-width:100px;">Account</th>#}
+{#                                                            <!--<th style="text-align:right;text-transform:capitalize">Disconnect this account</th>-->#}
+{#                                                        </tr>#}
+{#                                                    </thead>#}
+{#                                                    <tbody>#}
+{#                                                        {% for auth in auths|sort(attribute='app_name') %}#}
+{#                                                        <tr>#}
+{#                                                            <td>{{ auth.app_fullname }}</td>#}
+{#                                                            <td>{{ auth.account }}</td>#}
+{#                                                            <!--<td style="text-align:right;"><button class="js-notify btn btn-sm btn-danger" id="{{ auth.id }}" onclick="return ConfirmDeleteAuthAccount(this);">Revoke Access</button></td>-->#}
+{#                                                        </tr>#}
+{#                                                    {% endfor %}#}
+{#                                                    </tbody>#}
+{#                                                </table>#}
+{#                                            {% else %}#}
+{#                                                <div style="text-align:center;margin-top:50px;"><b>You don't have any connected accounts yet.</b><br /><br/></div>#}
+{#                                            {% endif %}#}
+{#                                            </div>#}
+{#                                        </div><br /><br /><br />#}
                                         <h3 class="font-w400 push-15" style="margin-bottom:5px !important;">Delete your account</h3>
-                                        <h4 class="font-w300 push-15">This will permanently delete your account and all of your integrations.</h4><hr />
+                                        <h4 class="font-w300 push-15">This will permanently delete your account and all of your reservations.</h4><hr />
                                         <!-- Header BG Table -->
                                         <div class="block">
                                             <div class="col-md-5" style="overflow-x:hidden">
@@ -440,6 +441,13 @@
                     document.getElementById('name-sort-icon').classList.remove('fa-arrow-up');
                     document.getElementById('name-sort-icon').classList.add('fa-sort');
                 }
+            }
+
+            /**
+             * @return {boolean}
+             */
+            function ConfirmDeleteAccount(){
+                return confirm("Are you sure you want to delete your account? This can't be undone.");
             }
         </script>
 

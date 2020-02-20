@@ -1,6 +1,6 @@
 {% extends 'layouts/app.html' %}
 
-{% block title %}Privacy Policy - Domain{% endblock %}
+{% block title %}Privacy Policy - {{ 'site_name'|site_name_filter|capitalize }}{% endblock %}
 {% block heading %}<h2>Privacy Policy</h2>{% endblock %}
 
 {% block body %}
@@ -49,26 +49,26 @@
     <h3>Information from Third Party Services such as Google</h3>
   <p>
     If you decide to register through or grant access to a third-party service such as Google,
-    Domain may collect personal information that is already associated with your service
+    {{ 'site_name'|site_name_filter|capitalize }} may collect personal information that is already associated with your service
     account.
   </p>
   <p>
     If you choose to provide such information, during registration or otherwise, you are giving
-    Domain the permission to use, share, and store your data in a manner consistent with
+    {{ 'site_name'|site_name_filter|capitalize }} the permission to use, share, and store your data in a manner consistent with
     this Privacy notice.
   </p>
   <p>
-    Domain allows you to integrate and share data between many online third party services,
+    {{ 'site_name'|site_name_filter|capitalize }} allows you to integrate and share data between many online third party services,
       such as Google, Dropbox, and others. In order to use this feature, you might have to
       authenticate or log in to these third party services. When you authenticate with Google,
-      we will collect relevant information necessary in order to allow Domain
+      we will collect relevant information necessary in order to allow {{ 'site_name'|site_name_filter|capitalize }}
       to link relevant data and content in that third party service, to the linked third party
       service.
 
-      When you allow Domain to connect to your Goolge service and thus link data between your Google
+      When you allow {{ 'site_name'|site_name_filter|capitalize }} to connect to your Goolge service and thus link data between your Google
       service and other third party services, we will use, store, and disclose such information in
-      accordance with this Privacy policy. Domain assumes no liability or responsibility for the actions
-      of any third party services that might be enabled through Domain.
+      accordance with this Privacy policy. {{ 'site_name'|site_name_filter|capitalize }} assumes no liability or responsibility for the actions
+      of any third party services that might be enabled through {{ 'site_name'|site_name_filter|capitalize }}.
   </p>
     
   <hr/>
