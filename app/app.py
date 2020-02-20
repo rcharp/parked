@@ -138,7 +138,6 @@ def create_app(settings_override=None):
     template_processors(app)
     extensions(app)
     authentication(app, User)
-    internal_error(app)
 
     # Compress Flask app
     COMPRESS_MIMETYPES = ['text/html' 'text/css', 'application/json']
