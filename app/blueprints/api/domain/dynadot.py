@@ -1,6 +1,6 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback
-from app.blueprints.page.date import get_string_from_utc_datetime
+from app.blueprints.page.date import get_string_from_utc_datetime, convert_timestamp_to_datetime_utc
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
 import pythonwhois
@@ -46,8 +46,21 @@ def register_domain(domain, production=False):
         # Only purchase the domain if it's less than $60
         if results is not None and results['price'] is not None and Decimal(results['price']) <= 60:
             api_key = current_app.config.get('DYNADOT_API_KEY')
-            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + ""
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain
             r = requests.get(url=dynadot_url)
             results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
             return results
     return False
+
+
+def get_domain_expiration(domain):
+    # Ensure that the domain can be registered
+    api_key = current_app.config.get('DYNADOT_API_KEY')
+    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+    r = requests.get(url=dynadot_url)
+
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
+
+    expires = convert_timestamp_to_datetime_utc(float(results)/1000)
+    expires = get_dt_string(expires)
+    return expires

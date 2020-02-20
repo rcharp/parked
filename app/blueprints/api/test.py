@@ -10,7 +10,8 @@ from flask import flash
 from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     check_domain,
-    register_domain
+    register_domain,
+    get_domain_expiration
 )
 
 
@@ -35,6 +36,7 @@ def test(domain):
     #     flash("There was an error", 'error')
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
-    results = check_domain(domain)
+    # results = check_domain(domain)
+    results = get_domain_expiration(domain)
     # results = register_domain(domain)
     return results

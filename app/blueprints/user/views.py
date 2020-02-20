@@ -43,12 +43,8 @@ from app.blueprints.api.api_functions import save_domain, update_customer, print
 from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     register_domain as register,
-    check_domain
-)
-from app.blueprints.api.domain.godaddy import (
-    get_purchase_agreement,
-    get_tld_schema,
-    list_domains
+    check_domain,
+    get_domain_expiration
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -371,6 +367,9 @@ def update_domain():
 
             # Send a receipt email
 
+            # Now that the domain has been registered, get the expiry to update the db
+            # expires = get_domain_expiration(domain)
+
             # Create and save the domain in the db if it isn't already
             if not db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
                 d = Domain()
@@ -378,12 +377,14 @@ def update_domain():
                 d.customer_id = customer_id
                 d.registered = True
                 d.name = domain
+                d.expires = expires
 
                 d.save()
             else:
                 d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
                 d.customer_id = customer_id
                 d.registered = True
+                d.expires = expires
                 d.save()
 
     return redirect(url_for('user.dashboard'))
