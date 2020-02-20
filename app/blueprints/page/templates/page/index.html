@@ -169,8 +169,8 @@
                                 <!--/ End Empty Space -->
                                 <!--/ End Empty Space -->
                                 <p class="lead base-plus-font-size text-center">
-                                    Have a domain in mind that you want? Backorder it and we'll buy it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.</p>
+                                    Have a domain in mind that you want?<br />Backorder it and we'll buy it for you as soon as it becomes available.<br />
+                                    Only $99 per domain.</p><br /><br />
                                 {% if domain|length %}
                                     <div class="block block-themed" style="height:450px;">
                                         <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
@@ -218,7 +218,7 @@
                                         {% if not domain['available'] and details is not none %}
                                             <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;">
                                                 <div style="text-align:center; font-size:20px;"><br />
-                                                    WhoIs information for {{ domain['name'] }}<br /><br />
+                                                    Registration info for {{ domain['name'] }}<br /><br />
                                                 </div>
                                                 <div>
                                                     <span style="font-size:18px;text-align:left;">
