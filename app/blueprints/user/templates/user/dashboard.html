@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Dashboard - Parked</title>
+        <title>Dashboard - {{ 'site_name'|site_name_filter }}</title>
 
         <meta name="description" content="OneUI - Admin Dashboard Template &amp; UI Framework created by pixelcave and published on Themeforest">
         <meta name="author" content="pixelcave">
@@ -132,6 +132,17 @@
                                         <i class="si si-logout pull-right"></i>Log out
                                     </a>
                                 </li>
+                                {% if test %}
+                                    <li class="divider"></li>
+                                    <li class="dropdown-header">Testing</li>
+                                    <li class="text-center">
+                                        <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
+                                            <input class="form-control" id="domain" name="domain" type="text" value="rickycharpentier.xyz" /><br />
+                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit">
+                                                <i class="si si-ghost pull-right"></i>Run Tests</button>
+                                        </form>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </li>
@@ -183,7 +194,7 @@
                     <div class="row" style="margin-bottom:150px;">
                         <div class="col-md-4" style="width:80%;margin:0 auto; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
                                         <a href="#check"><h3 class="font-w300">Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
@@ -198,7 +209,7 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;min-width:420px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                                    <div style="text-align:center; font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
                                                                 The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
@@ -243,7 +254,7 @@
                                                     <br />
                                                     </div>
                                                     {% if not domain['available'] and details is not none %}
-                                                        <div class="block block-themed" style="float:right;width:50%;min-width:420px;display:block;">
+                                                        <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;">
                                                             <div style="text-align:center; font-size:24px;"><br />
                                                                 Registration info for {{ domain['name'] }}<br /><br />
                                                             </div>
@@ -281,7 +292,7 @@
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
 {#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
-                                                                <input class="form-control" id="domain" name="domain" value="rickycharpentier.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input class="form-control" id="domain" name="domain" value="rickyc.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -374,7 +385,7 @@
                                                                         </form>
                                                                     {% if not domain.registered %}
                                                                         </div>
-                                                                        {% if register_domain %}
+                                                                        {% if test %}
                                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
                                                                                     <div class="form-group">
                                                                                         <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />

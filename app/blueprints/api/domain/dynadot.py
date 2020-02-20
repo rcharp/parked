@@ -27,7 +27,7 @@ def check_domain(domain):
     if 'Available' in results:
         price = re.findall("\d*\.?\d+", results['Price'])[0] if 'Price' in results else None
         available = True if results['Available'] == 'yes' else False
-        details.update({'domain': domain, 'available': available, 'price': price})
+        details.update({'name': domain, 'available': available, 'price': price})
         return details
     else:
         return None

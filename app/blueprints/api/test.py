@@ -1,12 +1,12 @@
 from flask import flash
-from app.blueprints.api.domain.godaddy import (
-    purchase_domain,
-    check_domain,
-    get_purchase_agreement,
-    get_tld_schema,
-    list_domains
-)
-from app.blueprints.api.domain.namecheap import purchase_domain
+# from app.blueprints.api.domain.godaddy import (
+#     purchase_domain,
+#     check_domain,
+#     get_purchase_agreement,
+#     get_tld_schema,
+#     list_domains
+# )
+# from app.blueprints.api.domain.namecheap import purchase_domain
 from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     check_domain,
@@ -35,6 +35,6 @@ def test(domain):
     #     flash("There was an error", 'error')
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
-    # results = check_domain(domain)
-    purchase = register_domain(domain)
-    print(purchase)
+    results = check_domain(domain)
+    # results = register_domain(domain)
+    return results

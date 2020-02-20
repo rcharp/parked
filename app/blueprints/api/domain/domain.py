@@ -14,26 +14,25 @@ from app.blueprints.api.domain.dynadot import check_domain
 
 # Get WhoIs domain availability
 def get_domain_availability(domain):
-    details = dict()
+
+    # Get the availability
+    availability = check_domain(domain)
+
     try:
-        # Check dynadot first
-        if check_domain(domain) is not None:
+        if availability is not None:
             ext = tldextract.extract(domain)
             domain = ext.registered_domain
 
             details = pythonwhois.get_whois(domain)
             if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
                 expires = get_dt_string(details['expiration_date'][0])
-                details.update({'name': domain, 'available': False, 'expires': expires})
+                availability.update({'expires': expires})
             else:
-                details.update({'name': domain, 'available': True, 'expires': None})
-        else:
-            details.update({'name': domain, 'available': None, 'expires': None})
+                availability.update({'expires': None})
     except Exception as e:
         print_traceback(e)
-        details.update({'name': domain, 'available': None, 'expires': None})
 
-    return details
+    return availability
 
 
 # WhoIs get domain registration details

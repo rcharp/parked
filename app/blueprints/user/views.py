@@ -240,12 +240,12 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
-    register = False
+    test = True
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
 
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains, register_domain=register, searched=searched)
+    return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched)
 
 
 @user.route('/check_availability', methods=['GET','POST'])
@@ -361,16 +361,13 @@ def delete_domain():
     return redirect(url_for('user.dashboard'))
 
 
-@user.route('/purchase', methods=['GET','POST'])
+@user.route('/update_domain', methods=['GET','POST'])
 @csrf.exempt
-def purchase():
-    print(request.form)
-
+def update_domain():
     if request.method == 'POST':
-        if 'domain' in request.form and 'customer_id' in request.form and 'email' in request.form:
+        if 'domain' in request.form and 'customer_id' in request.form:
             domain = request.form['domain']
             customer_id = request.form['customer_id']
-            email = request.form['email']
 
             # Send a receipt email
 
@@ -403,13 +400,15 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain
-            if register(domain) or True:
+            #if register(domain):
+            if True:
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, True)
 
                 # Redirect to the payment page
                 if si is not None:
                     return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+
             flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
         except Exception as e:
