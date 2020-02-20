@@ -7,7 +7,7 @@ var orderData = {
 };
 
 // Disable the button until we have Stripe set up on the page
-document.querySelector("button").disabled = true;
+document.getElementById("submit_payment").disabled = true;
 
 fetch("/stripe-key.php")
   .then(function(result) {
@@ -154,7 +154,7 @@ var showError = function(errorMsgText) {
 // Show a spinner on payment submission
 var changeLoadingState = function(isLoading) {
   if (isLoading) {
-    document.querySelector("button").disabled = true;
+    document.getElementById("submit_payment").disabled = true;
     document.querySelector("#spinner").classList.remove("hidden");
     document.querySelector("#button-text").classList.add("hidden");
   } else {
