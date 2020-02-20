@@ -17,7 +17,7 @@ fetch("/stripe-key.php")
     return setupElements(data);
   })
   .then(function({ stripe, card, clientSecret }) {
-    document.querySelector("button").disabled = false;
+    document.getElementById("submit_payment").disabled = false;
 
     var form = document.getElementById("payment-form");
     form.addEventListener("submit", function(event) {
@@ -127,7 +127,7 @@ var changeLoadingState = function(isLoading) {
     document.querySelector("#spinner").classList.remove("hidden");
     document.querySelector("#button-text").classList.add("hidden");
   } else {
-    document.querySelector("button").disabled = false;
+    document.getElementById("submit_payment").disabled = false;
     document.querySelector("#spinner").classList.add("hidden");
     document.querySelector("#button-text").classList.remove("hidden");
   }
