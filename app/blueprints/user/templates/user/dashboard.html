@@ -182,7 +182,7 @@
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                {% if domain is defined %}Check Availability{% else %}Dashboard{% endif %}
+                                {% if domain is defined and domain is not none %}Check Availability{% else %}Dashboard{% endif %}
                             </h1>
                         </div>
 
@@ -219,7 +219,7 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                {% if domain is defined %}
+                                                {% if domain is defined and domain is not none %}
                                                     <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
