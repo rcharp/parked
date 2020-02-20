@@ -246,6 +246,9 @@ def get_payment_method(si):
 def get_card(c):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
+    if c is None:
+        return None
+
     pm = None
     if c.save_card:
         customer = stripe.Customer.retrieve(c.customer_id)
