@@ -146,9 +146,8 @@ def create_app(settings_override=None):
     Compress(app)
 
     @app.errorhandler(500)
-    def error_500(e):
-        flash("There was a 500 error.", "error")
-        return redirect(url_for('user.dashboard'))
+    def error_502(e):
+        return render_template('errors/500.html')
 
     @app.errorhandler(404)
     def error_404(e):
