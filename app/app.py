@@ -138,12 +138,25 @@ def create_app(settings_override=None):
     template_processors(app)
     extensions(app)
     authentication(app, User)
+    internal_error(app)
 
     # Compress Flask app
     COMPRESS_MIMETYPES = ['text/html' 'text/css', 'application/json']
     COMPRESS_LEVEL = 6
     COMPRESS_MIN_SIZE = 500
     Compress(app)
+
+    @app.errorhandler(500)
+    def error_500(e):
+        print("There was a 500 error")
+
+    @app.errorhandler(404)
+    def error_404(e):
+        print("There was a 404 error")
+
+    @app.errorhandler(502)
+    def error_502(e):
+        print("There was a 502 error")
 
     return app
 

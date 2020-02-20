@@ -314,7 +314,7 @@
                                                                 <span class="text-muted" style="font-size:18px;">Recent searches
                                                             </div><br />
 {#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
-                                                            <div style="overflow-x: auto;">
+                                                            <div style="overflow-x: scroll;">
                                                                 <table class="table table-borderless table-condensed">
                                                                     <thead>
                                                                         <tr>
@@ -329,8 +329,8 @@
                                                                     <tbody>
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
+                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
@@ -348,7 +348,7 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
+                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;overflow-x:scroll;">
                                                     <thead>
                                                         <tr role="row">
                                                             <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
