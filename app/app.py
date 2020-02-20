@@ -7,7 +7,7 @@ import stripe
 import datetime
 
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, flash, redirect
 from celery import Celery
 from itsdangerous import URLSafeTimedSerializer
 from flask_compress import Compress
@@ -147,15 +147,16 @@ def create_app(settings_override=None):
 
     @app.errorhandler(500)
     def error_500(e):
-        print("There was a 500 error")
+        flash("There was a 500 error.", "error")
+        return redirect(url_for('user.dashboard'))
 
     @app.errorhandler(404)
     def error_404(e):
-        print("There was a 404 error")
+        return render_template('errors/404.html')
 
     @app.errorhandler(502)
     def error_502(e):
-        print("There was a 502 error")
+        return render_template('errors/500.html')
 
     return app
 

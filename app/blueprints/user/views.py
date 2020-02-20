@@ -17,7 +17,6 @@ from flask_login import (
 
 import time
 
-from app import app
 from lib.safe_next_url import safe_next_url
 from app.blueprints.user.decorators import anonymous_required
 from app.blueprints.user.models import User
