@@ -15,16 +15,16 @@
           {% if current_user.is_authenticated %}
               {% if current_user.role == 'member' %}
                 <a href="{{ url_for('page.home') }}">
-                  <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
+                  <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
                 </a>
               {% else %}
                   <a href="{{ url_for('admin.dashboard') }}">
-                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
+                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
                     </a>
               {% endif %}
           {% else %}
           <a href="{{ url_for('page.home') }}">
-          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
+          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;margin-left:10px;">{{ 'site_name'|site_name_filter }}</span>
         </a>
           {% endif %}
       </div>

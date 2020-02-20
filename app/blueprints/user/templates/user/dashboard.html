@@ -51,7 +51,7 @@
 
         <!-- Stylesheets -->
         <!-- Web fonts -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7CRoboto:300,400,400italic,600,700">
         <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
@@ -61,8 +61,17 @@
         <!-- Shepherd JS -->
         <link rel="stylesheet" href="../../../../static/shepherd.js/dist/css/shepherd-theme-square.css"/>
 
+        <!-- CSS for form -->
+        <link rel="stylesheet" href="../../../../static/form/form.css"/>
+
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
+
+        <!-- Load Stripe.js on your website. -->
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/normalize.css" />
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/global.css" />
+        <script src="../../../../static/payment/using-webhooks/client/web/script.js" defer></script>
+        <script src="https://js.stripe.com/v3/"></script>
         <!-- END Stylesheets -->
     </head>
     <body style="zoom: 80%;">
@@ -93,7 +102,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -153,13 +162,13 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -169,11 +178,11 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
                     <div class="row items-push">
-                        <div class="col-sm-7" style="margin-bottom:20px;">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                Dashboard
+                                {% if domain|length %}Check Availability{% else %}Dashboard{% endif %}
                             </h1>
                         </div>
 
@@ -194,7 +203,9 @@
                     <div class="row" style="margin-bottom:150px;">
                         <div class="col-md-4" style="width:80%;margin:0 auto; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
+                            <!-- Old block with shadow -->
+                            <!--bTorder-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);-->
+                            <div class="block" style="margin-top:100px;border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
                                         <a href="#check"><h3 class="font-w300">Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
@@ -209,45 +220,41 @@
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                                    <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
-                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
-                                                                It expires {{ domain['expires'] }} UTC.
+{#                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />#}
+                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
+                                                                <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
 
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
-                                                                <br />
-                                                                - or -
                                                             {% else %}
-                                                                The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
+                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
-                                                                        <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
-                                                                <br />
-                                                                - or -
                                                             {% endif %}
                                                         {% else %}
                                                             There was an error checking this domain. Is it valid? Please try again.
                                                         {% endif %}
+                                                        <hr />
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
-                                                                <br />
-                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
+                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
+                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -322,8 +329,8 @@
                                                                     <tbody>
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
+                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
@@ -360,7 +367,7 @@
                                                             <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#007fd8;font-weight:100;">{{ domain.name }}</span>
+                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#009fff;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
                                                                 <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.expires %}{{ domain.expires }}{% else %}N/A{% endif %}</span></td>

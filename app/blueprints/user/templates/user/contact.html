@@ -49,7 +49,7 @@
 
         <!-- Stylesheets -->
         <!-- Web fonts -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7CRoboto:300,400,400italic,600,700">
         <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
@@ -89,7 +89,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -139,13 +139,13 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -155,7 +155,7 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">

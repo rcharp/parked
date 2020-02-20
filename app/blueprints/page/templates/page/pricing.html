@@ -39,7 +39,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -96,7 +96,7 @@
                         <nav class="navbar navbar-expand-lg py-1">
                             <div class="container-fluid">
                                 <a href="/">
-                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                                 </a>
                                 <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="base-color fas fa-bars xl-font-size"></span>
@@ -154,7 +154,7 @@
                     <ul class="nav-header pull-right">
                         <li>
                             <div class="btn-group">
-                                <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                                <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                     <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                     <i class="si si-user"></i>
                                     <span class="caret"></span>
@@ -188,13 +188,13 @@
                     <ul class="nav-header pull-left">
                         <li>
                             <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                            <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                            <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                                 <i class="si si-home"></i>
                             </button>
                         </li>
                         <li>
                             <a href="{{ url_for('page.home') }}">
-                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                             </a>
                         </li>
                     </ul>
