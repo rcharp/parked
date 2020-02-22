@@ -133,6 +133,18 @@ def setup_intent(domain, customer_id):
         return None
 
 
+def confirm_intent(si, pm):
+    try:
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        return stripe.SetupIntent.confirm(
+            si,
+            payment_method=pm,
+        )
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
 def create_session(email, site_url, domain):
     return stripe.checkout.Session.create(
         customer_email=email,

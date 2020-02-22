@@ -355,7 +355,7 @@
                           $.ajax({
                               url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
-                              data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pm': result.setupIntent.payment_method, 'si': result.setupIntent.id, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.success', domain=domain) }}';

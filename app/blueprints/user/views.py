@@ -37,7 +37,7 @@ from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment
+from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment, confirm_intent
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
@@ -444,10 +444,12 @@ def checkout():
 @csrf.exempt
 def save_reservation():
     if request.method == 'POST':
+        print(request.form)
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'si' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
+            si = request.form['si']
             domain = request.form['domain']
             customer_id = request.form['customer_id']
 
@@ -457,6 +459,9 @@ def save_reservation():
                 from app.blueprints.api.domain.domain import get_domain_availability
                 details = get_domain_availability(domain)
                 save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+
+                # Confirm the intent
+                confirm_intent(si, pm)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
