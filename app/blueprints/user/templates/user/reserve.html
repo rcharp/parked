@@ -172,7 +172,7 @@
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                Dashboard
+                                Reserve
                             </h1>
                         </div>
                     </div>
@@ -201,12 +201,14 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed" style="height:800px;">
-                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:350px;display:block;margin-bottom:50px;" class="col-md-12"><br><br>
+                                                <div style="text-align:center;font-size:24px;max-height:100px;width:100%;min-width:320px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Reserve <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">includes the first year.</span>
+                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
+                                                    <span style="font-size:18px">By reserving this domain, you agree to have your card charged $99 if we get the domain for you.</span><br /><br />
                                                 </div>
+                                                <div style="flex: 1 0 100px;"></div>
                                                 <div class="sr-root" style="text-align:center; font-size:24px;">
-                                                  <div class="sr-main" style="display:block;padding:40px;min-width:350px;margin-top:-20%;">
+                                                  <div class="sr-main" style="display:block;padding:40px;min-width:350px;">
                                                       <div style="text-align:center; font-size:18px;">
                                                             Please enter your card details
                                                       </div><br />
@@ -220,7 +222,7 @@
                                                         <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
                                                         <div style="text-align:center; font-size:14px;"><br /><br />
-                                                            Please note that your card won't be charged unless we secure {{ domain }} for you.
+                                                            By reserving {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
                                                       </div>
                                                     </form>
                                                     <div class="sr-result hidden">
@@ -351,7 +353,7 @@
                       // The payment has been processed!
                       if (result.setupIntent.status === 'succeeded') {
                           $.ajax({
-                              url: '{{ url_for("user.save_intent") }}',
+                              url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
                               data: {'pm': result.setupIntent.payment_method, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {

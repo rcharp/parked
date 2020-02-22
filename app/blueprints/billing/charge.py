@@ -1,10 +1,13 @@
 import stripe
 from flask import current_app, url_for
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, generate_id
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from sqlalchemy import exists, and_
 from app.extensions import db
+
+
+site_name = "GetParked.io"
 
 
 def stripe_checkout(email, domain, purchase=False):
@@ -63,7 +66,10 @@ def create_payment(domain, customer_id):
         customer=customer_id,
         currency="usd",
         description="Purchase " + domain + " -- $99",
-        payment_method_types=["card"]
+        payment_method_types=["card"],
+        # metadata={
+        #     'order_id': generate_id(),
+        # },
     )
 
 
@@ -72,7 +78,7 @@ def confirm_payment(domain):
     return stripe.PaymentIntent.create(
         amount=9900,
         currency="usd",
-        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
         payment_method_types=["card"]
     )
 
@@ -83,8 +89,11 @@ def charge_card(domain):
         amount=9900,
         confirm="True",
         currency="usd",
-        description="Buy " + domain + " from GetMyDomain.",
-        payment_method_types=["card"]
+        description="Buy " + domain + " from " + site_name + ".",
+        payment_method_types=["card"],
+        # metadata={
+        #     'order_id': generate_id(),
+        # },
     )
 
 
@@ -113,8 +122,11 @@ def setup_intent(domain, customer_id):
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
         return stripe.SetupIntent.create(
             customer=customer_id,
-            description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
-            payment_method_types=["card"]
+            description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
+            payment_method_types=["card"],
+            # metadata={
+            #     'order_id': generate_id(),
+            # },
         )
     except Exception as e:
         print_traceback(e)
@@ -126,8 +138,8 @@ def create_session(email, site_url, domain):
         customer_email=email,
         payment_method_types=['card'],
         line_items=[{
-            'name': 'GetMyDomain - Reserve ' + domain,
-            'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
+            'name': site_name + ' - Reserve ' + domain,
+            'description': "Reserve your domain with " + site_name + ". Your card won't be charged until we secure the domain.",
             'amount': 9900,
             'currency': 'usd',
             'quantity': 1,
@@ -156,3 +168,14 @@ def update_customer(pm, customer_id):
     except Exception as e:
         print_traceback(e)
         return False
+
+
+def delete_payment(order_id):
+    try:
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        return stripe.PaymentIntent.cancel(
+            order_id
+        )
+    except Exception as e:
+        print_traceback(e)
+        return None

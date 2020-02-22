@@ -253,7 +253,7 @@
                                                         {% else %}
                                                             There was an error checking this domain. Is it valid? Please try again.
                                                         {% endif %}
-                                                        <hr />
+                                                        <hr width="50%" style="margin-left:0" />
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
                                                                 <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
@@ -302,7 +302,7 @@
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
 {#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
-                                                                <input class="form-control" id="domain" name="domain" value="rickyc.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domain" name="domain" value="" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">

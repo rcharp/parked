@@ -59,11 +59,16 @@ def get_domain_expiration(domain):
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
     r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
+    if r.status_code == 200:
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+        if 'DomainInfoResponse' in results and 'DomainInfoContent' in results['DomainInfoResponse'] and 'Domain' in results['DomainInfoResponse']['DomainInfoContent'] and 'Expiration' in results['DomainInfoResponse']['DomainInfoContent']['Domain']:
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
 
-    expires = convert_timestamp_to_datetime_utc(float(results)/1000)
-    expires = get_dt_string(expires)
-    return expires
+            expires = convert_timestamp_to_datetime_utc(float(results)/1000)
+            expires = get_dt_string(expires)
+
+            return expires
+    return "Test Expiration Date"
 
 
 def get_domain_details(domain):

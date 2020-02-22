@@ -37,7 +37,7 @@ from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.billing.charge import stripe_checkout, create_payment
+from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
@@ -265,8 +265,10 @@ def check_availability():
         if domain is not None and domain['available'] is not None:
             save_search(domain_name, domain['expires'], current_user.id)
 
-        domains = Domain.query.filter(Domain.user_id == current_user.id).all()
-        return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
+            domains = Domain.query.filter(Domain.user_id == current_user.id).all()
+            return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
+        flash("The domain was invalid. Please try again.", "error")
+        return redirect(url_for('user.dashboard'))
     else:
         return redirect(url_for('user.dashboard'))
 
@@ -360,11 +362,14 @@ def delete_domain():
     if request.method == 'POST':
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+        order_id = domain.order_id
+
         domain.delete()
 
         # Ensure the domain has been deleted
         d = Domain.query.get(domain_id)
         if d is None:
+            delete_payment(order_id)
             flash('This domain reservation was successfully deleted.', 'success')
         else:
             flash('There was a problem deleting your reservation. Please try again.', 'error')
@@ -383,7 +388,7 @@ def update_domain():
             # Send a receipt email
 
             # Now that the domain has been registered, get the expiry to update the db
-            # expires = get_domain_expiration(domain)
+            expires = get_domain_expiration(domain)
 
             # Create and save the domain in the db if it isn't already
             if not db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
@@ -392,14 +397,14 @@ def update_domain():
                 d.customer_id = customer_id
                 d.registered = True
                 d.name = domain
-                # d.expires = expires
+                d.expires = expires
 
                 d.save()
             else:
                 d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
                 d.customer_id = customer_id
                 d.registered = True
-                # d.expires = expires
+                d.expires = expires
                 d.save()
 
     return redirect(url_for('user.dashboard'))
@@ -435,9 +440,9 @@ def checkout():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
-@user.route('/save_intent', methods=['GET','POST'])
+@user.route('/save_reservation', methods=['GET','POST'])
 @csrf.exempt
-def save_intent():
+def save_reservation():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
         if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
@@ -451,7 +456,7 @@ def save_intent():
                 # Save the domain after payment
                 from app.blueprints.api.domain.domain import get_domain_availability
                 details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
@@ -460,12 +465,12 @@ def save_intent():
     return redirect(url_for('user.dashboard'))
 
 
-@user.route('/success', methods=['POST'])
+@user.route('/success', methods=['GET', 'POST'])
 @csrf.exempt
 def success():
-    if request.method == 'GET':
-        flash('The page you were looking for wasn\'t found.', 'error')
-        return redirect(url_for('user.dashboard'))
+    # if request.method == 'GET':
+    #     flash('The page you were looking for wasn\'t found.', 'error')
+    #     return redirect(url_for('user.dashboard'))
 
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
@@ -474,9 +479,9 @@ def success():
 @user.route('/purchase_success', methods=['GET','POST'])
 @csrf.exempt
 def purchase_success():
-    if request.method == 'GET':
-        flash('The page you were looking for wasn\'t found.', 'error')
-        return redirect(url_for('user.dashboard'))
+    # if request.method == 'GET':
+    #     flash('The page you were looking for wasn\'t found.', 'error')
+    #     return redirect(url_for('user.dashboard'))
 
     flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
           category='success')
