@@ -67,7 +67,14 @@ def seed():
         'password': app.config['SEED_ADMIN_PASSWORD']
     }
 
+    member2 = {
+        'role': 'member',
+        'email': app.config['SEED_MEMBER_2_EMAIL'],
+        'password': app.config['SEED_ADMIN_PASSWORD']
+    }
+
     User(**member).save()
+    User(**member2).save()
 
     return User(**params).save()
 

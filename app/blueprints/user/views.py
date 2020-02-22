@@ -461,7 +461,7 @@ def save_reservation():
                 save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
                 # Confirm the intent
-                confirm_intent(si, pm)
+                # confirm_intent(si, pm)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
