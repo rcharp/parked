@@ -92,6 +92,6 @@ def save_search(domain, expires, user_id):
     return
 
 
-def update_customer(pm, customer_id):
+def update_customer(pm, customer_id, save_card):
     from app.blueprints.billing.charge import update_customer
-    return update_customer(pm, customer_id)
+    return update_customer(pm, customer_id, save_card)

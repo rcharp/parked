@@ -75,7 +75,7 @@
         <script src="https://js.stripe.com/v3/"></script>
 
     </head>
-    <body style="zoom: 80%;" onload="StripeCheckout()">
+    <body style="zoom: 80%;" onload="StripeCheckout(); DisableInputs()">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -172,7 +172,7 @@
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                Reserve
+                                Reserve a Domain
                             </h1>
                         </div>
                     </div>
@@ -203,28 +203,45 @@
                                             <div class="block block-themed" style="height:800px;">
                                                 <div style="text-align:center;font-size:24px;max-height:100px;width:100%;min-width:320px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Reserve <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
+                                                    <span style="font-size:18px">Includes the first year.</span><br />
                                                     <span style="font-size:18px">By reserving this domain, you agree to have your card charged $99 if we get the domain for you.</span><br /><br />
+                                                    {% if pm is not none %}
+                                                        <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
+                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use the card on file ending in {{ pm['card']['last4'] }}</span>
+                                                        </label>
+                                                    {% endif %}<br />
                                                 </div>
                                                 <div style="flex: 1 0 100px;"></div>
                                                 <div class="sr-root" style="text-align:center; font-size:24px;">
                                                   <div class="sr-main" style="display:block;padding:40px;min-width:350px;">
-                                                      <div style="text-align:center; font-size:18px;">
-                                                            Please enter your card details
-                                                      </div><br />
                                                     <form id="payment-form" class="sr-payment-form">
-                                                      <div class="sr-combo-inputs-row">
-                                                        <div class="sr-input sr-card-element" id="card-element"></div>
+                                                      <div class="{% if pm is not none %}text-muted{% endif %}" id="credentials" style="text-align:center; font-size:18px;">
+                                                        Please enter your card details
+                                                      </div>
+                                                      <div class="sr-combo-inputs-row" id="input-row">
+                                                        <div class="sr-input sr-card-element" id="card-element" disabled="disabled"></div>
                                                       </div>
                                                       <div class="sr-field-error" id="card-errors" role="alert"></div>
-                                                      <button id="submit" style="padding:15px;">
+                                                      <button id="submit" style="padding:15px;max-width:80%;margin:0 auto; float:none">
                                                         <div class="spinner hidden" id="spinner"></div>
                                                         <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
-                                                        <div style="text-align:center; font-size:14px;"><br /><br />
+                                                        <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                                            <input type="checkbox" id="save-card" name="save-card" {% if pm is not none %}disabled{% endif %} checked><span></span> <span style="font-size:16px;">Save this card for future purchases</span>
+                                                        </label><br /><br />
+                                                        <div style="text-align:center; font-size:14px;">
                                                             By reserving {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
                                                       </div>
                                                     </form>
+                                                    <div id="saved-card" style="display:none">
+                                                        <form id="saved-card-form" class="sr-payment-form">
+                                                            This is where the saved card will go.
+                                                            <button id="submit" style="padding:15px;max-width:80%;margin:0 auto; float:none">
+                                                                <div class="spinner hidden" id="spinner"></div>
+                                                                <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
+                                                              </button>
+                                                        </form>
+                                                    </div>
                                                     <div class="sr-result hidden">
                                                       <p>Payment completed<br /></p>
                                                       <pre>
@@ -336,6 +353,7 @@
                 form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
                   document.getElementById('submit').disabled = true;
+                  var save_card = $('#save-card').is(':checked');
                   stripe.confirmCardSetup(clientSecret, {
                     payment_method: {
                       card: card,
@@ -355,7 +373,7 @@
                           $.ajax({
                               url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
-                              data: {'pm': result.setupIntent.payment_method, 'si': result.setupIntent.id, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.success', domain=domain) }}';
@@ -372,8 +390,23 @@
                 });
             }
 
-            function SubmitPayment(clientSecret){
+            function DisableInputs() {
+                // Disable the card field if we are using a saved card
+                {% if pm is not none %}
+                    document.getElementById('payment-form').style.display = 'none';
+                    document.getElementById('saved-card').style.display = 'block';
+                {% endif %}
+            }
 
+            function UseCard()
+            {
+                if(document.getElementById('use-card').checked) {
+                    document.getElementById('payment-form').style.display = 'none';
+                    document.getElementById('saved-card').style.display = 'block';
+                } else {
+                    document.getElementById('payment-form').style.display = 'block';
+                    document.getElementById('saved-card').style.display = 'none';
+                }
             }
         </script>
 
