@@ -199,6 +199,7 @@ def template_processors(app):
     app.jinja_env.filters['dict_filter'] = dict_filter
     app.jinja_env.filters['today_filter'] = today_filter
     app.jinja_env.filters['site_name_filter'] = site_name_filter
+    app.jinja_env.filters['site_color_filter'] = site_color_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -335,3 +336,7 @@ def today_filter(arg):
 
 def site_name_filter(arg):
     return 'getparked.io'
+
+
+def site_color_filter(arg):
+    return '009fff'

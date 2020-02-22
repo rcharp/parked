@@ -257,12 +257,12 @@ def check_availability():
         # Uncomment this when ready to check multiple domains at once
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
-        domain_name = request.form['domain'].replace(' ','')
+        domain_name = request.form['domain'].replace(' ','').lower()
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
         # Save the search if it is a valid domain
-        if domain['available'] is not None:
+        if domain is not None and domain['available'] is not None:
             save_search(domain_name, domain['expires'], current_user.id)
 
         domains = Domain.query.filter(Domain.user_id == current_user.id).all()
@@ -418,6 +418,7 @@ def checkout():
             flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
     else:
+        flash("There was an error buying this domain. Please try again.", 'error')
         return render_template('user/dashboard.html', current_user=current_user)
 
 

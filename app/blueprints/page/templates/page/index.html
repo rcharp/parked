@@ -171,7 +171,7 @@
                                 <p class="lead base-plus-font-size text-center">
                                     Have a domain in mind that you want?<br />Backorder it and we'll buy it for you as soon as it becomes available.<br />
                                     Only $99 per domain.</p><br /><br />
-                                {% if domain is defined %}
+                                {% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;">
                                         <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}

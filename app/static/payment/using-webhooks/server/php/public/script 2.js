@@ -7,7 +7,7 @@ var orderData = {
 };
 
 // Disable the button until we have Stripe set up on the page
-document.getElementById("submit_payment").disabled = true;
+//document.getElementById("submit").disabled = true;
 
 fetch("/create-payment-intent.php", {
   method: "POST",
@@ -23,7 +23,7 @@ fetch("/create-payment-intent.php", {
     return setupElements(data);
   })
   .then(function({ stripe, card, clientSecret }) {
-    document.getElementById("submit_payment").disabled = false;
+    document.getElementById("submit").disabled = false;
 
     // Handle form submission.
     var form = document.getElementById("payment-form");
@@ -118,11 +118,11 @@ var showError = function(errorMsgText) {
 // Show a spinner on payment submission
 var changeLoadingState = function(isLoading) {
   if (isLoading) {
-    document.getElementById("submit_payment").disabled = true;
+    document.getElementById("submit").disabled = true;
     document.querySelector("#spinner").classList.remove("hidden");
     document.querySelector("#button-text").classList.add("hidden");
   } else {
-    document.getElementById("submit_payment").disabled = false;
+    document.getElementById("submit").disabled = false;
     document.querySelector("#spinner").classList.add("hidden");
     document.querySelector("#button-text").classList.remove("hidden");
   }

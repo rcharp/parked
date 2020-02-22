@@ -215,7 +215,7 @@
                                                         <div class="sr-input sr-card-element" id="card-element"></div>
                                                       </div>
                                                       <div class="sr-field-error" id="card-errors" role="alert"></div>
-                                                      <button id="submit_payment" style="padding:15px;">
+                                                      <button id="submit" style="padding:15px;">
                                                         <div class="spinner hidden" id="spinner"></div>
                                                         <span id="button-text" style="font-size:16px;">Buy {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
@@ -331,9 +331,9 @@
                 var form = document.getElementById('payment-form');
                 var clientSecret = '{{ si.client_secret }}';
 
-                form.addEventListener('submit_payment', function(ev) {
+                form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
-                  document.getElementById('submit_payment').disabled = true;
+                  document.getElementById('submit').disabled = true;
                   stripe.confirmCardPayment(clientSecret, {
                     payment_method: {
                       card: card,
@@ -345,6 +345,7 @@
                   }
                   ).then(function(result) {
                     if (result.error) {
+                        window.location.href='{{ url_for('user.dashboard') }}';
                         alert(result.error.message);
                       // Show error to your customer (e.g., insufficient funds)
                       console.log(result.error.message);
