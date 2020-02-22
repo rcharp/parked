@@ -184,7 +184,7 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:60%; margin:0 auto; min-width:420px; float:none;">
+                        <div class="col-md-4" style="width:60%; margin:0 auto; margin-top:100px; min-width:420px; float:none;">
                             <!-- Block Tabs Alternative Style -->
                             <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs" style="padding:1px;">
@@ -219,7 +219,7 @@
             <!-- Footer -->
             <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
                 <div class="pull-right">
-                    <a href="https://www.getquickflow.com/contact">Contact Us</a> | <a href="https://www.getquickflow.com/privacy">Privacy Policy</a> | <a href="https://www.getquickflow.com/terms">Terms of Service</a>
+                    <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>
                 <div class="pull-left">
                     <a class="font-w600" href="http://goo.gl/6LF10W" target="_blank">OneUI 3.1</a> &copy; <span class="js-year-copy"></span>

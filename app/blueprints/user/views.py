@@ -327,6 +327,9 @@ def register_domain():
 @user.route('/view_domain', methods=['GET','POST'])
 @csrf.exempt
 def view_domain():
+
+    # from app.blueprints.api.domain.dynadot import get_domain_details
+
     # Get and register the domain
     if request.method == 'POST':
         domain_id = request.form['domain']
@@ -336,6 +339,16 @@ def view_domain():
 
         return render_template('user/view.html', current_user=current_user, domain=domain.name, details=details, registered=registered)
 
+    else:
+        try:
+            domain_name = request.args.get('domain')
+            domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.name == domain_name).scalar()
+            details = get_domain_details(domain_name)
+            registered = domain.registered
+
+            return render_template('user/view.html', current_user=current_user, domain=domain.name, details=details, registered=registered)
+        except Exception as e:
+            flash("There was an error. Please try again.", 'error')
     return redirect(url_for('user.dashboard'))
 
 
@@ -400,7 +413,7 @@ def checkout():
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
             flash('You already own this domain!', 'error')
-            return redirect(url_for('user.dashboard'))
+            # return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain
             if register(domain) or True:
@@ -447,9 +460,13 @@ def save_intent():
     return redirect(url_for('user.dashboard'))
 
 
-@user.route('/success', methods=['GET','POST'])
+@user.route('/success', methods=['POST'])
 @csrf.exempt
 def success():
+    if request.method == 'GET':
+        flash('The page you were looking for wasn\'t found.', 'error')
+        return redirect(url_for('user.dashboard'))
+
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
 
@@ -457,7 +474,11 @@ def success():
 @user.route('/purchase_success', methods=['GET','POST'])
 @csrf.exempt
 def purchase_success():
-    flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'>your dashboard</a>."),
+    if request.method == 'GET':
+        flash('The page you were looking for wasn\'t found.', 'error')
+        return redirect(url_for('user.dashboard'))
+
+    flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
           category='success')
     return render_template('user/purchase_success.html', current_user=current_user)
 

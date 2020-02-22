@@ -64,3 +64,14 @@ def get_domain_expiration(domain):
     expires = convert_timestamp_to_datetime_utc(float(results)/1000)
     expires = get_dt_string(expires)
     return expires
+
+
+def get_domain_details(domain):
+    # Ensure that the domain can be registered
+    api_key = current_app.config.get('DYNADOT_API_KEY')
+    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+    r = requests.get(url=dynadot_url)
+
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']
+
+    return results
