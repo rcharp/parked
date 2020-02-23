@@ -75,7 +75,7 @@
         <script src="https://js.stripe.com/v3/"></script>
 
     </head>
-    <body style="zoom: 80%;" onload="StripeCheckout()">
+    <body style="zoom: 80%;" onload="StripeCheckout(); DisableInputs();">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -201,17 +201,22 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed" style="height:800px;">
-                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:350px;display:block;margin-bottom:50px;" class="col-md-12"><br><br>
+                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:350px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Buy <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">For the first year.</span>
+                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
+                                                    {% if pm is not none %}
+                                                        <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
+                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use {{ pm['card']['brand']|capitalize }} ****{{ pm['card']['last4'] }} to buy this domain</span>
+                                                        </label>
+                                                    {% endif %}<br />
                                                 </div>
                                                 <div style="flex: 1 0 100px;"></div>
                                                 <div class="sr-root" style="text-align:center; font-size:24px;">
                                                   <div class="sr-main" style="display:block;padding:40px;min-width:350px;">
-                                                      <div style="text-align:center; font-size:18px;">
-                                                            Please enter your card details
-                                                      </div><br />
                                                     <form id="payment-form" class="sr-payment-form">
+                                                      <div class="{% if pm is not none %}text-muted{% endif %}" id="credentials" style="text-align:center; font-size:18px;">
+                                                        Please enter your card details
+                                                      </div><br />
                                                       <div class="sr-combo-inputs-row">
                                                         <div class="sr-input sr-card-element" id="card-element"></div>
                                                       </div>
@@ -220,10 +225,25 @@
                                                         <div class="spinner hidden" id="spinner"></div>
                                                         <span id="button-text" style="font-size:16px;">Buy {{ domain }}</span><span id="order-amount"></span>
                                                       </button>
-                                                        <div style="text-align:center; font-size:14px;"><br /><br />
+                                                        <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                                            <input type="checkbox" id="save-card" name="save-card" {% if pm is not none %}disabled{% endif %} checked><span></span> <span style="font-size:16px;">Save this card for future purchases</span>
+                                                        </label><br /><br />
+                                                        <div style="text-align:center; font-size:14px;">
                                                             By purchasing {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
                                                       </div>
                                                     </form>
+                                                      <div id="saved-card" style="display:none">
+                                                        <form id="payment-form" class="sr-payment-form">
+                                                            <button id="saved-submit" type="button" onclick="CreatePayment();" style="padding:15px;max-width:80%;margin:0 auto; float:none">
+                                                                <div class="spinner hidden" id="spinner"></div>
+                                                                <span id="button-text" style="font-size:16px;">Buy {{ domain }} -- $99</span><span id="order-amount"></span>
+                                                            </button>
+                                                            <br /><br />
+                                                            <div style="text-align:center; font-size:14px;">
+                                                                By purchasing {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
+                                                            </div>
+                                                        </form>
+                                                      </div>
                                                     <div class="sr-result hidden">
                                                       <p>Payment completed<br /></p>
                                                       <pre>
@@ -324,6 +344,7 @@
                   const displayError = document.getElementById('card-errors');
                   if (error) {
                     displayError.textContent = error.message;
+                    displayError.style.color = 'red';
                   } else {
                     displayError.textContent = '';
                   }
@@ -373,8 +394,35 @@
                 });
             }
 
-            function SubmitPayment(clientSecret){
+            function DisableInputs() {
+                // Disable the card field if we are using a saved card
+                {% if pm is not none %}
+                    document.getElementById('payment-form').style.display = 'none';
+                    document.getElementById('saved-card').style.display = 'block';
+                {% endif %}
+            }
 
+            function CreatePayment() {
+                $.ajax({
+                  url: '{{ url_for("user.saved_card_payment") }}',
+                  type: 'POST',
+                  data: {'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                  success: function (response) {
+                      var domain = '{{ domain }}';
+                      window.location.href='{{ url_for('user.purchase_success', domain=domain) }}';
+                  }
+                });
+            }
+
+            function UseCard()
+            {
+                if(document.getElementById('use-card').checked) {
+                    document.getElementById('payment-form').style.display = 'none';
+                    document.getElementById('saved-card').style.display = 'block';
+                } else {
+                    document.getElementById('payment-form').style.display = 'block';
+                    document.getElementById('saved-card').style.display = 'none';
+                }
             }
         </script>
 

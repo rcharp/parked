@@ -37,7 +37,7 @@ from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment, confirm_intent, get_payment_method
+from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment, confirm_intent, get_payment_method, get_card
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
@@ -239,7 +239,7 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
-    test = True
+    test = False
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -429,7 +429,8 @@ def checkout():
 
                 # Redirect to the payment page
                 if si is not None:
-                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email)
+                    pm = get_payment_method(si)
+                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email, pm=pm)
 
             flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
@@ -468,9 +469,9 @@ def save_reservation():
     return redirect(url_for('user.dashboard'))
 
 
-@user.route('/create_intent', methods=['GET','POST'])
+@user.route('/saved_card_intent', methods=['GET','POST'])
 @csrf.exempt
-def create_intent():
+def saved_card_intent():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
         if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
@@ -488,6 +489,31 @@ def create_intent():
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
+
+    flash('There was a problem reserving your domain. Please try again.', 'error')
+    return redirect(url_for('user.dashboard'))
+
+
+@user.route('/saved_card_payment', methods=['GET','POST'])
+@csrf.exempt
+def saved_card_payment():
+    if request.method == 'POST':
+        # Save the customer's info to db on successful charge if they don't already exist
+        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+
+            pm = request.form['pm']
+            domain = request.form['domain']
+            customer_id = request.form['customer_id']
+
+            # Create the payment with the existing payment method
+            if create_payment(domain, customer_id, pm, True):
+                # Save the domain after payment
+                from app.blueprints.api.domain.domain import get_domain_availability
+                details = get_domain_availability(domain)
+                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
+
+                flash('Your domain was successfully purchased!', 'success')
+                return render_template('user/purchase_success.html', current_user=current_user)
 
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
@@ -525,19 +551,10 @@ def settings():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    # Get settings trial information
-    trial_days_left = -1
-    if not current_user.customer and not current_user.trial and current_user.role == 'member':
-        flash(Markup("Your free trial has expired. Please <a href='/subscription/update'>sign up</a> for a plan to continue."), category='error')
+    c = Customer.query.filter(Customer.user_id == current_user.id).scalar()
+    card = get_card(c)
 
-    if current_user.trial and current_user.role == 'member':
-        trial_days_left = 14 - (datetime.datetime.now() - current_user.created_on.replace(tzinfo=None)).days
-
-    if trial_days_left < 0:
-        current_user.trial = False
-        current_user.save()
-
-    return render_template('user/settings.html', current_user=current_user, trial_days_left=trial_days_left)
+    return render_template('user/settings.html', current_user=current_user, card=card)
 
 
 # Contact us -------------------------------------------------------------------

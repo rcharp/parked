@@ -203,11 +203,11 @@
                                             <div class="block block-themed" style="height:800px;">
                                                 <div style="text-align:center;font-size:24px;max-height:100px;width:100%;min-width:320px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Reserve <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">Includes the first year.</span><br />
+                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
                                                     <span style="font-size:18px">By reserving this domain, you agree to have your card charged $99 if we get the domain for you.</span><br /><br />
                                                     {% if pm is not none %}
                                                         <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
-                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use the {{ pm['card']['brand']|capitalize }} on file ending in {{ pm['card']['last4'] }}</span>
+                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use {{ pm['card']['brand']|capitalize }} ****{{ pm['card']['last4'] }} for this reservation</span>
                                                         </label>
                                                     {% endif %}<br />
                                                 </div>
@@ -235,7 +235,7 @@
                                                     </form>
                                                     <div id="saved-card" style="display:none">
                                                         <form id="payment-form" class="sr-payment-form">
-                                                            <button id="saved-submit" type="button" onclick="CreatePayment();" style="padding:15px;max-width:80%;margin:0 auto; float:none">
+                                                            <button id="saved-submit" type="button" onclick="CreatePaymentIntent();" style="padding:15px;max-width:80%;margin:0 auto; float:none">
                                                                 <div class="spinner hidden" id="spinner"></div>
                                                                 <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
                                                             </button>
@@ -345,6 +345,7 @@
                   const displayError = document.getElementById('card-errors');
                   if (error) {
                     displayError.textContent = error.message;
+                    displayError.style.color = 'red';
                   } else {
                     displayError.textContent = '';
                   }
@@ -402,9 +403,9 @@
                 {% endif %}
             }
 
-            function CreatePayment() {
+            function CreatePaymentIntent() {
                 $.ajax({
-                  url: '{{ url_for("user.create_intent") }}',
+                  url: '{{ url_for("user.saved_card_intent") }}',
                   type: 'POST',
                   data: {'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                   success: function (response) {
