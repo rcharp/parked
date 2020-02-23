@@ -284,11 +284,11 @@ def reserve_domain():
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
             # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
-            d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
-            d.delete()
+            # d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
+            # d.delete()
 
-            # flash('You already have this domain reserved!', 'error')
-            # return redirect(url_for('user.dashboard'))
+            flash('You already have this domain reserved!', 'error')
+            return redirect(url_for('user.dashboard'))
 
         try:
             # Setup the payment method
@@ -456,6 +456,31 @@ def save_reservation():
 
             if update_customer(pm, customer_id, save_card):
 
+                # Save the domain after payment
+                from app.blueprints.api.domain.domain import get_domain_availability
+                details = get_domain_availability(domain)
+                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+
+                flash('Your domain was successfully reserved!', 'success')
+                return render_template('user/success.html', current_user=current_user)
+
+    flash('There was a problem reserving your domain. Please try again.', 'error')
+    return redirect(url_for('user.dashboard'))
+
+
+@user.route('/create_intent', methods=['GET','POST'])
+@csrf.exempt
+def create_intent():
+    if request.method == 'POST':
+        # Save the customer's info to db on successful charge if they don't already exist
+        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+
+            pm = request.form['pm']
+            domain = request.form['domain']
+            customer_id = request.form['customer_id']
+
+            # Create the payment intent with the existing payment method
+            if create_payment(domain, customer_id, pm):
                 # Save the domain after payment
                 from app.blueprints.api.domain.domain import get_domain_availability
                 details = get_domain_availability(domain)

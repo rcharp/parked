@@ -346,8 +346,8 @@
                   }
                   ).then(function(result) {
                     if (result.error) {
-                        window.location.href='{{ url_for('user.dashboard') }}';
                         alert(result.error.message);
+                        document.getElementById('submit').disabled = false;
                       // Show error to your customer (e.g., insufficient funds)
                       console.log(result.error.message);
                     } else {

@@ -75,7 +75,7 @@
         <script src="https://js.stripe.com/v3/"></script>
 
     </head>
-    <body style="zoom: 80%;" onload="StripeCheckout(); DisableInputs()">
+    <body style="zoom: 80%;" onload="StripeCheckout(); DisableInputs();">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -207,7 +207,7 @@
                                                     <span style="font-size:18px">By reserving this domain, you agree to have your card charged $99 if we get the domain for you.</span><br /><br />
                                                     {% if pm is not none %}
                                                         <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
-                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use the card on file ending in {{ pm['card']['last4'] }}</span>
+                                                            <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use the {{ pm['card']['brand']|capitalize }} on file ending in {{ pm['card']['last4'] }}</span>
                                                         </label>
                                                     {% endif %}<br />
                                                 </div>
@@ -217,7 +217,7 @@
                                                     <form id="payment-form" class="sr-payment-form">
                                                       <div class="{% if pm is not none %}text-muted{% endif %}" id="credentials" style="text-align:center; font-size:18px;">
                                                         Please enter your card details
-                                                      </div>
+                                                      </div><br />
                                                       <div class="sr-combo-inputs-row" id="input-row">
                                                         <div class="sr-input sr-card-element" id="card-element" disabled="disabled"></div>
                                                       </div>
@@ -231,15 +231,18 @@
                                                         </label><br /><br />
                                                         <div style="text-align:center; font-size:14px;">
                                                             By reserving {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
-                                                      </div>
+                                                        </div>
                                                     </form>
                                                     <div id="saved-card" style="display:none">
-                                                        <form id="saved-card-form" class="sr-payment-form">
-                                                            This is where the saved card will go.
-                                                            <button id="submit" style="padding:15px;max-width:80%;margin:0 auto; float:none">
+                                                        <form id="payment-form" class="sr-payment-form">
+                                                            <button id="saved-submit" type="button" onclick="CreatePayment();" style="padding:15px;max-width:80%;margin:0 auto; float:none">
                                                                 <div class="spinner hidden" id="spinner"></div>
                                                                 <span id="button-text" style="font-size:16px;">Reserve {{ domain }}</span><span id="order-amount"></span>
-                                                              </button>
+                                                            </button>
+                                                            <br /><br />
+                                                            <div style="text-align:center; font-size:14px;">
+                                                                By reserving {{ domain }} you agree to our <a href="{{ url_for('page.terms') }}"><span style="color:#009fff">Terms and Conditions</span></a>.
+                                                            </div>
                                                         </form>
                                                     </div>
                                                     <div class="sr-result hidden">
@@ -365,6 +368,7 @@
                   ).then(function(result) {
                     if (result.error) {
                         alert(result.error.message);
+                        document.getElementById('submit').disabled = false;
                       // Show error to your customer (e.g., insufficient funds)
                       console.log(result.error.message);
                     } else {
@@ -396,6 +400,18 @@
                     document.getElementById('payment-form').style.display = 'none';
                     document.getElementById('saved-card').style.display = 'block';
                 {% endif %}
+            }
+
+            function CreatePayment() {
+                $.ajax({
+                  url: '{{ url_for("user.create_intent") }}',
+                  type: 'POST',
+                  data: {'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                  success: function (response) {
+                      var domain = '{{ domain }}';
+                      window.location.href='{{ url_for('user.success', domain=domain) }}';
+                  }
+                });
             }
 
             function UseCard()

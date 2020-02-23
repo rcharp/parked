@@ -59,15 +59,26 @@ def stripe_checkout(email, domain, purchase=False):
         return None
 
 
-def create_payment(domain, customer_id):
+def create_payment(domain, customer_id, pm=None):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.PaymentIntent.create(
-        amount=9900,
-        customer=customer_id,
-        currency="usd",
-        description="Purchase " + domain + " -- $99",
-        payment_method_types=["card"],
-    )
+
+    if pm is not None:
+        return stripe.PaymentIntent.create(
+            amount=9900,
+            customer=customer_id,
+            payment_method=pm,
+            currency="usd",
+            description="Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain.",
+            payment_method_types=["card"],
+        )
+    else:
+        return stripe.PaymentIntent.create(
+            amount=9900,
+            customer=customer_id,
+            currency="usd",
+            description="Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain.",
+            payment_method_types=["card"],
+        )
 
 
 def confirm_payment(domain):
