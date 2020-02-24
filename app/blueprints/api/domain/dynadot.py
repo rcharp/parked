@@ -92,12 +92,12 @@ def backorder_request(domain):
             r = requests.get(url=dynadot_url)
 
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
-            response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']['SuccessCode']
+            response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
 
-            print("results are")
-            print(results)
+            # print("results are")
+            # print(results)
 
-            return response == '0'
+            return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
         # Still create the backorder in the db, but set backorder.available to False
         return False
@@ -108,13 +108,17 @@ def backorder_request(domain):
 
 
 def delete_backorder_request(domain):
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
-    r = requests.get(url=dynadot_url)
+    try:
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
+        r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
-    return results
+        return True
+    except Exception as e:
+        print_traceback(e)
+        return False
 
 
 # This needs to be here because importing it from domain.domain creates a circular dependency
