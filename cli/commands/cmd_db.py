@@ -10,6 +10,7 @@ from app.extensions import db
 from app.blueprints.user.models import User
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
+from app.blueprints.api.models.backorder import Backorder
 from importlib import import_module
 from app.blueprints.api.api_functions import print_traceback
 

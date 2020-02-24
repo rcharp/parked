@@ -77,7 +77,7 @@ def save_domain(user_id, customer_id, pm, domain, expires, reserve_time, registe
     d.registered = registered
 
     d.save()
-    return
+    return d
 
 
 def save_search(domain, expires, user_id):
@@ -90,6 +90,21 @@ def save_search(domain, expires, user_id):
         s.user_id = user_id
 
         s.save()
+    return
+
+
+def create_backorder(domain, customer_id, user_id):
+    from app.blueprints.api.models.backorder import Backorder
+
+    b = Backorder()
+    b.domain = domain.id
+    b.domain_name = domain.name
+    b.expires = domain.expires
+    b.user_id = user_id
+    b.customer_id = customer_id
+    b.active = True
+
+    b.save()
     return
 
 

@@ -37,16 +37,24 @@ from datetime import datetime as dt
 from app.extensions import cache, csrf, timeout, db
 from importlib import import_module
 from sqlalchemy import or_, and_, exists
-from app.blueprints.billing.charge import stripe_checkout, create_payment, delete_payment, confirm_intent, get_payment_method, get_card
+from app.blueprints.billing.charge import (
+    stripe_checkout,
+    create_payment,
+    delete_payment,
+    confirm_intent,
+    get_payment_method,
+    get_card
+)
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
-from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback
+from app.blueprints.api.api_functions import save_domain, update_customer, print_traceback, create_backorder
 from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     register_domain as register,
     check_domain,
-    get_domain_expiration
+    get_domain_expiration,
+    backorder_request
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -239,7 +247,7 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
-    test = False
+    test = True
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -456,14 +464,20 @@ def save_reservation():
             customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id, save_card):
+                # Create the backorder request in Dynadot
+                if backorder_request(domain):
 
-                # Save the domain after payment
-                from app.blueprints.api.domain.domain import get_domain_availability
-                details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                    # Save the domain
+                    from app.blueprints.api.domain.domain import get_domain_availability
+                    details = get_domain_availability(domain)
+                    d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
-                flash('Your domain was successfully reserved!', 'success')
-                return render_template('user/success.html', current_user=current_user)
+                    # Save the backorder to the db
+                    c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+                    create_backorder(d, c.id, current_user.id)
+
+                    flash('Your domain was successfully reserved!', 'success')
+                    return render_template('user/success.html', current_user=current_user)
 
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
@@ -522,10 +536,6 @@ def saved_card_payment():
 @user.route('/success', methods=['GET', 'POST'])
 @csrf.exempt
 def success():
-    # if request.method == 'GET':
-    #     flash('The page you were looking for wasn\'t found.', 'error')
-    #     return redirect(url_for('user.dashboard'))
-
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
 
@@ -533,10 +543,6 @@ def success():
 @user.route('/purchase_success', methods=['GET','POST'])
 @csrf.exempt
 def purchase_success():
-    # if request.method == 'GET':
-    #     flash('The page you were looking for wasn\'t found.', 'error')
-    #     return redirect(url_for('user.dashboard'))
-
     flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
           category='success')
     return render_template('user/purchase_success.html', current_user=current_user)

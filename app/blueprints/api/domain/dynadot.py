@@ -80,3 +80,30 @@ def get_domain_details(domain):
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']
 
     return results
+
+
+def backorder_request(domain):
+    try:
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
+        r = requests.get(url=dynadot_url)
+
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+
+        print(results)
+
+        return True
+    except Exception as e:
+        print_traceback(e)
+
+    return False
+
+
+def delete_backorder_request(domain):
+    api_key = current_app.config.get('DYNADOT_API_KEY')
+    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
+    r = requests.get(url=dynadot_url)
+
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))
+
+    return results

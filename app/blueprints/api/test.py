@@ -11,7 +11,9 @@ from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     check_domain,
     register_domain,
-    get_domain_expiration
+    get_domain_expiration,
+    backorder_request,
+    delete_backorder_request
 )
 
 
@@ -37,6 +39,6 @@ def test(domain):
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
     # results = check_domain(domain)
-    results = get_domain_expiration(domain)
+    results = backorder_request(domain)
     # results = register_domain(domain)
     return results

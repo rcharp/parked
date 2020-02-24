@@ -4,22 +4,28 @@ from lib.util_sqlalchemy import ResourceMixin, AwareDateTime
 from app.extensions import db
 
 
-class SearchedDomain(ResourceMixin, db.Model):
+class Backorder(ResourceMixin, db.Model):
 
-    __tablename__ = 'searched_domains'
+    __tablename__ = 'backorders'
 
     # Objects.
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    domain_name = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    active = db.Column('active', db.Boolean(), nullable=False, server_default='0')
+    registered = db.Column('registered', db.Boolean(), nullable=False, server_default='0')
 
     # Relationships.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),
                            index=True, nullable=True, primary_key=False, unique=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', onupdate='CASCADE', ondelete='CASCADE'),
+                        index=True, nullable=True, primary_key=False, unique=False)
+    domain = db.Column(db.Integer, db.ForeignKey('domains.id', onupdate='CASCADE', ondelete='CASCADE'),
+                            index=True, nullable=True, primary_key=False, unique=False)
 
     def __init__(self, **kwargs):
         # Call Flask-SQLAlchemy's constructor.
-        super(SearchedDomain, self).__init__(**kwargs)
+        super(Backorder, self).__init__(**kwargs)
 
     @classmethod
     def find_by_id(cls, identity):
@@ -30,8 +36,8 @@ class SearchedDomain(ResourceMixin, db.Model):
         :type identity: str
         :return: User instance
         """
-        return SearchedDomain.query.filter(
-          (SearchedDomain.id == identity).first())
+        return Backorder.query.filter(
+          (Backorder.id == identity).first())
 
     @classmethod
     def search(cls, query):
@@ -46,7 +52,7 @@ class SearchedDomain(ResourceMixin, db.Model):
             return ''
 
         search_query = '%{0}%'.format(query)
-        search_chain = (SearchedDomain.id.ilike(search_query))
+        search_chain = (Backorder.id.ilike(search_query))
 
         return or_(*search_chain)
 
@@ -63,12 +69,12 @@ class SearchedDomain(ResourceMixin, db.Model):
         delete_count = 0
 
         for id in ids:
-            searched_domain = SearchedDomain.query.get(id)
+            backorder = Backorder.query.get(id)
 
-            if searched_domain is None:
+            if backorder is None:
                 continue
 
-            searched_domain.delete()
+            backorder.delete()
 
             delete_count += 1
 
