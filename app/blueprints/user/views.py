@@ -59,7 +59,7 @@ from app.blueprints.api.api_functions import (
 from app.blueprints.api.domain.domain import get_domain_details, get_domain_availability, get_domain_tld
 from app.blueprints.api.domain.dynadot import (
     register_domain as register,
-    check_domain,
+    delete_backorder_request,
     get_domain_expiration,
     backorder_request
 )
@@ -346,6 +346,7 @@ def delete_domain():
         order_id = domain.pm
 
         domain.delete()
+        delete_backorder_request(domain.name)
 
         # Ensure the domain has been deleted
         d = Domain.query.get(domain_id)

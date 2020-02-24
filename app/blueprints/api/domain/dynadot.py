@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, active_backorders
 from app.blueprints.page.date import get_string_from_utc_datetime, convert_timestamp_to_datetime_utc
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
@@ -94,8 +94,8 @@ def backorder_request(domain):
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
             response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
 
-            print("results are")
-            print(results)
+            # print("results are")
+            # print(results)
 
             return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
@@ -108,17 +108,19 @@ def backorder_request(domain):
 
 
 def delete_backorder_request(domain):
-    try:
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
-        r = requests.get(url=dynadot_url)
+    if not active_backorders(domain):
+        try:
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
+            r = requests.get(url=dynadot_url)
 
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
-        return True
-    except Exception as e:
-        print_traceback(e)
-        return False
+            return True
+        except Exception as e:
+            print_traceback(e)
+            return False
+    return False
 
 
 # This needs to be here because importing it from domain.domain creates a circular dependency

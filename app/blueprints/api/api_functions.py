@@ -109,6 +109,13 @@ def create_backorder(domain, customer_id, user_id, pending_delete):
     return
 
 
+def active_backorders(domain):
+    from app.blueprints.api.models.backorder import Backorder
+    if not db.session.query(exists().where(and_(Backorder.domain_name == domain, Backorder.active.is_(True)))).scalar():
+        return False
+    return True
+
+
 def update_customer(pm, customer_id, save_card):
     from app.blueprints.billing.charge import update_customer
     return update_customer(pm, customer_id, save_card)
