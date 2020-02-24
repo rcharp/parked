@@ -90,6 +90,7 @@ def backorder_request(domain):
 
         results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
+        print('Results are')
         print(results)
 
         return True

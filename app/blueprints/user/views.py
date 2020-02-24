@@ -497,13 +497,19 @@ def saved_card_intent():
 
             # Create the payment intent with the existing payment method
             if create_payment(domain, customer_id, pm):
-                # Save the domain after payment
-                from app.blueprints.api.domain.domain import get_domain_availability
-                details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                # Create the backorder request in Dynadot
+                if backorder_request(domain):
+                    # Save the domain after payment
+                    from app.blueprints.api.domain.domain import get_domain_availability
+                    details = get_domain_availability(domain)
+                    d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
 
-                flash('Your domain was successfully reserved!', 'success')
-                return render_template('user/success.html', current_user=current_user)
+                    # Save the backorder to the db
+                    c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+                    create_backorder(d, c.id, current_user.id)
+
+                    flash('Your domain was successfully reserved!', 'success')
+                    return render_template('user/success.html', current_user=current_user)
 
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
