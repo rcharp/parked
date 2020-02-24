@@ -247,7 +247,7 @@ def dashboard():
         current_user.trial = False
         current_user.save()
 
-    test = True
+    test = False
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -372,14 +372,15 @@ def delete_domain():
     if request.method == 'POST':
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
-        order_id = domain.order_id
+        order_id = domain.pm
 
         domain.delete()
 
         # Ensure the domain has been deleted
         d = Domain.query.get(domain_id)
         if d is None:
-            delete_payment(order_id)
+            # Delete the Payment Intent
+            # delete_payment(order_id)
             flash('This domain reservation was successfully deleted.', 'success')
         else:
             flash('There was a problem deleting your reservation. Please try again.', 'error')

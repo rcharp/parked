@@ -73,7 +73,7 @@ def save_domain(user_id, customer_id, pm, domain, expires, reserve_time, registe
     d.expires = expires
     d.created_on = get_dt_string(reserve_time)
     d.customer_id = customer_id
-    d.order_id = pm
+    d.pm = pm
     d.registered = registered
 
     d.save()
