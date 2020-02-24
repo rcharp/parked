@@ -241,24 +241,13 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    # Get settings trial information
-    trial_days_left = -1
-    if not current_user.customer and not current_user.trial and current_user.role == 'member':
-        flash(Markup("Your free trial has expired. Please <a href='/subscription/update'>sign up</a> for a plan to continue."), category='error')
-
-    if current_user.trial and current_user.role == 'member':
-        trial_days_left = 14 - (datetime.datetime.now() - current_user.created_on.replace(tzinfo=None)).days
-
-    if trial_days_left < 0:
-        current_user.trial = False
-        current_user.save()
-
     test = False
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
+    tlds = valid_tlds()
 
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched)
+    return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched, tlds=tlds)
 
 
 # Domain Functions -------------------------------------------------------------------
