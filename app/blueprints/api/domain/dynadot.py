@@ -13,6 +13,7 @@ import re
 from decimal import Decimal
 from dynadotpy.client import Dynadot
 import xmltodict
+from builtins import any
 
 
 def check_domain(domain):
@@ -84,16 +85,22 @@ def get_domain_details(domain):
 
 def backorder_request(domain):
     try:
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
-        r = requests.get(url=dynadot_url)
+        # "Pending Delete" is in the domain's status, so it can be backordered now
+        if get_domain_status(domain):
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
+            r = requests.get(url=dynadot_url)
 
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']['SuccessCode']
 
-        print('Results are')
-        print(results)
+            print("results are")
+            print(results)
 
-        return True
+            return response == '0'
+
+        # Still create the backorder in the db, but set backorder.available to False
+        return False
     except Exception as e:
         print_traceback(e)
 
@@ -108,3 +115,20 @@ def delete_backorder_request(domain):
     results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
     return results
+
+
+# This needs to be here because importing it from domain.domain creates a circular dependency
+# Returns true if "pending delete" is in the domain's status, meaning it can be backordered
+def get_domain_status(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+
+        details = pythonwhois.get_whois(domain)
+
+        # Remove the raw data
+        status = details['status']
+        return any('pendingDelete' in x for x in status)
+    except Exception as e:
+        print_traceback(e)
+        return False

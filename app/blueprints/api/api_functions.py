@@ -93,7 +93,7 @@ def save_search(domain, expires, user_id):
     return
 
 
-def create_backorder(domain, customer_id, user_id):
+def create_backorder(domain, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
 
     b = Backorder()
@@ -103,6 +103,7 @@ def create_backorder(domain, customer_id, user_id):
     b.user_id = user_id
     b.customer_id = customer_id
     b.active = True
+    b.available = pending_delete
 
     b.save()
     return
@@ -111,3 +112,7 @@ def create_backorder(domain, customer_id, user_id):
 def update_customer(pm, customer_id, save_card):
     from app.blueprints.billing.charge import update_customer
     return update_customer(pm, customer_id, save_card)
+
+
+def valid_tlds():
+    return ['.com', '.net', '.org', '.co', '.tv', '.cc', '.us', '.biz', '.info', '.mobi', '.pro', '.red', '.blue', '.black', '.pink', '.green', '.kim', '.poker', '.organic', '.lgbt', '.bet', '.vote', '.voto', '.promo', '.archi', '.bio', '.ski', '.io', '.me']

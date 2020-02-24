@@ -52,4 +52,33 @@ def get_domain_details(domain):
         return None
 
 
+# WhoIs get domain registration details
+def get_domain_tld(domain):
+    try:
+        ext = tldextract.extract(domain)
+        tld = ext.suffix
+        return '.' + tld
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+# WhoIs get status of domain
+def get_domain_status(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+
+        details = pythonwhois.get_whois(domain)
+
+        # Remove the raw data
+        del details['raw']
+
+        print(details)
+
+        return True
+    except Exception as e:
+        print_traceback(e)
+        return False
+
 
