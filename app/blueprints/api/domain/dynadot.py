@@ -94,8 +94,8 @@ def backorder_request(domain):
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
             response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
 
-            # print("results are")
-            # print(results)
+            print("results are")
+            print(results)
 
             return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 

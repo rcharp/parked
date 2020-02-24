@@ -202,7 +202,7 @@
                                             <div class="block block-themed">
                                                 <div style="text-align:center; font-size:24px;"><br /><br />
                                                     {% set domain = request.args.get('domain') %}
-                                                    You've successfully bought the domain {{ domain }}!<br /><br />
+                                                    You've successfully bought <span style="color:#009fff">{{ domain }}</span>!<br /><br />
                                                     Please click <a href="{{ url_for('user.view_domain', domain=domain) }}"><span style="color:#009fff;">here</span></a> to view the domain info.
                                                 </div>
                                             </div>
