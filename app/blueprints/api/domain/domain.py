@@ -40,13 +40,27 @@ def get_domain_details(domain):
     try:
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
-
         details = pythonwhois.get_whois(domain)
 
         # Remove the raw data
         del details['raw']
 
         return details
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+# Get WhoIs domain availability
+def get_domain_expiration(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+        details = pythonwhois.get_whois(domain)
+        if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
+            expires = get_dt_string(details['expiration_date'][0])
+            return expires
+        return None
     except Exception as e:
         print_traceback(e)
         return None
@@ -68,13 +82,10 @@ def get_domain_status(domain):
     try:
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
-
         details = pythonwhois.get_whois(domain)
 
         # Remove the raw data
         del details['raw']
-
-        print(details)
 
         return True
     except Exception as e:

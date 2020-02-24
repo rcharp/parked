@@ -7,13 +7,15 @@ from flask import flash
 #     list_domains
 # )
 # from app.blueprints.api.domain.namecheap import purchase_domain
-from app.blueprints.api.domain.domain import get_domain_details
+# from app.blueprints.api.domain.domain import get_domain_details
 from app.blueprints.api.domain.dynadot import (
     check_domain,
     register_domain,
     get_domain_expiration,
     backorder_request,
-    delete_backorder_request
+    delete_backorder_request,
+    get_domain_details,
+    list_backorder_requests
 )
 
 
@@ -39,6 +41,8 @@ def test(domain):
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
     # results = check_domain(domain)
-    results = backorder_request(domain)
+    # results = backorder_request(domain)
     # results = register_domain(domain)
+    # results = get_domain_details(domain)
+    results = list_backorder_requests()
     return results

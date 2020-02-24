@@ -17,6 +17,9 @@ from builtins import any
 
 
 def check_domain(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        check_domain(domain)
     api_key = current_app.config.get('DYNADOT_API_KEY')
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=search&domain0=' + domain + "&show_price=1"
 
@@ -37,7 +40,9 @@ def check_domain(domain):
 
 
 def register_domain(domain, production=False):
-
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        register_domain(domain, production)
     # Ensure that the domain can be registered
     results = check_domain(domain)
     print(results)
@@ -55,6 +60,9 @@ def register_domain(domain, production=False):
 
 
 def get_domain_expiration(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        get_domain_expiration(domain)
     # Ensure that the domain can be registered
     api_key = current_app.config.get('DYNADOT_API_KEY')
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
@@ -69,21 +77,27 @@ def get_domain_expiration(domain):
             expires = get_dt_string(expires)
 
             return expires
-    return "Test Expiration Date"
+    return None
 
 
 def get_domain_details(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        get_domain_details(domain)
     # Ensure that the domain can be registered
     api_key = current_app.config.get('DYNADOT_API_KEY')
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
     r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))#['DomainInfoResponse']['DomainInfoContent']['Domain']
 
     return results
 
 
 def backorder_request(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        backorder_request(domain)
     try:
         # "Pending Delete" is in the domain's status, so it can be backordered now
         if get_domain_status(domain):
@@ -108,14 +122,14 @@ def backorder_request(domain):
 
 
 def delete_backorder_request(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        delete_backorder_request(domain)
     if not active_backorders(domain):
         try:
             api_key = current_app.config.get('DYNADOT_API_KEY')
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
             r = requests.get(url=dynadot_url)
-
-            results = json.loads(json.dumps(xmltodict.parse(r.text)))
-
             return True
         except Exception as e:
             print_traceback(e)
@@ -123,9 +137,40 @@ def delete_backorder_request(domain):
     return False
 
 
+def list_backorder_requests():
+    if is_processing():
+        list_backorder_requests()
+    try:
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=backorder_request_list'
+        r = requests.get(url=dynadot_url)
+
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+
+        return results
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def is_processing():
+    api_key = current_app.config.get('DYNADOT_API_KEY')
+    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=is_processing'
+    r = requests.get(url=dynadot_url)
+
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))
+    response = results['Response']['ResponseHeader']['ResponseMsg']
+
+    return response == 'yes'
+
+
+# Helper methods -------------------------------------------------------------------------------
 # This needs to be here because importing it from domain.domain creates a circular dependency
 # Returns true if "pending delete" is in the domain's status, meaning it can be backordered
 def get_domain_status(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        get_domain_status(domain)
     try:
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
@@ -138,3 +183,6 @@ def get_domain_status(domain):
     except Exception as e:
         print_traceback(e)
         return False
+
+
+

@@ -56,7 +56,12 @@ from app.blueprints.api.api_functions import (
     print_traceback,
     create_backorder
 )
-from app.blueprints.api.domain.domain import get_domain_details, get_domain_availability, get_domain_tld
+from app.blueprints.api.domain.domain import (
+    get_domain_details,
+    get_domain_availability,
+    get_domain_tld,
+    get_domain_expiration as get_expiry
+)
 from app.blueprints.api.domain.dynadot import (
     register_domain as register,
     delete_backorder_request,
@@ -241,7 +246,7 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    test = False
+    test = True
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -291,6 +296,7 @@ def register_domain():
 
         if register(domain.name) or True:
             domain.registered = True
+            domain.expires = get_expiry(domain)
             domain.save()
 
             flash('This domain has been registered.', 'success')
