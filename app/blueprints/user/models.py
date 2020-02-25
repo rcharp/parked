@@ -191,6 +191,12 @@ class User(UserMixin, ResourceMixin, db.Model):
         for id in ids:
             user = User.query.get(id)
 
+            if user is None:
+                continue
+
+            # Delete the user
+            user.delete()
+
             # if user.customer is None:
             #     # user.delete()
             # else:
@@ -231,10 +237,6 @@ class User(UserMixin, ResourceMixin, db.Model):
             else:
                 c.delete()
 
-            if user is None:
-                continue
-            else:
-                user.delete()
             delete_count += 1
 
         return delete_count
