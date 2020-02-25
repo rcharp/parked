@@ -11,7 +11,7 @@ def send_welcome_email(email):
     mail = Mail()
     mail.init_app(app)
     msg = Message("You've successfully signed up for Domain!",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
 
     msg.html = render_template('user/mail/welcome_email.html')
@@ -26,7 +26,7 @@ def send_plan_signup_email(email, plan):
     mail = Mail()
     mail.init_app(app)
     msg = Message("You've subscribed to a plan with Domain!",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
     if plan == 'hobby':
         plan = 'Hobby'
@@ -49,7 +49,7 @@ def send_plan_change_email(email, plan):
     mail = Mail()
     mail.init_app(app)
     msg = Message("Your plan with Domain has been changed.",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
     if plan['id'] == 'hobby':
         plan = 'Hobby'
@@ -72,7 +72,7 @@ def send_three_day_expiration_email(email):
     mail = Mail()
     mail.init_app(app)
     msg = Message("Your free trial with Domain expires in 3 days.",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
     msg.html = render_template('user/mail/three_day_expiration_email.html')
 
@@ -84,7 +84,7 @@ def send_trial_expired_email(email):
     mail = Mail()
     mail.init_app(app)
     msg = Message("Your free trial with Domain has expired.",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
     msg.html = render_template('user/mail/trial_expired_email.html')
 
@@ -96,14 +96,14 @@ def contact_us_email(email, message):
     mail = Mail()
     mail.init_app(app)
     msg = Message("[Domain Contact] Support request from " + email,
-                  recipients=["support@domain.com"],
-                  sender="support@domain.com",
+                  recipients=["getparkedio@gmail.com"],
+                  sender="getparkedio@gmail.com",
                   reply_to=email)
     msg.body = email + " sent you a message:\n\n" + message
 
     response = Message("Your email to Domain has been received.",
                        recipients=[email],
-                       sender="support@domain.com")
+                       sender="getparkedio@gmail.com")
 
     response.html = render_template('user/mail/contact_email.html',email=email, message=message)
 
@@ -116,8 +116,8 @@ def request_email(email, request_to, request_from, message):
     mail = Mail()
     mail.init_app(app)
     msg = Message("[Domain Contact] Support request from " + email,
-                  recipients=["support@domain.com"],
-                  sender="support@domain.com",
+                  recipients=["getparkedio@gmail.com"],
+                  sender="getparkedio@gmail.com",
                   reply_to=email)
     msg.body = email + " sent you an integration request:\n\n" + "From: " + request_from + "\n\n" +\
                "To: " + request_to + "\n\n" + \
@@ -125,7 +125,7 @@ def request_email(email, request_to, request_from, message):
 
     response = Message("Your email to Domain has been received.",
                        recipients=[email],
-                       sender="support@domain.com")
+                       sender="getparkedio@gmail.com")
 
     response.html = render_template('user/mail/request_email.html', email=email, request_from=request_from, request_to=request_to, message=message)
 
@@ -138,7 +138,7 @@ def send_cancel_email(email):
     mail = Mail()
     mail.init_app(app)
     msg = Message("Goodbye from Domain",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=[email])
 
     msg.html = render_template('user/mail/cancel_email.html')
@@ -151,7 +151,7 @@ def send_failed_log_email(email, integration_id, failure_time):
     mail = Mail()
     mail.init_app(app)
     msg = Message("Domain: Integration #" + str(integration_id) + " for " + email + " failed.",
-                  sender="support@domain.com",
+                  sender="getparkedio@gmail.com",
                   recipients=['logs@domain.com'])
 
     from app.blueprints.api.models.user_integrations import UserIntegration

@@ -141,10 +141,10 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://getparked.herokuapp.com'
+SITE_URL = 'https://getparked.io'
 
 # Webhook
-WEBHOOK_URL = 'https://www.domain.com/webhook'
+WEBHOOK_URL = 'https://www.getparked.io/webhook'
 
 # Mailerlite
 # MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)
