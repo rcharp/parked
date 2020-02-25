@@ -228,7 +228,6 @@
                                                     <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
-{#                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />#}
                                                                 <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
                                                                 <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
 
@@ -303,7 +302,6 @@
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-{#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
                                                                 <input required class="form-control" id="domain" name="domain" value="" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                             </div>
                                                         </div>
