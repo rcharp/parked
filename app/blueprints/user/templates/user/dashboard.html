@@ -74,7 +74,7 @@
         <script src="https://js.stripe.com/v3/"></script>
         <!-- END Stylesheets -->
     </head>
-    <body style="zoom: 80%;">
+    <body style="zoom: 80%;" onload="ScrollTable();">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -558,6 +558,12 @@
                     document.getElementById('name-sort-icon').classList.remove('si','si-arrow-up');
                     document.getElementById('name-sort-icon').classList.add('fa','fa-sort');
                 }
+            }
+        </script>
+        <script>
+            function ScrollTable() {
+                var x = document.getElementsByClassName('col-sm-12')[0];
+                x.style.overflowX = 'scroll';
             }
         </script>
 
