@@ -247,7 +247,7 @@
                                         <div class="block">
                                             <div class="block-content" style="padding:0;overflow-x:auto;overflow-y:auto;">
                                                 <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary" style="margin-right:10px;">
-                                                    <input id="send_failure_email" style="display:inline-block;" name="send_failure_email" type="checkbox" class="checkbox" onclick="UpdateSendFailureEmail(this)" {% if current_user.send_failure_email %}checked{% endif %} /><span></span>
+                                                    <input disabled id="send_failure_email" style="display:inline-block;" name="send_failure_email" type="checkbox" class="checkbox" onclick="UpdateSendFailureEmail(this)" {% if current_user.send_failure_email %}checked{% endif %} /><span></span>
                                                 </label>
                                                 <span class="h4 font-w400 text-muted" style="word-wrap:break-word">Send me an email when a domain I have reserved gets purchased.<br /></span>
                                             </div>
