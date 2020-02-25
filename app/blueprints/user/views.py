@@ -97,13 +97,6 @@ def login():
             if login_user(u, remember=True) and u.is_active():
                 u.update_activity_tracking(request.remote_addr)
 
-                # Set the days left in the trial
-                if current_user.trial:
-                    trial_days_left = 14 - (datetime.datetime.now() - current_user.created_on.replace(tzinfo=None)).days
-                    if trial_days_left < 0:
-                        current_user.trial = False
-                        current_user.save()
-
                 next_url = request.form.get('next')
 
                 if next_url:

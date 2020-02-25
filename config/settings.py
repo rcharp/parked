@@ -61,14 +61,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.blueprints.billing.tasks.mark_old_credit_cards',
         'schedule': crontab(hour=0, minute=0)
     },
-    'send_three_day_expiration_emails': {
-        'task': 'app.blueprints.billing.tasks.send_three_day_expiration_emails',
-        'schedule': crontab(hour=12, minute=0)
-    },
-    'send_trial_expired_emails': {
-        'task': 'app.blueprints.billing.tasks.send_trial_expired_emails',
-        'schedule': crontab(hour=12, minute=0)
-    }
 }
 
 '''

@@ -19,33 +19,6 @@ def mark_old_credit_cards():
     return CreditCard.mark_old_credit_cards()
 
 
-@celery.task()
-def send_three_day_expiration_emails():
-    from app.blueprints.user.models import User
-    days = timedelta(days=11)
-
-    users = User.query.filter(and_(User.trial.is_(True), cast(User.created_on + days, d) == date.today())).all()
-
-    from app.blueprints.user.tasks import send_three_day_expiration_email
-
-    for user in users:
-        email = user.email
-        send_three_day_expiration_email.delay(email)
-
-
-@celery.task()
-def send_trial_expired_emails():
-    from app.blueprints.user.models import User
-    days = timedelta(days=14)
-
-    users = User.query.filter(and_(User.trial.is_(True), cast(User.created_on + days, d) == date.today())).all()
-
-    from app.blueprints.user.tasks import send_trial_expired_email
-
-    for user in users:
-        email = user.email
-        send_trial_expired_email.delay(email)
-
 
 @celery.task()
 def delete_users(ids):
