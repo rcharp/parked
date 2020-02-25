@@ -146,7 +146,7 @@
                                     <li class="dropdown-header">Testing</li>
                                     <li class="text-center">
                                         <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
-                                            <input class="form-control" id="domain" name="domain" type="text" value="gameboy-advance.com" /><br />
+                                            <input class="form-control" id="domain" name="domain" type="text" value="{{ 'site_name'|site_name_filter }}" /><br />
                                             <button class="btn btn-sm btn-success" id="submit-button" type="submit">
                                                 <i class="si si-ghost pull-right"></i>Run Tests</button>
                                         </form>
@@ -318,28 +318,33 @@
                                                             <div style="font-size:24px;">
                                                                 <span class="text-muted" style="font-size:18px;">Recent searches
                                                             </div><br />
-{#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
-                                                            <div style="overflow-x: auto;">
+                                                            <table class="table table-borderless table-condensed" style="position:sticky;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td id="domain-name" name="domain-name" style="min-width:240px;max-width:600px;">
+                                                                            <span class="text-muted" style="font-size:18px;">Domain</span>
+                                                                        </td>
+                                                                        <td style="min-width:240px;">
+                                                                            <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </thead>
+                                                            </table>
+                                                            <div style="overflow-x: auto;max-height:200px;">
                                                                 <table class="table table-borderless table-condensed">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <td>
-                                                                                <span class="text-muted" style="font-size:18px;">Domain</span>
-                                                                            </td>
-                                                                            <td>
-                                                                                <span class="text-muted" style="font-size:18px;">Expires</span>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </thead>
                                                                     <tbody>
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
-                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
+                                                                            <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
                                                                             <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
                                                                 </table>
+                                                                <script type="text/javascript">
+                                                                    var x = document.getElementById('searched-domain').offsetWidth;
+                                                                    document.getElementById('domain-name').style.width = x.toString() + 'px';
+                                                                </script>
                                                             </div>
                                                         </div>
                                                     {% endif %}
