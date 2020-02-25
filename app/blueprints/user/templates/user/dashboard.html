@@ -229,7 +229,7 @@
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
                                                                 <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
-                                                                <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
+                                                                <span class="text-muted">Available:</span> {{ domain['available_on'] }} UTC.
 
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                                     <div class="form-group">
@@ -362,7 +362,7 @@
                                                             <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
                                                             <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
                                                             <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
+                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Available On" onclick="ChangeSortIcon(this)" style="width: 200px;">Available On&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
                                                             <th class="sorting_disabled text-center font-w300" style="width: 69px;" rowspan="1" colspan="1" aria-label="Owned">Owned</th>
                                                             <th class="sorting_disabled text-center font-w300" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
@@ -378,7 +378,7 @@
                                                                     <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#009fff;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.expires %}{{ domain.expires }}{% else %}N/A{% endif %}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.available_on %}{{ domain.available_on }}{% else %}N/A{% endif %}</span></td>
                                                                 <td class="text-center" style="min-width:75px;padding:10px 0;">
                                                                     {% if domain.registered %}
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>
