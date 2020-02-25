@@ -16,18 +16,17 @@ from app.blueprints.page.date import get_dt_string
 
 
 # Create a distinct integration id for the integration.
-def generate_id(size=8, chars=string.digits):
-    return
-    # # Generate a random 8-character user id
-    # new_id = int(''.join(random.choice(chars) for _ in range(size)))
-    #
-    # from app.blueprints.api.models.user_integrations import UserIntegration
-    #
-    # # Check to make sure there isn't already that id in the database
-    # if not db.session.query(exists().where(UserIntegration.id == new_id)).scalar():
-    #     return integration_id
-    # else:
-    #     generate_integration_id()
+def generate_id(size=12, chars=string.digits):
+    # Generate a random 12-character user id
+    new_id = int(''.join(random.choice(chars) for _ in range(size)))
+
+    from app.blueprints.api.models.domains import Domain
+
+    # Check to make sure there isn't already that id in the database
+    if not db.session.query(exists().where(Domain.order_id == new_id)).scalar():
+        return new_id
+    else:
+        generate_id()
 
 
 # Create a distinct auth id for the auth.
@@ -65,7 +64,7 @@ def print_traceback(e):
     print(e)
 
 
-def save_domain(user_id, customer_id, domain, expires, reserve_time):
+def save_domain(user_id, customer_id, pm, domain, expires, reserve_time, registered=False):
     from app.blueprints.api.models.domains import Domain
 
     d = Domain()
@@ -74,9 +73,11 @@ def save_domain(user_id, customer_id, domain, expires, reserve_time):
     d.expires = expires
     d.created_on = get_dt_string(reserve_time)
     d.customer_id = customer_id
+    d.pm = pm
+    d.registered = registered
 
     d.save()
-    return
+    return d
 
 
 def save_search(domain, expires, user_id):
@@ -92,6 +93,33 @@ def save_search(domain, expires, user_id):
     return
 
 
-def update_customer(pm, customer_id):
+def create_backorder(domain, customer_id, user_id, pending_delete):
+    from app.blueprints.api.models.backorder import Backorder
+
+    b = Backorder()
+    b.domain = domain.id
+    b.domain_name = domain.name
+    b.expires = domain.expires
+    b.user_id = user_id
+    b.customer_id = customer_id
+    b.active = True
+    b.available = pending_delete
+
+    b.save()
+    return
+
+
+def active_backorders(domain):
+    from app.blueprints.api.models.backorder import Backorder
+    if not db.session.query(exists().where(and_(Backorder.domain_name == domain, Backorder.active.is_(True)))).scalar():
+        return False
+    return True
+
+
+def update_customer(pm, customer_id, save_card):
     from app.blueprints.billing.charge import update_customer
-    return update_customer(pm, customer_id)
+    return update_customer(pm, customer_id, save_card)
+
+
+def valid_tlds():
+    return ['.com', '.net', '.org', '.co', '.io', '.cc', '.us', '.biz', '.info', '.mobi', '.bio', '.me', '.tv', '.pro', '.red', '.blue', '.black', '.pink', '.green', '.kim', '.poker', '.organic', '.lgbt', '.bet', '.vote', '.voto', '.promo', '.archi', '.ski']

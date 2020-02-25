@@ -30,7 +30,7 @@ body {
   align-content: center;
   justify-content: center;
   height: auto;
-  min-height: 100vh;
+  /*min-height: 100vh;*/
   margin: 0 auto;
 }
 .sr-main {

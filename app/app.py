@@ -7,7 +7,7 @@ import stripe
 import datetime
 
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, flash, redirect
 from celery import Celery
 from itsdangerous import URLSafeTimedSerializer
 from flask_compress import Compress
@@ -145,6 +145,18 @@ def create_app(settings_override=None):
     COMPRESS_MIN_SIZE = 500
     Compress(app)
 
+    @app.errorhandler(500)
+    def error_502(e):
+        return render_template('errors/500.html')
+
+    @app.errorhandler(404)
+    def error_404(e):
+        return render_template('errors/404.html')
+
+    @app.errorhandler(502)
+    def error_502(e):
+        return render_template('errors/500.html')
+
     return app
 
 
@@ -187,6 +199,7 @@ def template_processors(app):
     app.jinja_env.filters['dict_filter'] = dict_filter
     app.jinja_env.filters['today_filter'] = today_filter
     app.jinja_env.filters['site_name_filter'] = site_name_filter
+    app.jinja_env.filters['site_color_filter'] = site_color_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -301,6 +314,8 @@ def pretty_date_filter(arg):
     time_string = str(arg)
 
     if is_date(time_string):
+        if '.' in time_string:
+            time_string = time_string.split('.')[0]
         dt = get_datetime_from_string(time_string)
         return get_dt_string(dt) + ' UTC'
 
@@ -321,3 +336,7 @@ def today_filter(arg):
 
 def site_name_filter(arg):
     return 'getparked.io'
+
+
+def site_color_filter(arg):
+    return '009fff'

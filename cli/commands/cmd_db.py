@@ -10,6 +10,7 @@ from app.extensions import db
 from app.blueprints.user.models import User
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
+from app.blueprints.api.models.backorder import Backorder
 from importlib import import_module
 from app.blueprints.api.api_functions import print_traceback
 
@@ -67,7 +68,14 @@ def seed():
         'password': app.config['SEED_ADMIN_PASSWORD']
     }
 
+    member2 = {
+        'role': 'member',
+        'email': app.config['SEED_MEMBER_2_EMAIL'],
+        'password': app.config['SEED_ADMIN_PASSWORD']
+    }
+
     User(**member).save()
+    User(**member2).save()
 
     return User(**params).save()
 

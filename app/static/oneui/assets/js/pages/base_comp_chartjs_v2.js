@@ -9,7 +9,7 @@ var BaseCompChartJSv2 = function() {
     var initChartsChartJSv2 = function () {
         // Set Global Chart.js configuration
         Chart.defaults.global.defaultFontColor              = '#999';
-        Chart.defaults.global.defaultFontFamily             = 'Open Sans';
+        Chart.defaults.global.defaultFontFamily             = 'Product Sans';
         Chart.defaults.global.defaultFontStyle              = '600';
         Chart.defaults.scale.gridLines.color               = "rgba(0,0,0,.05)";
         Chart.defaults.scale.gridLines.zeroLineColor       = "rgba(0,0,0,.1)";
@@ -17,7 +17,7 @@ var BaseCompChartJSv2 = function() {
         Chart.defaults.global.elements.point.radius         = 4;
         Chart.defaults.global.elements.point.hoverRadius    = 6;
         Chart.defaults.global.tooltips.titleFontFamily      = 'Source Sans Pro';
-        Chart.defaults.global.tooltips.bodyFontFamily       = 'Open Sans';
+        Chart.defaults.global.tooltips.bodyFontFamily       = 'Product Sans';
         Chart.defaults.global.tooltips.cornerRadius         = 3;
         Chart.defaults.global.legend.labels.boxWidth        = 15;
 

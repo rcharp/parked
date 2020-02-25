@@ -1,10 +1,13 @@
 import stripe
 from flask import current_app, url_for
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, generate_id
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from sqlalchemy import exists, and_
 from app.extensions import db
+
+
+site_name = "GetParked.io"
 
 
 def stripe_checkout(email, domain, purchase=False):
@@ -46,7 +49,7 @@ def stripe_checkout(email, domain, purchase=False):
 
         if customer_id is not None:
             if purchase:
-                p = charge_card(domain)
+                p = create_payment(domain, customer_id)
                 return p
             else:
                 si = setup_intent(domain, customer_id)
@@ -56,14 +59,31 @@ def stripe_checkout(email, domain, purchase=False):
         return None
 
 
-def create_payment(domain):
+def create_payment(domain, customer_id, pm=None, confirm=False):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.PaymentIntent.create(
-        amount=9900,
-        currency="usd",
-        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
-        payment_method_types=["card"]
-    )
+
+    description = "Buy " + domain + " from " + site_name + "." if confirm \
+        else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
+
+    if pm is not None:
+        return stripe.PaymentIntent.create(
+            amount=9900,
+            customer=customer_id,
+            payment_method=pm,
+            confirm=confirm,
+            currency="usd",
+            description=description,
+            payment_method_types=["card"],
+        )
+    else:
+        return stripe.PaymentIntent.create(
+            amount=9900,
+            customer=customer_id,
+            confirm=confirm,
+            currency="usd",
+            description=description,
+            payment_method_types=["card"],
+        )
 
 
 def confirm_payment(domain):
@@ -71,7 +91,7 @@ def confirm_payment(domain):
     return stripe.PaymentIntent.create(
         amount=9900,
         currency="usd",
-        description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
+        description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
         payment_method_types=["card"]
     )
 
@@ -82,8 +102,8 @@ def charge_card(domain):
         amount=9900,
         confirm="True",
         currency="usd",
-        description="Buy " + domain + " from GetMyDomain.",
-        payment_method_types=["card"]
+        description="Buy " + domain + " from " + site_name + ".",
+        payment_method_types=["card"],
     )
 
 
@@ -110,10 +130,43 @@ def create_customer(u, email, create_db=True):
 def setup_intent(domain, customer_id):
     try:
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-        return stripe.SetupIntent.create(
-            customer=customer_id,
-            description="Reserve " + domain + " with GetMyDomain. Your card won't be charged until we secure the domain.",
-            payment_method_types=["card"]
+
+        c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+        if c is not None and c.save_card:
+            # Get the default payment method and use that
+            customer = stripe.Customer.retrieve(customer_id)
+            pm = customer.default_source
+
+            if pm is not None:
+                return stripe.SetupIntent.create(
+                    customer=customer_id,
+                    description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
+                    payment_method_types=["card"],
+                    payment_method=pm,
+                )
+            else:
+                return stripe.SetupIntent.create(
+                    customer=customer_id,
+                    description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
+                    payment_method_types=["card"],
+                )
+        else:
+            return stripe.SetupIntent.create(
+                customer=customer_id,
+                description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
+                payment_method_types=["card"],
+            )
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def confirm_intent(si, pm):
+    try:
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        return stripe.SetupIntent.confirm(
+            si,
+            payment_method=pm,
         )
     except Exception as e:
         print_traceback(e)
@@ -125,8 +178,8 @@ def create_session(email, site_url, domain):
         customer_email=email,
         payment_method_types=['card'],
         line_items=[{
-            'name': 'GetMyDomain - Reserve ' + domain,
-            'description': "Reserve your domain with GetMyDomain. Your card won't be charged until we secure the domain.",
+            'name': site_name + ' - Reserve ' + domain,
+            'description': "Reserve your domain with " + site_name + ". Your card won't be charged until we secure the domain.",
             'amount': 9900,
             'currency': 'usd',
             'quantity': 1,
@@ -136,7 +189,7 @@ def create_session(email, site_url, domain):
     )
 
 
-def update_customer(pm, customer_id):
+def update_customer(pm, customer_id, save_card):
     try:
         # Change to Live key when done testing
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -150,8 +203,55 @@ def update_customer(pm, customer_id):
                 customer=customer_id,
             )
 
+        if save_card == 'true':
+            stripe.Customer.modify(
+                customer_id,
+                invoice_settings={'default_payment_method':pm}
+            )
+
+            customer = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+            customer.save_card = True
+            customer.save()
+
         return True
 
     except Exception as e:
         print_traceback(e)
         return False
+
+
+def delete_payment(order_id):
+    try:
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        return stripe.PaymentIntent.cancel(
+            order_id
+        )
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def get_payment_method(si):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+
+    pm = None
+    c = Customer.query.filter(Customer.customer_id == si.customer).scalar()
+    if c.save_card:
+        customer = stripe.Customer.retrieve(c.customer_id)
+        pm = stripe.PaymentMethod.retrieve(customer.invoice_settings.default_payment_method)
+
+    return pm
+
+
+def get_card(c):
+    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+
+    if c is None:
+        return None
+
+    pm = None
+    if c.save_card:
+        customer = stripe.Customer.retrieve(c.customer_id)
+        pm = stripe.PaymentMethod.retrieve(customer.invoice_settings.default_payment_method)
+
+    return pm

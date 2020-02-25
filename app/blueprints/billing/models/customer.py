@@ -26,6 +26,7 @@ class Customer(ResourceMixin, db.Model):
     customer_id = db.Column(db.String(128))
     name = db.Column(db.String(128))
     email = db.Column(db.String(128))
+    save_card = db.Column('save_card', db.Boolean(), nullable=False, server_default='0')
 
     def __init__(self, **kwargs):
         # Call Flask-SQLAlchemy's constructor.

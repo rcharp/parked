@@ -16,14 +16,17 @@ def test():
         domain = request.form['domain']
 
         try:
-            t(domain)
+            results = t(domain)
+            print(results)
             flash("Test was successful.", 'success')
+            flash("Results are: " + str(results), 'danger')
             return redirect(url_for('user.dashboard'))
         except Exception as e:
             print_traceback(e)
             flash("Test was unsuccessful.", 'error')
             return redirect(url_for('user.dashboard'))
     else:
+        flash("Test wasn't run.", 'error')
         return redirect(url_for('user.dashboard'))
 
 

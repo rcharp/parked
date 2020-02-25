@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/png" href="../../../../static/favicon128x128.png">
+    <link rel="icon" type="image/png" href="../../../../static/favicon.ico">
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
@@ -48,7 +48,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -95,7 +95,7 @@
 
         <div class="cover">
             <!-- Header -->
-            <header class="header border-bottom border-color-light-gray" style="background-color:#007fd8">
+            <header class="header border-bottom border-color-light-gray" style="background-color:#009fff">
                 <div class="header-inner">
                     <nav class="navbar navbar-expand-lg py-1">
                         <div class="container-fluid">
@@ -151,7 +151,6 @@
                 </div>
             </header>
             <!--/ End Header -->
-
             <!-- Hero -->
             <div class="jumbotron jumbotron-fluid bg-white font-weight__500 hero mb-0">
                 <!-- Empty Space -->
@@ -169,47 +168,44 @@
                                 <!--/ End Empty Space -->
                                 <!--/ End Empty Space -->
                                 <p class="lead base-plus-font-size text-center">
-                                    Have a domain in mind that you want? Backorder it and we'll buy it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.</p>
-                                {% if domain|length %}
+                                    Have a domain in mind that you want?<br />Backorder it and we'll buy it for you as soon as it becomes available.<br />
+                                    Only $99 per domain.</p><br /><br />
+                                {% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;">
-                                        <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
+                                        <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
-                                                    The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br />
-                                                    It expires {{ domain['expires'] }} UTC.
+                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
+                                                    <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
 
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                         <div class="form-group">
                                                             <br />
-                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                             </div>
                                                         </div>
                                                     </form>
-                                                    - or -
                                                 {% else %}
-                                                    The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
+                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                         <div class="form-group">
-                                                            <br />
-                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
                                                             </div>
                                                         </div>
                                                     </form>
-                                                    - or -
                                                 {% endif %}
                                             {% else %}
                                                 There was an error checking this domain. Is it valid? Please try again.
                                             {% endif %}
-                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.home' ) }}" method="get">
+                                            <hr style="margin-left:0;width:50%" />
+                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.home') }}" method="get">
                                                 <div class="form-group">
-                                                    <br />
-                                                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
+                                                    <div class="col-xs-12" style="width:40%;min-width:350px;">
+                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -218,7 +214,7 @@
                                         {% if not domain['available'] and details is not none %}
                                             <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;">
                                                 <div style="text-align:center; font-size:20px;"><br />
-                                                    WhoIs information for {{ domain['name'] }}<br /><br />
+                                                    Registration info for {{ domain['name'] }}<br /><br />
                                                 </div>
                                                 <div>
                                                     <span style="font-size:18px;text-align:left;">
@@ -252,9 +248,18 @@
                                     <form class="form-horizontal push-5-t" action="{{ url_for('page.availability' ) }}" method="post">
                                         <div class="form-group">
                                             <br />
-                                            <div class="col-md-12" style="width:80%;min-width:320px;max-width:90%;margin:0 auto; float:none">
+                                            <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none">
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                </div>
+                                            </div>
+                                            <div style="margin:0 auto;float:none;height:100%;margin-bottom:10px;max-width:500px;">
+                                                {% for message in get_flashed_messages(with_categories=True) %}
+                                                    {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                                                    <div class="ribbon-box btn-{{ category }} font-w600 text-center" style="padding:20px;min-height:30px !important;margin-top:5px;position:relative">
+                                                        {{ message[1] }}
+                                                    </div>
+                                                    {% if not loop.last %}<br />{% endif %}
+                                                {% endfor %}
+                                            </div>
                                         </div><br />
                                         <div class="form-group">
                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
@@ -295,7 +300,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle si fas fa-search" style="color:#007fd8"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle si fas fa-search" style="color:#009fff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -317,7 +322,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-check" style="color:#007fd8"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-check" style="color:#009fff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -339,7 +344,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-credit-card" style="color:#007fd8"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-credit-card" style="color:#009fff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -361,7 +366,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-edit" style="color:#007fd8"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-edit" style="color:#009fff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -445,7 +450,7 @@
 {#                </div>#}
 {##}
 {#                <br /><br /><br />#}
-{#                <div id="customize" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:320px;">#}
+{#                <div id="customize" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:350px;">#}
 {#                    <h3 class="xl-font-size font-weight__500">#}
 {#                        Customize your workflow integrations.#}
 {#                    </h3>#}
@@ -457,9 +462,9 @@
 {#                <div class="row">#}
 {#                    <div class="col-12 col-md-11 mx-auto">#}
 {#                        <div class="row align-items-center">#}
-{#                            <img src="../../../../static/landing/assets/images/workflow.png" class="img-fluid mt-5 mt-lg-0 pull-left" alt="features" style="width:40%;min-width:320px;margin:0 auto;display:block">#}
+{#                            <img src="../../../../static/landing/assets/images/workflow.png" class="img-fluid mt-5 mt-lg-0 pull-left" alt="features" style="width:40%;min-width:350px;margin:0 auto;display:block">#}
 {#                            <!--<h2 class="text-muted" style="display:block;float:none">or</h2>-->#}
-{#                            <img src="../../../../static/landing/assets/images/workflow2.png" class="img-fluid mt-5 mt-lg-0 pull-right" alt="features" style="width:40%;min-width:320px;margin:0 auto;display:block">#}
+{#                            <img src="../../../../static/landing/assets/images/workflow2.png" class="img-fluid mt-5 mt-lg-0 pull-right" alt="features" style="width:40%;min-width:350px;margin:0 auto;display:block">#}
 {#                        </div>#}
 {#                    </div>#}
 {#                </div>#}
@@ -468,7 +473,7 @@
 {#        <!--/ End Features 1 -->#}
 
         <!-- Pricing -->
-        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:320px;">
+        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:240px;">
             <h3 class="xl-font-size font-weight__500">
                 One easy price.
             </h3>
@@ -482,14 +487,9 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12 mx-auto">
                         <div class="row">
-                            <div class="d-lg-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:320px;display:block;float:left;margin:0 auto;">
+                            <div class="d-lg-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-{#                                    <div class="d-block">#}
-{#                                        <div class="qdo-pricing font-weight__900">#}
-{#                                            <span class="lg-font-size font-weight__300">Hobby</span>#}
-{#                                        </div>#}
-{#                                    </div>#}
                                     <div class="qdo-pricing font-weight__900">
                                         <sup class="md-font-size font-weight__300">$</sup><span class="xxxxl-font-size font-weight__300" style="font-size:100px;">99</span><br />
                                         <span class="sm-font-size font-weight__300">per backordered domain</span>
@@ -498,16 +498,6 @@
                                     <div class="md-space"></div>
                                     <a href="{{ url_for('user.signup') }}" class="btn btn-primary py-2 px-4 sm-font-size font-weight__700">Get started</a>
                                     <!--/ End Empty Space -->
-{#                                    {% call billing.plan(plans['1']) %}#}
-{#                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">#}
-{#                                        <li class="py-2">5 active integrations</li>#}
-{#                                        <li class="py-2">2 step integrations</li>#}
-{#                                        <li class="py-2">Access to all apps</li>#}
-{#                                        <li class="py-2">Email support</li>#}
-{#                                        <li class="py-2"></li>#}
-{#                                        <!--<li class="py-2">Venenatis turpis sed</li>-->#}
-{#                                    </ul><br />#}
-{#                                    {% endcall %}#}
                                 </div>
                                 <!-- End Single Price Table -->
                             </div>

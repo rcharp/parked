@@ -25,10 +25,14 @@ def home():
 @csrf.exempt
 def availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import save_search
-        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_domain_tld
+        from app.blueprints.api.api_functions import valid_tlds
 
-        domain_name = request.form['domain'].replace(' ', '')
+        domain_name = request.form['domain'].replace(' ', '').lower()
+        tld = get_domain_tld(domain_name)
+        if tld not in valid_tlds():
+            flash("This TLD can't be backordered. Please try another TLD.", "error")
+            return redirect(url_for('page.home'))
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
