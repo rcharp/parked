@@ -212,10 +212,10 @@ class User(UserMixin, ResourceMixin, db.Model):
             # user.save()
 
             # Delete backorders and domains
-            b = Backorder.query.filter(Backorder.user_id == user.id).all()
-            d = Domain.query.filter(Domain.user_id == user.id).all()
-            s = SearchedDomain.query.filter(SearchedDomain.user_id == user.id).all()
-            c = Customer.query.filter(Customer.user_id == user.id).scalar()
+            b = Backorder.query.filter(Backorder.user_id == id).all()
+            d = Domain.query.filter(Domain.user_id == id).all()
+            s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
+            c = Customer.query.filter(Customer.user_id == id).scalar()
 
             for backorder in b:
                 if backorder is None:
