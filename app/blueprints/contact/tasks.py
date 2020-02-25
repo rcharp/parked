@@ -1,6 +1,6 @@
 from lib.flask_mailplus import send_template_message
 from app.app import create_celery_app
-from app.blueprints.user.templates.emails import contact_us_email
+from app.blueprints.user.emails import contact_us_email
 
 celery = create_celery_app()
 

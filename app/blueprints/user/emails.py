@@ -10,7 +10,7 @@ def send_welcome_email(email):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("You've successfully signed up for Domain!",
+    msg = Message("You've successfully signed up for Getparked.io!",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
 
@@ -25,7 +25,7 @@ def send_plan_signup_email(email, plan):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("You've subscribed to a plan with Domain!",
+    msg = Message("You've subscribed to a plan with Getparked.io!",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
     if plan == 'hobby':
@@ -48,7 +48,7 @@ def send_plan_change_email(email, plan):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Your plan with Domain has been changed.",
+    msg = Message("Your plan with Getparked.io has been changed.",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
     if plan['id'] == 'hobby':
@@ -71,7 +71,7 @@ def send_three_day_expiration_email(email):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Your free trial with Domain expires in 3 days.",
+    msg = Message("Your free trial with Getparked.io expires in 3 days.",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
     msg.html = render_template('user/mail/three_day_expiration_email.html')
@@ -83,7 +83,7 @@ def send_trial_expired_email(email):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Your free trial with Domain has expired.",
+    msg = Message("Your free trial with Getparked.io has expired.",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
     msg.html = render_template('user/mail/trial_expired_email.html')
@@ -95,27 +95,31 @@ def contact_us_email(email, message):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("[Domain Contact] Support request from " + email,
+    msg = Message("[Getparked.io Contact] Support request from " + email,
                   recipients=["getparkedio@gmail.com"],
                   sender="getparkedio@gmail.com",
                   reply_to=email)
     msg.body = email + " sent you a message:\n\n" + message
 
-    response = Message("Your email to Domain has been received.",
+    response = Message("Your email to Getparked.io has been received.",
                        recipients=[email],
                        sender="getparkedio@gmail.com")
 
     response.html = render_template('user/mail/contact_email.html',email=email, message=message)
 
+    print(msg)
+
     mail.send(msg)
     mail.send(response)
+
+    print("Email sent")
 
 
 def request_email(email, request_to, request_from, message):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("[Domain Contact] Support request from " + email,
+    msg = Message("[Getparked.io Contact] Support request from " + email,
                   recipients=["getparkedio@gmail.com"],
                   sender="getparkedio@gmail.com",
                   reply_to=email)
@@ -123,7 +127,7 @@ def request_email(email, request_to, request_from, message):
                "To: " + request_to + "\n\n" + \
                "Message: " + message
 
-    response = Message("Your email to Domain has been received.",
+    response = Message("Your email to Getparked.io has been received.",
                        recipients=[email],
                        sender="getparkedio@gmail.com")
 
@@ -137,7 +141,7 @@ def send_cancel_email(email):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Goodbye from Domain",
+    msg = Message("Goodbye from Getparked.io",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
 
@@ -150,9 +154,9 @@ def send_failed_log_email(email, integration_id, failure_time):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Domain: Integration #" + str(integration_id) + " for " + email + " failed.",
+    msg = Message("Getparked.io: Integration #" + str(integration_id) + " for " + email + " failed.",
                   sender="getparkedio@gmail.com",
-                  recipients=['logs@domain.com'])
+                  recipients=['logs@Getparked.io.com'])
 
     from app.blueprints.api.models.user_integrations import UserIntegration
 

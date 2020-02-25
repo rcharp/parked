@@ -226,8 +226,8 @@ def cancel():
             delete_users.delay(ids)
 
             # Send a cancellation email.
-            # from app.blueprints.user.tasks import send_cancel_email
-            # send_cancel_email.delay(email)
+            from app.blueprints.user.tasks import send_cancel_email
+            send_cancel_email.delay(email)
 
             flash('Sorry to see you go! Your subscription has been canceled.',
                   'success')

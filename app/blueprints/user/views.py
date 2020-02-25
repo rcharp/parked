@@ -110,7 +110,7 @@ def login():
             flash('Your username/email or password is incorrect.', 'error')
 
     else:
-        if not bool(form.errors):
+        if len(form.errors) > 0:
             print(form.errors)
 
     return render_template('user/login.html', form=form)
