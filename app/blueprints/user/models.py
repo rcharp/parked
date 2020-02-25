@@ -195,7 +195,6 @@ class User(UserMixin, ResourceMixin, db.Model):
 
             # if user.customer is None:
             #     # user.delete()
-            #     user.active = False
             # else:
             #     customer = Customer()
             #     cancelled = customer.cancel(user=user)
@@ -203,7 +202,6 @@ class User(UserMixin, ResourceMixin, db.Model):
             #     # If successful, delete it locally.
             #     if cancelled:
             #         # user.delete()
-            #         user.active = False
 
             # Use this to deactivate the user instead of deleting their account completely
             # user.active = False
