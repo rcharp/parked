@@ -306,6 +306,7 @@ def register_domain():
 
 
 @user.route('/view_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def view_domain():
     # Get the domain details and display them
@@ -331,6 +332,7 @@ def view_domain():
 
 
 @user.route('/delete_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def delete_domain():
 
@@ -356,6 +358,7 @@ def delete_domain():
 
 
 @user.route('/update_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def update_domain():
     if request.method == 'POST':
@@ -425,6 +428,7 @@ def reserve_domain():
 
 
 @user.route('/save_reservation', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def save_reservation():
     if request.method == 'POST':
@@ -456,6 +460,7 @@ def save_reservation():
 
 
 @user.route('/saved_card_intent', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def saved_card_intent():
     if request.method == 'POST':
@@ -488,6 +493,7 @@ def saved_card_intent():
 
 # Purchase Available Domains -------------------------------------------------------------------
 @user.route('/checkout', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def checkout():
     if request.method == 'POST':
@@ -519,6 +525,7 @@ def checkout():
 
 
 @user.route('/saved_card_payment', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def saved_card_payment():
     if request.method == 'POST':
@@ -544,6 +551,7 @@ def saved_card_payment():
 
 # Success Messages -------------------------------------------------------------------
 @user.route('/success', methods=['GET', 'POST'])
+@login_required
 @csrf.exempt
 def success():
     flash('Your domain was successfully reserved!', 'success')
@@ -551,6 +559,7 @@ def success():
 
 
 @user.route('/purchase_success', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def purchase_success():
     flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
