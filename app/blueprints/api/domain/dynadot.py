@@ -45,7 +45,6 @@ def register_domain(domain, production=False):
         register_domain(domain, production)
     # Ensure that the domain can be registered
     results = check_domain(domain)
-    print(results)
 
     # The real deal. The domain will be registered if 'production' is passed as True
     if production:

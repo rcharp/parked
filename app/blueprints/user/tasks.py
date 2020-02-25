@@ -41,8 +41,9 @@ def deliver_password_reset_email(user_id, reset_token):
 # Sending emails -------------------------------------------------------------------
 @celery.task()
 def send_welcome_email(email):
-    from app.blueprints.user.templates.emails import send_welcome_email
-    send_welcome_email(email)
+    #from app.blueprints.user.templates.emails import send_welcome_email
+    #send_welcome_email(email)
+    return
 
 
 # @celery.task()
@@ -59,13 +60,15 @@ def send_welcome_email(email):
 
 @celery.task()
 def send_contact_us_email(email, message):
-    from app.blueprints.user.templates.emails import contact_us_email
-    contact_us_email(email, message)
+    # from app.blueprints.user.templates.emails import contact_us_email
+    # contact_us_email(email, message)
+    return
 
 
 @celery.task()
 def send_cancel_email(email):
-    from app.blueprints.user.templates.emails import send_cancel_email
-    send_cancel_email(email)
+    # from app.blueprints.user.templates.emails import send_cancel_email
+    # send_cancel_email(email)
+    return
 
 

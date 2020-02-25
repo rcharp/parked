@@ -19,7 +19,6 @@ def mark_old_credit_cards():
     return CreditCard.mark_old_credit_cards()
 
 
-
 @celery.task()
 def delete_users(ids):
     """

@@ -91,9 +91,6 @@ class Subscription(ResourceMixin, db.Model):
                                               plan=plan)
                                               # coupon=self.coupon)
 
-        print('customer is')
-        print(customer)
-
         # Update the user account.
         user.payment_id = customer.id
         user.name = name

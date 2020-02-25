@@ -205,6 +205,10 @@ class User(UserMixin, ResourceMixin, db.Model):
             #         # user.delete()
             #         user.active = False
 
+            # Use this to deactivate the user instead of deleting their account completely
+            # user.active = False
+            # user.save()
+
             # Delete backorders and domains
             from app.blueprints.api.models.backorder import Backorder
             from app.blueprints.api.models.domains import Domain
@@ -217,18 +221,26 @@ class User(UserMixin, ResourceMixin, db.Model):
             c = Customer.query.filter(Customer.user_id == user.id).scalar()
 
             for backorder in b:
+                if backorder is None:
+                    continue
                 backorder.delete()
 
             for domain in d:
+                if domain is None:
+                    continue
                 domain.delete()
 
             for searched in s:
+                if searched is None:
+                    continue
                 searched.delete()
 
-            c.delete()
+            if c is None:
+                continue
+            else:
+                c.delete()
 
-            user.active = False
-            user.save()
+            user.delete()
             delete_count += 1
 
         return delete_count
