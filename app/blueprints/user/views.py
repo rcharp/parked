@@ -84,7 +84,7 @@ def login():
 
         u = User.find_by_identity(request.form.get('identity'))
 
-        if u and u.authenticated(password=request.form.get('password')):
+        if u and u.is_active() and u.authenticated(password=request.form.get('password')):
             # As you can see remember me is always enabled, this was a design
             # decision I made because more often than not users want this
             # enabled. This allows for a less complicated login form.
@@ -178,6 +178,10 @@ def signup():
     form = SignupForm()
 
     if form.validate_on_submit():
+        if db.session.query(exists().where(User.email == request.form.get('email'))).scalar():
+            flash('There is already an account with this email. Please login.', 'error')
+            return redirect(url_for('user.login'))
+
         u = User()
 
         form.populate_obj(u)

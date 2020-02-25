@@ -219,7 +219,7 @@ def cancel():
             email = current_user.email
 
             # Delete the user.
-            from app.blueprints.billing.tasks import delete_users, delete_auth
+            from app.blueprints.billing.tasks import delete_users
             ids = [current_user.id]
 
             # Delete the user

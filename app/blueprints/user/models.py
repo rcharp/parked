@@ -33,8 +33,6 @@ class User(UserMixin, ResourceMixin, db.Model):
     # Relationships.
     credit_card = db.relationship(CreditCard, uselist=False, backref='users', lazy='subquery',
                                   passive_deletes=True)
-    # subscription = db.relationship(Subscription, uselist=False, lazy='subquery',
-    #                                backref='users', passive_deletes=True)
     customer = db.relationship(Customer, uselist=False, lazy='subquery',
                                    backref='users', passive_deletes=True)
     domain = db.relationship(Domain, uselist=False, backref='users', lazy='subquery',
@@ -54,13 +52,6 @@ class User(UserMixin, ResourceMixin, db.Model):
 
     # Billing.
     name = db.Column(db.String(128), index=True)
-    payment_id = db.Column(db.String(128), index=True)
-    cancelled_subscription_on = db.Column(AwareDateTime())
-    trial = db.Column('trial', db.Boolean(), nullable=False,
-                      server_default='1')
-
-    # Notifications
-    send_failure_email = db.Column('send_failure_email', db.Boolean(), nullable=False, server_default='0')
 
     sign_in_count = db.Column(db.Integer, nullable=False, default=0)
     current_sign_in_on = db.Column(AwareDateTime())
@@ -202,16 +193,42 @@ class User(UserMixin, ResourceMixin, db.Model):
             if user is None:
                 continue
 
-            if user.customer is None:
-                user.delete()
-            else:
-                customer = Customer()
-                cancelled = customer.cancel(user=user)
+            # if user.customer is None:
+            #     # user.delete()
+            #     user.active = False
+            # else:
+            #     customer = Customer()
+            #     cancelled = customer.cancel(user=user)
+            #
+            #     # If successful, delete it locally.
+            #     if cancelled:
+            #         # user.delete()
+            #         user.active = False
 
-                # If successful, delete it locally.
-                if cancelled:
-                    user.delete()
+            # Delete backorders and domains
+            from app.blueprints.api.models.backorder import Backorder
+            from app.blueprints.api.models.domains import Domain
+            from app.blueprints.api.models.searched import SearchedDomain
+            from app.blueprints.billing.models.customer import Customer
 
+            b = Backorder.query.filter(Backorder.user_id == user.id).all()
+            d = Domain.query.filter(Domain.user_id == user.id).all()
+            s = SearchedDomain.query.filter(SearchedDomain.user_id == user.id).all()
+            c = Customer.query.filter(Customer.user_id == user.id).scalar()
+
+            for backorder in b:
+                backorder.delete()
+
+            for domain in d:
+                domain.delete()
+
+            for searched in s:
+                searched.delete()
+
+            c.delete()
+
+            user.active = False
+            user.save()
             delete_count += 1
 
         return delete_count
