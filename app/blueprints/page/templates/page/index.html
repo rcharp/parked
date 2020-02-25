@@ -151,7 +151,6 @@
                 </div>
             </header>
             <!--/ End Header -->
-
             <!-- Hero -->
             <div class="jumbotron jumbotron-fluid bg-white font-weight__500 hero mb-0">
                 <!-- Empty Space -->
@@ -173,43 +172,40 @@
                                     Only $99 per domain.</p><br /><br />
                                 {% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;">
-                                        <div style="text-align:center; font-size:18px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:20px;float:left;display:block;{% endif %}"><br /><br />
+                                        <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
-                                                    The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br />
-                                                    It expires {{ domain['expires'] }} UTC.
+                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
+                                                    <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
 
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                         <div class="form-group">
                                                             <br />
-                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
                                                             </div>
                                                         </div>
                                                     </form>
-                                                    - or -
                                                 {% else %}
-                                                    The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain') }}" method="post">
+                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                         <div class="form-group">
-                                                            <br />
-                                                            <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                            <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
                                                             </div>
                                                         </div>
                                                     </form>
-                                                    - or -
                                                 {% endif %}
                                             {% else %}
                                                 There was an error checking this domain. Is it valid? Please try again.
                                             {% endif %}
-                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.home' ) }}" method="get">
+                                            <hr style="margin-left:0;width:50%" />
+                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.home') }}" method="get">
                                                 <div class="form-group">
-                                                    <br />
-                                                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
+                                                    <div class="col-xs-12" style="width:40%;min-width:350px;">
+                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -254,7 +250,16 @@
                                             <br />
                                             <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none">
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                </div>
+                                            </div>
+                                            <div style="margin:0 auto;float:none;height:100%;margin-bottom:10px;max-width:500px;">
+                                                {% for message in get_flashed_messages(with_categories=True) %}
+                                                    {% set category = 'danger' if message[0] == 'error' else 'success' %}
+                                                    <div class="ribbon-box btn-{{ category }} font-w600 text-center" style="padding:20px;min-height:30px !important;margin-top:5px;position:relative">
+                                                        {{ message[1] }}
+                                                    </div>
+                                                    {% if not loop.last %}<br />{% endif %}
+                                                {% endfor %}
+                                            </div>
                                         </div><br />
                                         <div class="form-group">
                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">

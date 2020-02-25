@@ -45,40 +45,22 @@ def send_welcome_email(email):
     send_welcome_email(email)
 
 
-@celery.task()
-def send_plan_change_email(email, plan):
-    from app.blueprints.user.templates.emails import send_plan_change_email
-    send_plan_change_email(email, plan)
-
-
-@celery.task()
-def send_plan_signup_email(email, plan):
-    from app.blueprints.user.templates.emails import send_plan_signup_email
-    send_plan_signup_email(email, plan)
+# @celery.task()
+# def send_plan_change_email(email, plan):
+#     from app.blueprints.user.templates.emails import send_plan_change_email
+#     send_plan_change_email(email, plan)
+#
+#
+# @celery.task()
+# def send_plan_signup_email(email, plan):
+#     from app.blueprints.user.templates.emails import send_plan_signup_email
+#     send_plan_signup_email(email, plan)
 
 
 @celery.task()
 def send_contact_us_email(email, message):
     from app.blueprints.user.templates.emails import contact_us_email
     contact_us_email(email, message)
-
-
-@celery.task()
-def send_three_day_expiration_email(email):
-    from app.blueprints.user.templates.emails import send_three_day_expiration_email
-    send_three_day_expiration_email(email)
-
-
-@celery.task()
-def send_trial_expired_email(email):
-    from app.blueprints.user.templates.emails import send_trial_expired_email
-    send_trial_expired_email(email)
-
-
-@celery.task()
-def send_failed_log_email(email, integration_id, time):
-    from app.blueprints.user.templates.emails import send_failed_log_email
-    send_failed_log_email(email, integration_id, time)
 
 
 @celery.task()
