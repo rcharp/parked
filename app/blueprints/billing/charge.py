@@ -52,7 +52,7 @@ def stripe_checkout(email, domain, price, purchase=False):
         if customer_id is not None:
             # The customer is buying the domain outright
             if purchase:
-                p = create_payment(domain, price, customer_id)
+                p = create_payment(domain, price, customer_id, None, True)
                 return p
             # The customer is setting up a card for a reservation
             else:
@@ -65,11 +65,11 @@ def stripe_checkout(email, domain, price, purchase=False):
 
 # Either purchase or setup a PaymentIntent for the customer's card.
 # Used by the stripe_checkout function above
-def create_payment(domain, price, customer_id, pm=None, confirm=False):
+def create_payment(domain, price, customer_id, pm=None, purchase=False, confirm=False):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
     price = int(price.replace('.', '')) if price is not None else 9900
 
-    description = "Buy " + domain + " from " + site_name + "." if confirm \
+    description = "Buy " + domain + " from " + site_name + "." if confirm or purchase \
         else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
 
     # If pm is not None then the user already has a card on file
@@ -160,6 +160,18 @@ def confirm_intent(si, pm):
         return stripe.SetupIntent.confirm(
             si,
             payment_method=pm,
+        )
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def confirm_payment(pi, pm):
+    try:
+        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        return stripe.PaymentIntent.confirm(
+            pi,
+            payment_method=pm
         )
     except Exception as e:
         print_traceback(e)

@@ -41,7 +41,7 @@ from app.blueprints.billing.charge import (
     stripe_checkout,
     create_payment,
     delete_payment,
-    confirm_intent,
+    confirm_payment,
     get_payment_method,
     get_card
 )
@@ -427,7 +427,7 @@ def reserve_domain():
 
         try:
             # Setup the payment method
-            si = stripe_checkout(current_user.email, domain, None)
+            si = stripe_checkout(current_user.email, domain, None, False)
 
             # Redirect to the payment page
             if si is not None:
@@ -567,15 +567,24 @@ Purchase a domain directly with a card that is on file
 def saved_card_payment():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'price' in request.form and 'customer_id' in request.form:
+        if 'si' in request.form and 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
+            si = request.form['si']
             pm = request.form['pm']
-            domain = request.form['domain']
-            price = request.form['price']
-            customer_id = request.form['customer_id']
 
-            # Create the payment with the existing payment method
-            if create_payment(domain, price, customer_id, pm, True):
+            print("si is")
+            print(si)
+            print("pm is")
+            print(pm)
+
+            # Confirm the payment
+            if confirm_payment(si, pm) is not None:
+
+                domain = request.form['domain']
+                customer_id = request.form['customer_id']
+
+                # Create the payment with the existing payment method
+                # if create_payment(domain, price, customer_id, pm, True):
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
