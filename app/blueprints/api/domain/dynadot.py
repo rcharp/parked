@@ -50,8 +50,6 @@ def register_domain(domain):
     # Ensure that the domain can be registered
     results = check_domain(domain)
 
-    print(results)
-
     # The real deal. The domain will be registered if the app is being used live
     if production:
         # Only purchase the domain if it's less than $60
@@ -61,7 +59,9 @@ def register_domain(domain):
             r = requests.get(url=dynadot_url)
             results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
             return 'SuccessCode' in results and results['SuccessCode'] == '0'
-    return False
+
+    # Otherwise return True in the dev environment
+    return True
 
 
 def get_domain_expiration(domain):
