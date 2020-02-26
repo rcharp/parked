@@ -68,6 +68,12 @@ from app.blueprints.api.domain.dynadot import (
     get_domain_expiration,
     backorder_request
 )
+from app.blueprints.user.tasks import (
+    send_welcome_email,
+    send_cancel_email,
+    send_purchase_email,
+    send_reservation_email
+)
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -183,8 +189,6 @@ def signup():
         u.save()
 
         if login_user(u):
-
-            from app.blueprints.user.tasks import send_welcome_email
             from app.blueprints.contact.mailerlite import create_subscriber
 
             send_welcome_email.delay(current_user.email)
@@ -378,7 +382,8 @@ def update_domain():
             domain = request.form['domain']
             customer_id = request.form['customer_id']
 
-            # TODO: Send a successful reservation email
+            # Send a successful reservation email
+            send_reservation_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
@@ -507,7 +512,8 @@ def saved_card_intent():
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
                 create_backorder(d, c.id, current_user.id, r)
 
-                # TODO: Send a successful reservation email
+                # Send a successful reservation email
+                send_reservation_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
@@ -575,7 +581,8 @@ def saved_card_payment():
                 details = get_domain_availability(domain)
                 save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
 
-                # TODO: Send a purchase receipt email
+                # Send a purchase receipt email
+                send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
