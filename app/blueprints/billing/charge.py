@@ -10,6 +10,7 @@ from app.extensions import db
 site_name = "GetParked.io"
 
 
+# The main checkout function for charging a user's card. Used for both reserving and purchasing a domain.
 def stripe_checkout(email, domain, purchase=False):
     try:
         from app.blueprints.user.models import User
@@ -48,9 +49,11 @@ def stripe_checkout(email, domain, purchase=False):
                 customer_id = create_customer(u, email, False)
 
         if customer_id is not None:
+            # The customer is buying the domain outright
             if purchase:
                 p = create_payment(domain, customer_id)
                 return p
+            # The customer is setting up a card for a reservation
             else:
                 si = setup_intent(domain, customer_id)
                 return si
@@ -59,12 +62,15 @@ def stripe_checkout(email, domain, purchase=False):
         return None
 
 
+# Either purchase or setup a PaymentIntent for the customer's card.
+# Used by the stripe_checkout function above
 def create_payment(domain, customer_id, pm=None, confirm=False):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
     description = "Buy " + domain + " from " + site_name + "." if confirm \
         else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
 
+    # If pm is not None then the user already has a card on file
     if pm is not None:
         return stripe.PaymentIntent.create(
             amount=9900,
@@ -86,28 +92,7 @@ def create_payment(domain, customer_id, pm=None, confirm=False):
         )
 
 
-def confirm_payment(domain):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.PaymentIntent.create(
-        amount=9900,
-        currency="usd",
-        description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
-        payment_method_types=["card"]
-    )
-
-
-def charge_card(domain):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    return stripe.PaymentIntent.create(
-        amount=9900,
-        confirm="True",
-        currency="usd",
-        description="Buy " + domain + " from " + site_name + ".",
-        payment_method_types=["card"],
-    )
-
-
-# Create the customer
+# Create the customer in both Stripe and the database
 def create_customer(u, email, create_db=True):
 
     # Create the customer in Stripe
@@ -127,13 +112,17 @@ def create_customer(u, email, create_db=True):
     return customer.id
 
 
+# Setup the PaymentIntent for the reservation
 def setup_intent(domain, customer_id):
     try:
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
+        # Get the customer from the db if they exist
         c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+
+        # If the customer has a card on file, get the default payment method and use that
         if c is not None and c.save_card:
-            # Get the default payment method and use that
+
             customer = stripe.Customer.retrieve(customer_id)
             pm = customer.default_source
 
@@ -161,6 +150,8 @@ def setup_intent(domain, customer_id):
         return None
 
 
+# Charge the user's card for the reservation, if the domain is secured.
+# TODO: Implement the functionality for calling this when the domain is secured
 def confirm_intent(si, pm):
     try:
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -173,22 +164,7 @@ def confirm_intent(si, pm):
         return None
 
 
-def create_session(email, site_url, domain):
-    return stripe.checkout.Session.create(
-        customer_email=email,
-        payment_method_types=['card'],
-        line_items=[{
-            'name': site_name + ' - Reserve ' + domain,
-            'description': "Reserve your domain with " + site_name + ". Your card won't be charged until we secure the domain.",
-            'amount': 9900,
-            'currency': 'usd',
-            'quantity': 1,
-        }],
-        success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
-        cancel_url=site_url + url_for('user.dashboard'),
-    )
-
-
+# Update the customer in Stripe and the db, as well as their card info
 def update_customer(pm, customer_id, save_card):
     try:
         # Change to Live key when done testing
@@ -220,6 +196,8 @@ def update_customer(pm, customer_id, save_card):
         return False
 
 
+# Delete the payment intent when the user cancels a reservation
+# TODO: Implement the functionality to delete the payment in Stripe
 def delete_payment(order_id):
     try:
         stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
@@ -231,6 +209,7 @@ def delete_payment(order_id):
         return None
 
 
+# Gets the customer's payment method from Stripe
 def get_payment_method(si):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
@@ -243,6 +222,7 @@ def get_payment_method(si):
     return pm
 
 
+# Get's the customer's card info from Stripe. Used to display the last 4 digits on the settings/checkout pages
 def get_card(c):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
 
@@ -255,3 +235,44 @@ def get_card(c):
         pm = stripe.PaymentMethod.retrieve(customer.invoice_settings.default_payment_method)
 
     return pm
+
+
+# Not used yet -----------------------------------------------------------------
+# Confirm an existing payment
+# Not currently used
+# def confirm_payment(domain):
+#     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+#     return stripe.PaymentIntent.create(
+#         amount=9900,
+#         currency="usd",
+#         description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
+#         payment_method_types=["card"]
+#     )
+
+
+# Charge the user's card for the immediate payment
+# Not currently used
+# def confirm_payment_intent(domain, pi, pm):
+#     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+#     return stripe.PaymentIntent.confirm(
+#         pi,
+#         payment_method=pm
+#     )
+
+
+# Old code to create a session for payments. Not currently used.
+# def create_session(email, site_url, domain):
+#     return stripe.checkout.Session.create(
+#         customer_email=email,
+#         payment_method_types=['card'],
+#         line_items=[{
+#             'name': site_name + ' - Reserve ' + domain,
+#             'description': "Reserve your domain with " + site_name + ". Your card won't be charged until we secure the domain.",
+#             'amount': 9900,
+#             'currency': 'usd',
+#             'quantity': 1,
+#         }],
+#         success_url=site_url + url_for('user.success', domain=domain) + '&session_id={CHECKOUT_SESSION_ID}',
+#         cancel_url=site_url + url_for('user.dashboard'),
+#     )
+
