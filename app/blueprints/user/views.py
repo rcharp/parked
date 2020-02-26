@@ -68,12 +68,6 @@ from app.blueprints.api.domain.dynadot import (
     get_domain_expiration,
     backorder_request
 )
-from app.blueprints.user.tasks import (
-    send_welcome_email,
-    send_cancel_email,
-    send_purchase_email,
-    send_reservation_email
-)
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -189,6 +183,8 @@ def signup():
         u.save()
 
         if login_user(u):
+
+            from app.blueprints.user.tasks import send_welcome_email
             from app.blueprints.contact.mailerlite import create_subscriber
 
             send_welcome_email.delay(current_user.email)
@@ -352,7 +348,7 @@ def delete_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        # TODO: Delete the PaymentIntent in Stripe
+        # Get the PM to delete the PaymentIntent in Stripe
         order_id = domain.pm
 
         domain.delete()
@@ -361,8 +357,10 @@ def delete_domain():
         # Ensure the domain has been deleted
         d = Domain.query.get(domain_id)
         if d is None:
-            # Delete the Payment Intent
+
+            # TODO: Delete the Payment Intent
             # delete_payment(order_id)
+
             flash('This domain reservation was successfully deleted.', 'success')
         else:
             flash('There was a problem deleting your reservation. Please try again.', 'error')
@@ -383,6 +381,7 @@ def update_domain():
             customer_id = request.form['customer_id']
 
             # Send a successful reservation email
+            from app.blueprints.user.tasks import send_reservation_email
             send_reservation_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
@@ -513,6 +512,7 @@ def saved_card_intent():
                 create_backorder(d, c.id, current_user.id, r)
 
                 # Send a successful reservation email
+                from app.blueprints.user.tasks import send_reservation_email
                 send_reservation_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully reserved!', 'success')
@@ -582,6 +582,7 @@ def saved_card_payment():
                 save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
+                from app.blueprints.user.tasks import send_purchase_email
                 send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
