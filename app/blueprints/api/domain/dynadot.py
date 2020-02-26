@@ -54,7 +54,7 @@ def register_domain(domain, production=False):
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain
             r = requests.get(url=dynadot_url)
             results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
-            return results
+            return 'SuccessCode' in results and results['SuccessCode'] == '0'
     return False
 
 

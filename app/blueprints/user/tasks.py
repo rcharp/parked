@@ -48,11 +48,23 @@ def send_welcome_email(email):
 
 
 @celery.task()
+def send_reservation_email(email, domain):
+    from app.blueprints.user.emails import send_reservation_email
+    send_reservation_email(email, domain)
+    return
+
+
+@celery.task()
+def send_purchase_email(email, domain):
+    from app.blueprints.user.emails import send_purchase_email
+    send_purchase_email(email, domain)
+    return
+
+
+@celery.task()
 def send_contact_us_email(email, message):
     from app.blueprints.user.emails import contact_us_email
-    print("sending email...")
     contact_us_email(email, message)
-    print("Sent email")
     return
 
 
@@ -62,15 +74,4 @@ def send_cancel_email(email):
     send_cancel_email(email)
     return
 
-
-# @celery.task()
-# def send_plan_change_email(email, plan):
-#     from app.blueprints.user.templates.emails import send_plan_change_email
-#     send_plan_change_email(email, plan)
-#
-#
-# @celery.task()
-# def send_plan_signup_email(email, plan):
-#     from app.blueprints.user.templates.emails import send_plan_signup_email
-#     send_plan_signup_email(email, plan)
 

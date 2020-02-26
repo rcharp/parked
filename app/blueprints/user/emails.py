@@ -18,75 +18,27 @@ def send_welcome_email(email):
 
     mail.send(msg)
 
-    print("Email was sent successfully")
 
-
-def send_plan_signup_email(email, plan):
+def send_reservation_email(email, domain):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("You've subscribed to a plan with Getparked.io!",
+    msg = Message("You've successfully reserved " + domain + "!",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
-    if plan == 'hobby':
-        plan = 'Hobby'
-        amount = 7
-    elif plan == 'startup':
-        plan = 'Startup'
-        amount = 20
-    elif plan == 'professional':
-        plan = 'Professional'
-        amount = 50
-    else:
-        amount = 0
-    msg.html = render_template('user/mail/plan_signup_email.html', plan=plan, amount=amount)
+    msg.html = render_template('user/mail/reservation_email.html', domain=domain)
 
     mail.send(msg)
 
 
-def send_plan_change_email(email, plan):
+def send_purchase_email(email, domain):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
-    msg = Message("Your plan with Getparked.io has been changed.",
+    msg = Message("You've successfully purchased " + domain + "!",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
-    if plan['id'] == 'hobby':
-        plan = 'Hobby'
-        amount = 7
-    elif plan['id'] == 'startup':
-        plan = 'Startup'
-        amount = 20
-    elif plan['id'] == 'professional':
-        plan = 'Professional'
-        amount = 50
-    else:
-        amount = 0
-    msg.html = render_template('user/mail/plan_change_email.html', plan=plan, amount=amount)
-
-    mail.send(msg)
-
-
-def send_three_day_expiration_email(email):
-    app = Flask(__name__)
-    mail = Mail()
-    mail.init_app(app)
-    msg = Message("Your free trial with Getparked.io expires in 3 days.",
-                  sender="getparkedio@gmail.com",
-                  recipients=[email])
-    msg.html = render_template('user/mail/three_day_expiration_email.html')
-
-    mail.send(msg)
-
-
-def send_trial_expired_email(email):
-    app = Flask(__name__)
-    mail = Mail()
-    mail.init_app(app)
-    msg = Message("Your free trial with Getparked.io has expired.",
-                  sender="getparkedio@gmail.com",
-                  recipients=[email])
-    msg.html = render_template('user/mail/trial_expired_email.html')
+    msg.html = render_template('user/mail/purchase_email.html', domain=domain)
 
     mail.send(msg)
 
@@ -146,25 +98,5 @@ def send_cancel_email(email):
                   recipients=[email])
 
     msg.html = render_template('user/mail/cancel_email.html')
-
-    mail.send(msg)
-
-
-def send_failed_log_email(email, integration_id, failure_time):
-    app = Flask(__name__)
-    mail = Mail()
-    mail.init_app(app)
-    msg = Message("Getparked.io: Integration #" + str(integration_id) + " for " + email + " failed.",
-                  sender="getparkedio@gmail.com",
-                  recipients=['logs@Getparked.io.com'])
-
-    from app.blueprints.api.models.user_integrations import UserIntegration
-
-    integration = UserIntegration.query.filter(UserIntegration.id == integration_id).scalar()
-
-    from app.blueprints.page.date import get_dt_string, get_datetime_from_string
-    failure_time = get_dt_string(get_datetime_from_string(failure_time)) + ' (UTC)'
-
-    msg.html = render_template('user/mail/send_failed_log_email.html', integration=integration, email=email, failure_time=failure_time)
 
     mail.send(msg)

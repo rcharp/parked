@@ -283,6 +283,9 @@ def check_availability():
         return redirect(url_for('user.dashboard'))
 
 
+"""
+Registers the domain after it has been reserved and successfully captured
+"""
 @user.route('/register_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -292,7 +295,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name) or True:
+        if register(domain.name):
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
@@ -303,6 +306,9 @@ def register_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+View the domain that you have reserved
+"""
 @user.route('/view_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -329,6 +335,9 @@ def view_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+Delete the domain reservation
+"""
 @user.route('/delete_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -338,6 +347,8 @@ def delete_domain():
     if request.method == 'POST':
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+
+        # TODO: Delete the PaymentIntent in Stripe
         order_id = domain.pm
 
         domain.delete()
@@ -355,6 +366,9 @@ def delete_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+After successfully purchasing/registering a domain, update the domain's info in the DB
+"""
 @user.route('/update_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -364,7 +378,7 @@ def update_domain():
             domain = request.form['domain']
             customer_id = request.form['customer_id']
 
-            # Send a receipt email
+            # TODO: Send a successful reservation email
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
@@ -390,6 +404,9 @@ def update_domain():
 
 
 # Reserve/Backorder Domain -------------------------------------------------------------------
+"""
+Create a reservation/backorder for a domain
+"""
 @user.route('/reserve_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -425,6 +442,9 @@ def reserve_domain():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
+"""
+Saves the backorder after the user's card info has been entered
+"""
 @user.route('/save_reservation', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -439,6 +459,7 @@ def save_reservation():
             customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id, save_card):
+
                 # Create the backorder request in Dynadot
                 r = backorder_request(domain)
 
@@ -457,6 +478,9 @@ def save_reservation():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+Create a backorder with a card that is already on file
+"""
 @user.route('/saved_card_intent', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -471,6 +495,7 @@ def saved_card_intent():
 
             # Create the payment intent with the existing payment method
             if create_payment(domain, customer_id, pm):
+
                 # Create the backorder request in Dynadot
                 r = backorder_request(domain)
 
@@ -482,6 +507,8 @@ def saved_card_intent():
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
                 create_backorder(d, c.id, current_user.id, r)
 
+                # TODO: Send a successful reservation email
+
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
 
@@ -490,6 +517,9 @@ def saved_card_intent():
 
 
 # Purchase Available Domains -------------------------------------------------------------------
+"""
+Purchase an available domain directly.
+"""
 @user.route('/checkout', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -499,10 +529,11 @@ def checkout():
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
             flash('You already own this domain!', 'error')
-            # return redirect(url_for('user.dashboard'))
+            return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain
-            if register(domain) or True:
+            if register(domain):
+
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, True)
 
@@ -522,6 +553,9 @@ def checkout():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
+"""
+Purchase a domain directly with a card that is on file
+"""
 @user.route('/saved_card_payment', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -536,9 +570,12 @@ def saved_card_payment():
 
             # Create the payment with the existing payment method
             if create_payment(domain, customer_id, pm, True):
+
                 # Save the domain after payment
                 details = get_domain_availability(domain)
                 save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
+
+                # TODO: Send a purchase receipt email
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
@@ -552,6 +589,7 @@ def saved_card_payment():
 @login_required
 @csrf.exempt
 def success():
+
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
 
@@ -560,6 +598,7 @@ def success():
 @login_required
 @csrf.exempt
 def purchase_success():
+
     flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
           category='success')
     return render_template('user/purchase_success.html', current_user=current_user)
