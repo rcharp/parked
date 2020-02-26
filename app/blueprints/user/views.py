@@ -39,6 +39,7 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import (
     stripe_checkout,
+    confirm_intent,
     create_payment,
     delete_payment,
     confirm_payment,
@@ -427,7 +428,7 @@ def reserve_domain():
 
         try:
             # Setup the payment method
-            si = stripe_checkout(current_user.email, domain, None, False)
+            si = stripe_checkout(current_user.email, domain, None)
 
             # Redirect to the payment page
             if si is not None:
@@ -453,8 +454,9 @@ Saves the backorder after the user's card info has been entered
 def save_reservation():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'si' in request.form and 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
+            si = request.form['si']
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
@@ -462,19 +464,22 @@ def save_reservation():
 
             if update_customer(pm, customer_id, save_card):
 
-                # Create the backorder request in Dynadot
-                r = backorder_request(domain)
+                # Create the payment intent for the reservation
+                if confirm_intent(si, pm):
 
-                # Save the domain
-                details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+                    # Create the backorder request in Dynadot
+                    r = backorder_request(domain)
 
-                # Save the backorder to the db
-                c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, c.id, current_user.id, r)
+                    # Save the domain
+                    details = get_domain_availability(domain)
+                    d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
 
-                flash('Your domain was successfully reserved!', 'success')
-                return render_template('user/success.html', current_user=current_user)
+                    # Save the backorder to the db
+                    c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+                    create_backorder(d, c.id, current_user.id, r)
+
+                    flash('Your domain was successfully reserved!', 'success')
+                    return render_template('user/success.html', current_user=current_user)
 
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
@@ -496,7 +501,7 @@ def saved_card_intent():
             customer_id = request.form['customer_id']
 
             # Create the payment intent with the existing payment method
-            if create_payment(domain, customer_id, pm):
+            if create_payment(domain, None, customer_id, pm):
 
                 # Create the backorder request in Dynadot
                 r = backorder_request(domain)
@@ -571,11 +576,6 @@ def saved_card_payment():
 
             si = request.form['si']
             pm = request.form['pm']
-
-            print("si is")
-            print(si)
-            print("pm is")
-            print(pm)
 
             # Confirm the payment
             if confirm_payment(si, pm) is not None:

@@ -378,7 +378,7 @@
                           $.ajax({
                               url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
-                              data: {'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'si': '{{ si.id }}', 'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.success', domain=domain) }}';

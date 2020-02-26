@@ -142,6 +142,8 @@ def setup_intent(domain, customer_id):
                     payment_method_types=["card"],
                 )
         else:
+            print("Creating first SI")
+            print(customer_id)
             return stripe.SetupIntent.create(
                 customer=customer_id,
                 description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
