@@ -589,5 +589,5 @@ def contact():
         send_contact_us_email.delay(request.form['email'], request.form['message'])
 
         flash('Thanks for your email! You can expect a response shortly.', 'success')
-        return redirect(url_for('user.dashboard'))
+        return redirect(url_for('user.contact'))
     return render_template('user/contact.html', current_user=current_user)
