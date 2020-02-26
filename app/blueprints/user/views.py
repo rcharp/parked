@@ -376,9 +376,14 @@ After successfully purchasing/registering a domain, update the domain's info in 
 @csrf.exempt
 def update_domain():
     if request.method == 'POST':
-        if 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'save-card' in request.form and 'customer_id' in request.form:
             domain = request.form['domain']
             customer_id = request.form['customer_id']
+            pm = request.form['pm']
+            save_card = request.form['save-card']
+
+            # Update the customer's payment info
+            update_customer(pm, customer_id, save_card)
 
             # Send a successful reservation email
             from app.blueprints.user.tasks import send_reservation_email
@@ -469,7 +474,7 @@ def save_reservation():
 
                 # Save the domain
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
@@ -505,7 +510,7 @@ def saved_card_intent():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
@@ -579,7 +584,7 @@ def saved_card_payment():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
+                save_domain(current_user.id, customer_id, pm, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
                 from app.blueprints.user.tasks import send_purchase_email

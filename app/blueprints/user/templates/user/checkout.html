@@ -203,7 +203,7 @@
                                             <div class="block block-themed" style="height:800px;">
                                                 <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:350px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Buy <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
+                                                    <span style="font-size:18px">for a year.</span><br /><br />
                                                     {% if pm is not none %}
                                                         <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
                                                             <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use {{ pm['card']['brand']|capitalize }} ****{{ pm['card']['last4'] }} to buy this domain</span>
@@ -356,6 +356,7 @@
                 form.addEventListener('submit', function(ev) {
                   ev.preventDefault();
                   document.getElementById('submit').disabled = true;
+                  var save_card = $('#save-card').is(':checked');
                   stripe.confirmCardPayment(clientSecret, {
                     payment_method: {
                       card: card,
@@ -377,7 +378,7 @@
                           $.ajax({
                               url: '{{ url_for("user.update_domain") }}',
                               type: 'POST',
-                              data: {'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pm': result.paymentIntent.payment_method, 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}', 'save-card': save_card},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.purchase_success', domain=domain) }}';

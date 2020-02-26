@@ -64,13 +64,14 @@ def print_traceback(e):
     print(e)
 
 
-def save_domain(user_id, customer_id, pm, domain, expires, reserve_time, registered=False):
+def save_domain(user_id, customer_id, pm, domain, expires, available_on, reserve_time, registered=False):
     from app.blueprints.api.models.domains import Domain
 
     d = Domain()
     d.user_id = user_id
     d.name = domain
     d.expires = expires
+    d.available_on = available_on
     d.created_on = get_dt_string(reserve_time)
     d.customer_id = customer_id
     d.pm = pm
