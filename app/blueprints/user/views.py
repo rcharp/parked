@@ -295,7 +295,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name):
+        if register(domain.name, True):
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
@@ -385,23 +385,16 @@ def update_domain():
             # Update the customer's payment info
             update_customer(pm, customer_id, save_card)
 
-            # Send a successful reservation email
-            from app.blueprints.user.tasks import send_reservation_email
-            send_reservation_email.delay(current_user.email, domain)
+            # Send a successful purchase email
+            from app.blueprints.user.tasks import send_purchase_email
+            send_purchase_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
 
             # Create and save the domain in the db if it isn't already
             if not db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
-                d = Domain()
-                d.user_id = current_user.id
-                d.customer_id = customer_id
-                d.registered = True
-                d.name = domain
-                d.expires = expires
-
-                d.save()
+                d = save_domain(current_user.id, customer_id, pm, domain, None, None, pytz.utc.localize(dt.utcnow()), True)
             else:
                 d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
                 d.customer_id = customer_id
@@ -434,7 +427,7 @@ def reserve_domain():
 
         try:
             # Setup the payment method
-            si = stripe_checkout(current_user.email, domain)
+            si = stripe_checkout(current_user.email, domain, None)
 
             # Redirect to the payment page
             if si is not None:
@@ -537,6 +530,7 @@ Purchase an available domain directly.
 def checkout():
     if request.method == 'POST':
         domain = request.form['domain']
+        price = request.form['price']
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
             flash('You already own this domain!', 'error')
@@ -546,12 +540,12 @@ def checkout():
             if register(domain):
 
                 # Setup the customer's payment method
-                si = stripe_checkout(current_user.email, domain, True)
+                si = stripe_checkout(current_user.email, domain, price, True)
 
                 # Redirect to the payment page
                 if si is not None:
                     pm = get_payment_method(si)
-                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email, pm=pm)
+                    return render_template('user/checkout.html', current_user=current_user, domain=domain, price=price, email=current_user.email, si=si, pm=pm)
 
             flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
@@ -573,14 +567,15 @@ Purchase a domain directly with a card that is on file
 def saved_card_payment():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'price' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             domain = request.form['domain']
+            price = request.form['price']
             customer_id = request.form['customer_id']
 
             # Create the payment with the existing payment method
-            if create_payment(domain, customer_id, pm, True):
+            if create_payment(domain, price, customer_id, pm, True):
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)

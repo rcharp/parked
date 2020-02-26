@@ -5,13 +5,14 @@ from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from sqlalchemy import exists, and_
 from app.extensions import db
+from decimal import Decimal
 
 
 site_name = "GetParked.io"
 
 
 # The main checkout function for charging a user's card. Used for both reserving and purchasing a domain.
-def stripe_checkout(email, domain, purchase=False):
+def stripe_checkout(email, domain, price, purchase=False):
     try:
         from app.blueprints.user.models import User
         from app.blueprints.api.models.domains import Domain
@@ -51,7 +52,7 @@ def stripe_checkout(email, domain, purchase=False):
         if customer_id is not None:
             # The customer is buying the domain outright
             if purchase:
-                p = create_payment(domain, customer_id)
+                p = create_payment(domain, price, customer_id)
                 return p
             # The customer is setting up a card for a reservation
             else:
@@ -64,8 +65,9 @@ def stripe_checkout(email, domain, purchase=False):
 
 # Either purchase or setup a PaymentIntent for the customer's card.
 # Used by the stripe_checkout function above
-def create_payment(domain, customer_id, pm=None, confirm=False):
+def create_payment(domain, price, customer_id, pm=None, confirm=False):
     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    price = int(price.replace('.', '')) if price is not None else 9900
 
     description = "Buy " + domain + " from " + site_name + "." if confirm \
         else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
@@ -73,7 +75,7 @@ def create_payment(domain, customer_id, pm=None, confirm=False):
     # If pm is not None then the user already has a card on file
     if pm is not None:
         return stripe.PaymentIntent.create(
-            amount=9900,
+            amount=price,
             customer=customer_id,
             payment_method=pm,
             confirm=confirm,
@@ -83,7 +85,7 @@ def create_payment(domain, customer_id, pm=None, confirm=False):
         )
     else:
         return stripe.PaymentIntent.create(
-            amount=9900,
+            amount=price,
             customer=customer_id,
             confirm=confirm,
             currency="usd",

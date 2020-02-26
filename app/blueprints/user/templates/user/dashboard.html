@@ -245,8 +245,9 @@
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
+                                                                            <input class="form-control" id="price" name="price" type="hidden" value="{{ domain['price'] }}" />
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - ${{ domain['price'] }}</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
