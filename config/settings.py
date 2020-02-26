@@ -4,6 +4,8 @@ from celery.schedules import crontab
 
 SITE_NAME = 'getparked.io'
 
+PRODUCTION = True
+
 DEBUG = True
 LOG_LEVEL = 'DEBUG'  # CRITICAL / ERROR / WARNING / INFO / DEBUG
 

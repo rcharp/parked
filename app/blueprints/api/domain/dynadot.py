@@ -39,14 +39,20 @@ def check_domain(domain):
     # return dyn.search(domains=[domain])
 
 
-def register_domain(domain, production=False):
+def register_domain(domain):
+
+    # Get the production level
+    production = current_app.config.get('PRODUCTION')
+
     # Only send a request if it isn't already processing one
     if is_processing():
-        register_domain(domain, production)
+        register_domain(domain)
     # Ensure that the domain can be registered
     results = check_domain(domain)
 
-    # The real deal. The domain will be registered if 'production' is passed as True
+    print(results)
+
+    # The real deal. The domain will be registered if the app is being used live
     if production:
         # Only purchase the domain if it's less than $60
         if results is not None and results['price'] is not None and Decimal(results['price']) <= 60:

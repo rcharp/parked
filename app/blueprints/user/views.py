@@ -537,7 +537,7 @@ def checkout():
             flash('You already own this domain!', 'error')
             return redirect(url_for('user.dashboard'))
         try:
-            # Secure the domain
+            # Secure the domain.
             if register(domain):
 
                 # Setup the customer's payment method
