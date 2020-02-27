@@ -70,8 +70,8 @@ def seed():
 
     member2 = {
         'role': 'member',
-        'email': app.config['SEED_MEMBER_2_EMAIL'],
-        'password': app.config['SEED_ADMIN_PASSWORD']
+        'email': app.config['SEED_TEST_EMAIL'],
+        'password': app.config['SEED_TEST_PASSWORD']
     }
 
     User(**member).save()
