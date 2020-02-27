@@ -30,9 +30,9 @@ def check_domain(domain):
 
     if 'Available' in results:
         price = Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49 if 'Price' in results else None
-        price = 0
+        # price = 1.00
         available = True if results['Available'] == 'yes' else False
-        details.update({'name': domain, 'available': available, 'price': price})
+        details.update({'name': domain, 'available': available, 'price': format(price, '.2f')})
         return details
     else:
         return None

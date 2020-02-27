@@ -71,7 +71,7 @@ def stripe_checkout(email, domain, price, purchase=False):
 # Used by the stripe_checkout function above
 def create_payment(domain, price, customer_id, pm=None, purchase=False, confirm=False):
     stripe.api_key = current_app.config.get('STRIPE_KEY')
-    price = int(price.replace('.', '')) if price is not None else 9900
+    price = int(float(price) * 100) if price is not None else 9900
 
     description = "Buy " + domain + " from " + site_name + "." if confirm or purchase \
         else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
