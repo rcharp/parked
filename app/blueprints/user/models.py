@@ -13,8 +13,6 @@ from itsdangerous import URLSafeTimedSerializer, \
     TimedJSONWebSignatureSerializer
 
 from lib.util_sqlalchemy import ResourceMixin, AwareDateTime
-from app.blueprints.billing.models.credit_card import CreditCard
-# from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
@@ -32,8 +30,6 @@ class User(UserMixin, ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Relationships.
-    credit_card = db.relationship(CreditCard, uselist=False, backref='users', lazy='subquery',
-                                  passive_deletes=True)
     customer = db.relationship(Customer, uselist=False, lazy='subquery',
                                    backref='users', passive_deletes=True)
     domain = db.relationship(Domain, uselist=False, backref='users', lazy='subquery',

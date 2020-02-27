@@ -14,7 +14,6 @@ class Domain(ResourceMixin, db.Model):
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     available_on = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     customer_id = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
-    pm = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     registered = db.Column('registered', db.Boolean(), nullable=False, server_default='0')
 
     # Relationships.
