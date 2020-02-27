@@ -355,17 +355,17 @@
                 var clientSecret = '{{ si.client_secret }}';
 
                 form.addEventListener('submit', function(ev) {
-                  ev.preventDefault();
-                  document.getElementById('submit').disabled = true;
-                  var save_card = $('#save-card').is(':checked');
-                  stripe.confirmCardSetup(clientSecret, {
-                    payment_method: {
-                      card: card,
-                      billing_details: {
-                        email: '{{ email }}'
+                    ev.preventDefault();
+                    document.getElementById('submit').disabled = true;
+                    var save_card = $('#save-card').is(':checked');
+                    stripe.confirmCardSetup(clientSecret, {
+                      payment_method: {
+                        card: card,
+                        billing_details: {
+                          email: '{{ email }}'
+                        }
                       }
                     }
-                  }
                   ).then(function(result) {
                     if (result.error) {
                         alert(result.error.message);

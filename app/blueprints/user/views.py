@@ -460,12 +460,14 @@ def save_reservation():
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
-            customer_id = request.form['customer_id']
+            customer_id = request.form['customer_id']#
+
+            # print(request.form)
 
             if update_customer(pm, customer_id, save_card):
 
-                # Create the payment intent for the reservation
-                if confirm_intent(si, pm):
+                # Create the payment intent with the existing payment method
+                if create_payment(domain, None, customer_id, pm):
 
                     # Create the backorder request in Dynadot
                     r = backorder_request(domain)

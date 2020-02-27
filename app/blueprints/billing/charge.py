@@ -6,6 +6,7 @@ from app.blueprints.api.models.domains import Domain
 from sqlalchemy import exists, and_
 from app.extensions import db
 from decimal import Decimal
+import time
 
 
 site_name = "GetParked.io"
@@ -50,6 +51,8 @@ def stripe_checkout(email, domain, price, purchase=False):
                 customer_id = create_customer(u, email, False)
 
         if customer_id is not None:
+            # Sleep for a sec to give Stripe's API a chance to catch up
+            time.sleep(1)
             # The customer is buying the domain outright
             if purchase:
                 p = create_payment(domain, price, customer_id, None, True)
@@ -57,6 +60,7 @@ def stripe_checkout(email, domain, price, purchase=False):
             # The customer is setting up a card for a reservation
             else:
                 si = setup_intent(domain, customer_id)
+                # si = create_payment(domain, price, customer_id, None, False, False)
                 return si
     except Exception as e:
         print_traceback(e)
@@ -142,8 +146,6 @@ def setup_intent(domain, customer_id):
                     payment_method_types=["card"],
                 )
         else:
-            print("Creating first SI")
-            print(customer_id)
             return stripe.SetupIntent.create(
                 customer=customer_id,
                 description="Reserve " + domain + " with " + site_name + ". Your card won't be charged until we secure the domain.",
