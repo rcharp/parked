@@ -4,6 +4,8 @@ from celery.schedules import crontab
 
 SITE_NAME = 'getparked.io'
 
+PRODUCTION = True
+
 DEBUG = True
 LOG_LEVEL = 'DEBUG'  # CRITICAL / ERROR / WARNING / INFO / DEBUG
 
@@ -61,14 +63,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.blueprints.billing.tasks.mark_old_credit_cards',
         'schedule': crontab(hour=0, minute=0)
     },
-    'send_three_day_expiration_emails': {
-        'task': 'app.blueprints.billing.tasks.send_three_day_expiration_emails',
-        'schedule': crontab(hour=12, minute=0)
-    },
-    'send_trial_expired_emails': {
-        'task': 'app.blueprints.billing.tasks.send_trial_expired_emails',
-        'schedule': crontab(hour=12, minute=0)
-    }
 }
 
 '''
@@ -141,10 +135,10 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://getparked.herokuapp.com'
+SITE_URL = 'https://getparked.io'
 
 # Webhook
-WEBHOOK_URL = 'https://www.domain.com/webhook'
+WEBHOOK_URL = 'https://www.getparked.io/webhook'
 
 # Mailerlite
 # MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)

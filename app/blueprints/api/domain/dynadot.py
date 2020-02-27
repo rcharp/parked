@@ -29,7 +29,7 @@ def check_domain(domain):
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
     if 'Available' in results:
-        price = re.findall("\d*\.?\d+", results['Price'])[0] if 'Price' in results else None
+        price = Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49 if 'Price' in results else None
         available = True if results['Available'] == 'yes' else False
         details.update({'name': domain, 'available': available, 'price': price})
         return details
@@ -39,24 +39,31 @@ def check_domain(domain):
     # return dyn.search(domains=[domain])
 
 
-def register_domain(domain, production=False):
+def register_domain(domain, backordered=False):
+
+    # Get the production level
+    production = current_app.config.get('PRODUCTION')
+
     # Only send a request if it isn't already processing one
     if is_processing():
-        register_domain(domain, production)
+        register_domain(domain)
     # Ensure that the domain can be registered
     results = check_domain(domain)
-    print(results)
 
-    # The real deal. The domain will be registered if 'production' is passed as True
+    limit = 60 if backordered else 99
+
+    # The real deal. The domain will be registered if the app is being used live
     if production:
         # Only purchase the domain if it's less than $60
-        if results is not None and results['price'] is not None and Decimal(results['price']) <= 60:
+        if results is not None and results['price'] is not None and results['price'] <= limit:
             api_key = current_app.config.get('DYNADOT_API_KEY')
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain
             r = requests.get(url=dynadot_url)
             results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
-            return results
-    return False
+            return 'SuccessCode' in results and results['SuccessCode'] == '0'
+
+    # Otherwise return True in the dev environment
+    return True
 
 
 def get_domain_expiration(domain):
@@ -92,6 +99,16 @@ def get_domain_details(domain):
     results = json.loads(json.dumps(xmltodict.parse(r.text)))#['DomainInfoResponse']['DomainInfoContent']['Domain']
 
     return results
+
+
+def get_domain_price(domain):
+    # Get the domain's details, which include the price
+    details = check_domain(domain)
+
+    if 'price' in details:
+        return details['price'] + 4900
+    else:
+        return None
 
 
 def backorder_request(domain):

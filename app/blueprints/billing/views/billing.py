@@ -205,21 +205,21 @@ def cancel():
 
     if form.validate_on_submit():
 
-        # Cancel the user's subscription
-        if current_user.customer:
-            subscription = Subscription()
-            canceled = subscription.cancel(user=current_user)
-        else:
-            # If there is no subscription, then delete the user
-            canceled = True
+        # Cancel the user's Stripe account here
+        # if current_user.customer:
+        #     # subscription = Subscription()
+        #     # canceled = subscription.cancel(user=current_user)
+        # else:
+        #     # If there is no subscription, then delete the user
+        #     canceled = True
+        canceled = True
 
         if canceled:
-
             # Get the user's email
             email = current_user.email
 
             # Delete the user.
-            from app.blueprints.billing.tasks import delete_users, delete_auth
+            from app.blueprints.billing.tasks import delete_users
             ids = [current_user.id]
 
             # Delete the user
@@ -231,7 +231,7 @@ def cancel():
 
             flash('Sorry to see you go! Your subscription has been canceled.',
                   'success')
-            return redirect(url_for('user.login'))
+            return redirect(url_for('user.logout'))
 
     return render_template('billing/cancel.html', form=form)
 

@@ -13,7 +13,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.domain.com">
+    <link rel="canonical" href="https://www.getparked.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -34,8 +34,8 @@
 
     <!-- Facebook Open Graph -->
     <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.domain.com" />
-    <meta property="og:image" content="https://www.domain.com/static/logo256x256.png" />
+    <meta property="og:url" content="https://www.getparked.io" />
+    <meta property="og:image" content="https://www.getparked.io/static/logo256x256.png" />
     <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
     <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
 
@@ -176,7 +176,7 @@
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
                                                     <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
-                                                    <span class="text-muted">Expires:</span> {{ domain['expires'] }} UTC.
+                                                    <span class="text-muted">Available:</span> {{ domain['available_on'] }} UTC.
 
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                         <div class="form-group">
@@ -192,8 +192,9 @@
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
+                                                                <input class="form-control" id="price" name="price" type="hidden" value="{{ domain['price'] }}" />
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - ${{ domain['price'] + 49 }}</button>
                                                             </div>
                                                         </div>
                                                     </form>

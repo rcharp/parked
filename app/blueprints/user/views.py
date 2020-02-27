@@ -39,9 +39,10 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import (
     stripe_checkout,
+    confirm_intent,
     create_payment,
     delete_payment,
-    confirm_intent,
+    confirm_payment,
     get_payment_method,
     get_card
 )
@@ -84,7 +85,7 @@ def login():
 
         u = User.find_by_identity(request.form.get('identity'))
 
-        if u and u.authenticated(password=request.form.get('password')):
+        if u and u.is_active() and u.authenticated(password=request.form.get('password')):
             # As you can see remember me is always enabled, this was a design
             # decision I made because more often than not users want this
             # enabled. This allows for a less complicated login form.
@@ -96,13 +97,6 @@ def login():
             # 3) Add a checkbox to the login form with the id/name 'remember'
             if login_user(u, remember=True) and u.is_active():
                 u.update_activity_tracking(request.remote_addr)
-
-                # Set the days left in the trial
-                if current_user.trial:
-                    trial_days_left = 14 - (datetime.datetime.now() - current_user.created_on.replace(tzinfo=None)).days
-                    if trial_days_left < 0:
-                        current_user.trial = False
-                        current_user.save()
 
                 next_url = request.form.get('next')
 
@@ -117,7 +111,8 @@ def login():
             flash('Your username/email or password is incorrect.', 'error')
 
     else:
-        print(form.errors)
+        if len(form.errors) > 0:
+            print(form.errors)
 
     return render_template('user/login.html', form=form)
 
@@ -178,6 +173,10 @@ def signup():
     form = SignupForm()
 
     if form.validate_on_submit():
+        if db.session.query(exists().where(User.email == request.form.get('email'))).scalar():
+            flash('There is already an account with this email. Please login.', 'error')
+            return redirect(url_for('user.login'))
+
         u = User()
 
         form.populate_obj(u)
@@ -285,6 +284,9 @@ def check_availability():
         return redirect(url_for('user.dashboard'))
 
 
+"""
+Registers the domain after it has been reserved and successfully captured
+"""
 @user.route('/register_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -294,7 +296,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name) or True:
+        if register(domain.name, True):
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
@@ -305,7 +307,11 @@ def register_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+View the domain that you have reserved
+"""
 @user.route('/view_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def view_domain():
     # Get the domain details and display them
@@ -330,7 +336,11 @@ def view_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+Delete the domain reservation
+"""
 @user.route('/delete_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def delete_domain():
 
@@ -338,6 +348,8 @@ def delete_domain():
     if request.method == 'POST':
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
+
+        # Get the PM to delete the PaymentIntent in Stripe
         order_id = domain.pm
 
         domain.delete()
@@ -346,8 +358,10 @@ def delete_domain():
         # Ensure the domain has been deleted
         d = Domain.query.get(domain_id)
         if d is None:
-            # Delete the Payment Intent
+
+            # TODO: Delete the Payment Intent
             # delete_payment(order_id)
+
             flash('This domain reservation was successfully deleted.', 'success')
         else:
             flash('There was a problem deleting your reservation. Please try again.', 'error')
@@ -355,29 +369,33 @@ def delete_domain():
     return redirect(url_for('user.dashboard'))
 
 
+"""
+After successfully purchasing/registering a domain, update the domain's info in the DB
+"""
 @user.route('/update_domain', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def update_domain():
     if request.method == 'POST':
-        if 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'save-card' in request.form and 'customer_id' in request.form:
             domain = request.form['domain']
             customer_id = request.form['customer_id']
+            pm = request.form['pm']
+            save_card = request.form['save-card']
 
-            # Send a receipt email
+            # Update the customer's payment info
+            update_customer(pm, customer_id, save_card)
+
+            # Send a successful purchase email
+            from app.blueprints.user.tasks import send_purchase_email
+            send_purchase_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
 
             # Create and save the domain in the db if it isn't already
             if not db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
-                d = Domain()
-                d.user_id = current_user.id
-                d.customer_id = customer_id
-                d.registered = True
-                d.name = domain
-                d.expires = expires
-
-                d.save()
+                d = save_domain(current_user.id, customer_id, domain, None, None, pytz.utc.localize(dt.utcnow()), True)
             else:
                 d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
                 d.customer_id = customer_id
@@ -389,6 +407,9 @@ def update_domain():
 
 
 # Reserve/Backorder Domain -------------------------------------------------------------------
+"""
+Create a reservation/backorder for a domain
+"""
 @user.route('/reserve_domain', methods=['GET','POST'])
 @login_required
 @csrf.exempt
@@ -407,7 +428,7 @@ def reserve_domain():
 
         try:
             # Setup the payment method
-            si = stripe_checkout(current_user.email, domain)
+            si = stripe_checkout(current_user.email, domain, None)
 
             # Redirect to the payment page
             if si is not None:
@@ -424,7 +445,11 @@ def reserve_domain():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
+"""
+Saves the backorder after the user's card info has been entered
+"""
 @user.route('/save_reservation', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def save_reservation():
     if request.method == 'POST':
@@ -434,28 +459,38 @@ def save_reservation():
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
-            customer_id = request.form['customer_id']
+            customer_id = request.form['customer_id']#
+
+            # print(request.form)
 
             if update_customer(pm, customer_id, save_card):
-                # Create the backorder request in Dynadot
-                r = backorder_request(domain)
 
-                # Save the domain
-                details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                # Create the payment intent with the existing payment method
+                if create_payment(domain, None, customer_id, pm):
 
-                # Save the backorder to the db
-                c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, c.id, current_user.id, r)
+                    # Create the backorder request in Dynadot
+                    r = backorder_request(domain)
 
-                flash('Your domain was successfully reserved!', 'success')
-                return render_template('user/success.html', current_user=current_user)
+                    # Save the domain
+                    details = get_domain_availability(domain)
+                    d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+
+                    # Save the backorder to the db
+                    c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
+                    create_backorder(d, pm, c.id, current_user.id, r)
+
+                    flash('Your domain was successfully reserved!', 'success')
+                    return render_template('user/success.html', current_user=current_user)
 
     flash('There was a problem reserving your domain. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
 
 
+"""
+Create a backorder with a card that is already on file
+"""
 @user.route('/saved_card_intent', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def saved_card_intent():
     if request.method == 'POST':
@@ -467,17 +502,22 @@ def saved_card_intent():
             customer_id = request.form['customer_id']
 
             # Create the payment intent with the existing payment method
-            if create_payment(domain, customer_id, pm):
+            if create_payment(domain, None, customer_id, pm):
+
                 # Create the backorder request in Dynadot
                 r = backorder_request(domain)
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, c.id, current_user.id, r)
+                create_backorder(d, pm, c.id, current_user.id, r)
+
+                # Send a successful reservation email
+                from app.blueprints.user.tasks import send_reservation_email
+                send_reservation_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
@@ -487,25 +527,31 @@ def saved_card_intent():
 
 
 # Purchase Available Domains -------------------------------------------------------------------
+"""
+Purchase an available domain directly.
+"""
 @user.route('/checkout', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def checkout():
     if request.method == 'POST':
         domain = request.form['domain']
+        price = request.form['price']
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id, Domain.registered.is_(True)))).scalar():
             flash('You already own this domain!', 'error')
-            # return redirect(url_for('user.dashboard'))
+            return redirect(url_for('user.dashboard'))
         try:
-            # Secure the domain
-            if register(domain) or True:
+            # Secure the domain.
+            if register(domain):
+
                 # Setup the customer's payment method
-                si = stripe_checkout(current_user.email, domain, True)
+                si = stripe_checkout(current_user.email, domain, price, True)
 
                 # Redirect to the payment page
                 if si is not None:
                     pm = get_payment_method(si)
-                    return render_template('user/checkout.html', current_user=current_user, domain=domain, si=si, email=current_user.email, pm=pm)
+                    return render_template('user/checkout.html', current_user=current_user, domain=domain, price=price, email=current_user.email, si=si, pm=pm)
 
             flash("There was an error buying this domain. Please try again.", 'error')
             return redirect(url_for('user.dashboard'))
@@ -518,22 +564,36 @@ def checkout():
         return render_template('user/dashboard.html', current_user=current_user)
 
 
+"""
+Purchase a domain directly with a card that is on file
+"""
 @user.route('/saved_card_payment', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def saved_card_payment():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'si' in request.form and 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
+            si = request.form['si']
             pm = request.form['pm']
-            domain = request.form['domain']
-            customer_id = request.form['customer_id']
 
-            # Create the payment with the existing payment method
-            if create_payment(domain, customer_id, pm, True):
+            # Confirm the payment
+            if confirm_payment(si, pm) is not None:
+
+                domain = request.form['domain']
+                customer_id = request.form['customer_id']
+
+                # Create the payment with the existing payment method
+                # if create_payment(domain, price, customer_id, pm, True):
+
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, pm, domain, details['expires'], pytz.utc.localize(dt.utcnow()), True)
+                save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
+
+                # Send a purchase receipt email
+                from app.blueprints.user.tasks import send_purchase_email
+                send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
@@ -544,15 +604,19 @@ def saved_card_payment():
 
 # Success Messages -------------------------------------------------------------------
 @user.route('/success', methods=['GET', 'POST'])
+@login_required
 @csrf.exempt
 def success():
+
     flash('Your domain was successfully reserved!', 'success')
     return render_template('user/success.html', current_user=current_user)
 
 
 @user.route('/purchase_success', methods=['GET','POST'])
+@login_required
 @csrf.exempt
 def purchase_success():
+
     flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
           category='success')
     return render_template('user/purchase_success.html', current_user=current_user)
@@ -582,5 +646,5 @@ def contact():
         send_contact_us_email.delay(request.form['email'], request.form['message'])
 
         flash('Thanks for your email! You can expect a response shortly.', 'success')
-        return redirect(url_for('user.dashboard'))
+        return redirect(url_for('user.contact'))
     return render_template('user/contact.html', current_user=current_user)
