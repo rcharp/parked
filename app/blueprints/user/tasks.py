@@ -13,6 +13,8 @@ from app.blueprints.user.models import User
 
 celery = create_celery_app()
 
+send = False
+
 
 @celery.task()
 def deliver_password_reset_email(user_id, reset_token):
@@ -43,35 +45,41 @@ def deliver_password_reset_email(user_id, reset_token):
 @celery.task()
 def send_welcome_email(email):
     from app.blueprints.user.emails import send_welcome_email
-    send_welcome_email(email)
+
+    if send:
+        send_welcome_email(email)
     return
 
 
 @celery.task()
 def send_reservation_email(email, domain):
     from app.blueprints.user.emails import send_reservation_email
-    send_reservation_email(email, domain)
+    if send:
+        send_reservation_email(email, domain)
     return
 
 
 @celery.task()
 def send_purchase_email(email, domain):
     from app.blueprints.user.emails import send_purchase_email
-    send_purchase_email(email, domain)
+    if send:
+        send_purchase_email(email, domain)
     return
 
 
 @celery.task()
 def send_contact_us_email(email, message):
     from app.blueprints.user.emails import contact_us_email
-    contact_us_email(email, message)
+    if send:
+        contact_us_email(email, message)
     return
 
 
 @celery.task()
 def send_cancel_email(email):
     from app.blueprints.user.emails import send_cancel_email
-    send_cancel_email(email)
+    if send:
+        send_cancel_email(email)
     return
 
 

@@ -29,10 +29,11 @@ def check_domain(domain):
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
     if 'Available' in results:
-        price = Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49 if 'Price' in results else None
-        # price = 1.00
+        p = format(1.00, '.2f')
+        # p = None
+        price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f') if 'Price' in results else p
         available = True if results['Available'] == 'yes' else False
-        details.update({'name': domain, 'available': available, 'price': format(price, '.2f')})
+        details.update({'name': domain, 'available': available, 'price': price})
         return details
     else:
         return None
@@ -97,7 +98,21 @@ def get_domain_details(domain):
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
     r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))#['DomainInfoResponse']['DomainInfoContent']['Domain']
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))#  ['DomainInfoResponse']['DomainInfoContent']['Domain']
+
+    return results
+
+
+def get_domain_contact_info(domain):
+    # Only send a request if it isn't already processing one
+    if is_processing():
+        get_domain_contact_info(domain)
+    # Ensure that the domain can be registered
+    api_key = current_app.config.get('DYNADOT_API_KEY')
+    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+    r = requests.get(url=dynadot_url)
+
+    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Whois']
 
     return results
 
@@ -126,9 +141,6 @@ def backorder_request(domain):
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
             response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
 
-            # print("results are")
-            # print(results)
-
             return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
         # Still create the backorder in the db, but set backorder.available to False
@@ -153,6 +165,38 @@ def delete_backorder_request(domain):
             print_traceback(e)
             return False
     return False
+
+
+def set_whois_info(domain):
+    if is_processing():
+        set_whois_info(domain)
+    try:
+        contact = '602028'
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=set_whois&domain=' + domain + "&registrant_contact=" + contact + "&admin_contact=" + contact + "&technical_contact=" + contact + "&billing_contact=" + contact
+        r = requests.get(url=dynadot_url)
+
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+
+        return results['SetWhoisResponse']['SetWhoisHeader']['SuccessCode'] == '0'
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
+def list_contacts():
+    if is_processing():
+        list_contacts()
+    try:
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=contact_list'
+        r = requests.get(url=dynadot_url)
+
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+        return results
+    except Exception as e:
+        print_traceback(e)
+        return None
 
 
 def list_backorder_requests():
@@ -203,4 +247,10 @@ def get_domain_status(domain):
         return False
 
 
+def get_whois(domain):
+    # details = pythonwhois.get_whois(domain)
+    # del details['raw']
+    import pywhois as p
+    details = p.whois(domain)
+    return details
 

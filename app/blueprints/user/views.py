@@ -67,11 +67,12 @@ from app.blueprints.api.domain.dynadot import (
     register_domain as register,
     delete_backorder_request,
     get_domain_expiration,
-    backorder_request
+    backorder_request,
+    set_whois_info
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
-
+send = False
 
 # Login and Credentials -------------------------------------------------------------------
 @user.route('/login', methods=['GET', 'POST'])
@@ -188,7 +189,8 @@ def signup():
             from app.blueprints.user.tasks import send_welcome_email
             from app.blueprints.contact.mailerlite import create_subscriber
 
-            send_welcome_email.delay(current_user.email)
+            if send:
+                send_welcome_email.delay(current_user.email)
             create_subscriber(current_user.email)
 
             flash("You've successfully signed up!", 'success')
@@ -245,7 +247,7 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    test = False
+    test = True
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -267,10 +269,11 @@ def check_availability():
         tld = get_domain_tld(domain_name)
         if tld not in valid_tlds():
             flash("This TLD can't be backordered. Please try another TLD.", "error")
-            return redirect(url_for('user.dashboard'))
+            # return redirect(url_for('user.dashboard'))
 
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
+        domain.update({'available':True})
 
         # Save the search if it is a valid domain
         if domain is not None and domain['available'] is not None:
@@ -300,6 +303,9 @@ def register_domain():
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
+
+            # Set the Whois info to GetParked.io
+            set_whois_info(domain.name)
 
             flash('This domain has been registered.', 'success')
         else:
@@ -386,9 +392,10 @@ def update_domain():
             # Update the customer's payment info
             update_customer(pm, customer_id, save_card)
 
-            # Send a successful purchase email
-            from app.blueprints.user.tasks import send_purchase_email
-            send_purchase_email.delay(current_user.email, domain)
+            if send:
+                # Send a successful purchase email
+                from app.blueprints.user.tasks import send_purchase_email
+                send_purchase_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
@@ -515,9 +522,10 @@ def saved_card_intent():
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
                 create_backorder(d, pm, c.id, current_user.id, r)
 
-                # Send a successful reservation email
-                from app.blueprints.user.tasks import send_reservation_email
-                send_reservation_email.delay(current_user.email, domain)
+                if send:
+                    # Send a successful reservation email
+                    from app.blueprints.user.tasks import send_reservation_email
+                    send_reservation_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
@@ -544,6 +552,9 @@ def checkout():
         try:
             # Secure the domain.
             if register(domain):
+
+                # Set the Whois info to GetParked.io
+                set_whois_info(domain)
 
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, price, True)
@@ -592,8 +603,9 @@ def saved_card_payment():
                 save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
-                from app.blueprints.user.tasks import send_purchase_email
-                send_purchase_email.delay(current_user.email, domain)
+                if send:
+                    from app.blueprints.user.tasks import send_purchase_email
+                    send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
@@ -642,8 +654,9 @@ def settings():
 @csrf.exempt
 def contact():
     if request.method == 'POST':
-        from app.blueprints.user.tasks import send_contact_us_email
-        send_contact_us_email.delay(request.form['email'], request.form['message'])
+        if send:
+            from app.blueprints.user.tasks import send_contact_us_email
+            send_contact_us_email.delay(request.form['email'], request.form['message'])
 
         flash('Thanks for your email! You can expect a response shortly.', 'success')
         return redirect(url_for('user.contact'))

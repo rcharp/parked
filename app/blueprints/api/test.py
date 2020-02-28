@@ -1,4 +1,5 @@
 from flask import flash
+
 # from app.blueprints.api.domain.godaddy import (
 #     purchase_domain,
 #     check_domain,
@@ -15,7 +16,10 @@ from app.blueprints.api.domain.dynadot import (
     backorder_request,
     delete_backorder_request,
     get_domain_details,
-    list_backorder_requests
+    list_backorder_requests,
+    list_contacts,
+    set_whois_info,
+    get_whois
 )
 
 
@@ -43,6 +47,10 @@ def test(domain):
     # results = check_domain(domain)
     # results = backorder_request(domain)
     # results = register_domain(domain)
-    # results = get_domain_details(domain)
-    results = list_backorder_requests()
+    # results = get_domain_details('rickycharpentier.xyz')
+    # results = list_backorder_requests()
+    # results = list_contacts()
+    # results = set_whois_info('rickycharpentier.xyz')
+    results = get_whois(domain)
+
     return results
