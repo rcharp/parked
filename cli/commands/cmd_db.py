@@ -8,6 +8,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app.app import create_app
 from app.extensions import db
 from app.blueprints.user.models import User
+from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
@@ -80,17 +81,36 @@ def seed():
     return User(**params).save()
 
 
+@click.command()
+def seed_customer():
+    params = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'email': app.config['SEED_MEMBER_EMAIL'],
+        'save_card': '1'
+    }
+
+    return Customer(**params).save()
+
 
 @click.command()
-def seedintegrations():
-    """
-    Seed the database with a couple integrations.
+def seed_domains():
+    domain1 = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'name': 'rickycharpentier.xyz',
+        'registered': '1'
+    }
 
-    :return: Nothing
-    """
+    domain2 = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'name': 'rickycharpentier.cc',
+        'registered': '1'
+    }
 
-    # Seed auths
-    # auths = app.config['SEED_AUTHS']
+    Domain(**domain1).save()
+    return Domain(**domain2).save()
 
 
 @click.command()
@@ -106,7 +126,8 @@ def reset(ctx, with_testdb):
     """
     ctx.invoke(init, with_testdb=with_testdb)
     ctx.invoke(seed)
-    # ctx.invoke(seedauth)
+    ctx.invoke(seed_customer)
+    ctx.invoke(seed_domains)
 
     return None
 
