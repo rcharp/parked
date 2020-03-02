@@ -278,7 +278,7 @@ def check_availability():
 
                 # If the domain's TLD isn't able to be backordered
                 if tld not in valid_tlds():
-                    flash("This TLD can't be backordered. Please try another TLD.", "error")
+                    flash("This domain extension can't be backordered. Please try another TLD.", "error")
                     return redirect(url_for('user.dashboard'))
             save_search(domain_name, domain['expires'], current_user.id)
 
@@ -464,18 +464,19 @@ Saves the backorder after the user's card info has been entered
 def save_reservation():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'si' in request.form and 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
 
+            si = request.form['si']
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
-            customer_id = request.form['customer_id']#
+            customer_id = request.form['customer_id']
 
-            # print(request.form)
+            print(request.form)
 
             if update_customer(pm, customer_id, save_card):
 
-                # Create the payment intent with the existing payment method
+                # Create the payment intent with the payment method
                 if create_payment(domain, None, customer_id, pm):
 
                     # Create the backorder request in Dynadot
@@ -487,7 +488,7 @@ def save_reservation():
 
                     # Save the backorder to the db
                     c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                    create_backorder(d, pm, c.id, current_user.id, r)
+                    create_backorder(d, pm, si, c.id, current_user.id, r)
 
                     flash('Your domain was successfully reserved!', 'success')
                     return render_template('user/success.html', current_user=current_user)

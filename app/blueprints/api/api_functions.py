@@ -93,12 +93,13 @@ def save_search(domain, expires, user_id):
     return
 
 
-def create_backorder(domain, pm, customer_id, user_id, pending_delete):
+def create_backorder(domain, pm, pi, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
 
     b = Backorder()
     b.domain = domain.id
     b.pm = pm
+    b.pi = pi
     b.domain_name = domain.name
     b.expires = domain.expires
     b.user_id = user_id

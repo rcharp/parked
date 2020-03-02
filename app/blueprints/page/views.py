@@ -31,7 +31,7 @@ def availability():
         domain_name = request.form['domain'].replace(' ', '').lower()
         tld = get_domain_tld(domain_name)
         if tld not in valid_tlds():
-            flash("This TLD can't be backordered. Please try another TLD.", "error")
+            flash("This domain extension can't be backordered. Please try another TLD.", "error")
             return redirect(url_for('page.home'))
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)

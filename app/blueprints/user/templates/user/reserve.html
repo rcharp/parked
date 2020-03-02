@@ -203,7 +203,7 @@
                                             <div class="block block-themed" style="height:800px;">
                                                 <div style="text-align:center;font-size:24px;max-height:100px;width:100%;min-width:320px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Reserve <span style="color:green">{{ domain }}</span> -- $99<br />
-                                                    <span style="font-size:18px">for a year.</span><br /><br />
+                                                    <span style="font-size:18px">Includes the first year of registration.</span><br /><br />
                                                     <span style="font-size:18px">By reserving this domain, you agree to have your card charged $99 if we get the domain for you.</span><br /><br />
                                                     {% if pm is not none %}
                                                         <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
@@ -378,7 +378,7 @@
                           $.ajax({
                               url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
-                              data: {'si': '{{ si.id }}', 'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pi': '{{ si.id }}', 'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.success', domain=domain) }}';
@@ -407,7 +407,7 @@
                 $.ajax({
                   url: '{{ url_for("user.saved_card_intent") }}',
                   type: 'POST',
-                  data: {'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                  data: {'pi': '{{ pi.id }}', 'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
                   success: function (response) {
                       var domain = '{{ domain }}';
                       window.location.href='{{ url_for('user.success', domain=domain) }}';
