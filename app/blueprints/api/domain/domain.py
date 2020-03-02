@@ -16,8 +16,9 @@ from app.blueprints.api.domain.dynadot import check_domain
 def get_domain_availability(domain):
 
     # Make sure it's a valid TLD before getting the availability
-    if get_domain_tld(domain) not in valid_tlds():
-        return None
+    # tld = get_domain_tld(domain)
+    # if tld is None or tld not in valid_tlds():
+    #     return None
 
     # Get the availability
     availability = check_domain(domain)
@@ -76,7 +77,10 @@ def get_domain_tld(domain):
     try:
         ext = tldextract.extract(domain)
         tld = ext.suffix
-        return '.' + tld
+        if tld is not None:
+            return '.' + tld
+
+        return None
     except Exception as e:
         print_traceback(e)
         return None

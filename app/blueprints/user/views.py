@@ -273,18 +273,20 @@ def check_availability():
 
         # Save the search if it is a valid domain
         if domain is not None and 'available' in domain and domain['available'] is not None:
-            details = get_domain_details(domain_name)
+
             if not domain['available']:
                 tld = get_domain_tld(domain_name)
 
                 # If the domain's TLD isn't able to be backordered
-                if tld not in valid_tlds():
-                    flash("This domain extension can't be backordered. Please try another TLD.", "error")
+                if tld is None or tld not in valid_tlds():
+                    flash("This domain extension can't be backordered. Please try another domain extension.", "error")
                     return redirect(url_for('user.dashboard'))
             save_search(domain_name, domain['expires'], current_user.id)
 
             domains = Domain.query.filter(Domain.user_id == current_user.id).all()
+            details = get_domain_details(domain_name)
             return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
+
         flash("This domain is invalid. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
     else:

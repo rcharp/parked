@@ -29,20 +29,29 @@ def availability():
         from app.blueprints.api.api_functions import valid_tlds
 
         domain_name = request.form['domain'].replace(' ', '').lower()
-        tld = get_domain_tld(domain_name)
-        if tld not in valid_tlds():
-            flash("This domain extension can't be backordered. Please try another TLD.", "error")
-            return redirect(url_for('page.home'))
         domain = get_domain_availability(domain_name)
-        details = get_domain_details(domain_name)
 
-        # Save the search if it is a valid domain
-        # if domain['available'] is not None:
-        #     save_search(domain_name, domain['expires'], current_user.id)
+        if domain is not None and 'available' in domain and domain['available'] is not None:
 
-        return render_template('page/index.html', domain=domain, details=details)
-    else:
-        return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+            if not domain['available']:
+                tld = get_domain_tld(domain_name)
+
+                # If the domain's TLD isn't able to be backordered
+                if tld is None or tld not in valid_tlds():
+                    flash("This domain extension can't be backordered. Please try another domain extension.", "error")
+                    return redirect(url_for('page.home'))
+
+            # Save the search if it is a valid domain
+            # if domain['available'] is not None:
+            #     save_search(domain_name, domain['expires'], current_user.id)
+
+            details = get_domain_details(domain_name)
+            return render_template('page/index.html', domain=domain, details=details)
+
+        flash("This domain is invalid. Please try again.", "error")
+        return redirect(url_for('page.home'))
+
+    return render_template('page/index.html', plans=settings.STRIPE_PLANS)
 
 
 @page.route('/terms')
