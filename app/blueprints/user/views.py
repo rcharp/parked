@@ -267,15 +267,13 @@ def check_availability():
         # domains = [l for l in request.form['domains'].split('\n') if l]
         
         domain_name = request.form['domain'].replace(' ','').lower()
-
         domain = get_domain_availability(domain_name)
-        details = get_domain_details(domain_name)
 
-        print(domain)
+        # print(domain)
 
         # Save the search if it is a valid domain
         if domain is not None and 'available' in domain and domain['available'] is not None:
-
+            details = get_domain_details(domain_name)
             if not domain['available']:
                 tld = get_domain_tld(domain_name)
 

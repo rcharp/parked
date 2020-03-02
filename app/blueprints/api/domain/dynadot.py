@@ -29,7 +29,7 @@ def check_domain(domain):
     r = requests.get(url=dynadot_url)
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
-    print(results)
+    # print(results)
 
     if 'Available' in results:
         if 'Price' in results:
@@ -39,7 +39,7 @@ def check_domain(domain):
         available = True if results['Available'] == 'yes' else False
 
         # Testing purposes. Set Price to $1
-        price = format(1.00, '.2f')
+        # price = format(1.00, '.2f')
 
         details.update({'name': domain, 'available': available, 'price': price})
         return details
