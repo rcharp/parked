@@ -31,15 +31,12 @@ def availability():
         domain_name = request.form['domain'].replace(' ', '').lower()
         domain = get_domain_availability(domain_name)
 
+        # 500 is the error returned if the domain is valid but can't be backordered
+        if domain == 500:
+            flash("This domain extension can't be backordered. Please try another domain extension.", "error")
+            return redirect(url_for('page.home'))
+
         if domain is not None and 'available' in domain and domain['available'] is not None:
-
-            if not domain['available']:
-                tld = get_domain_tld(domain_name)
-
-                # If the domain's TLD isn't able to be backordered
-                if tld is None or tld not in valid_tlds():
-                    flash("This domain extension can't be backordered. Please try another domain extension.", "error")
-                    return redirect(url_for('page.home'))
 
             # Save the search if it is a valid domain
             # if domain['available'] is not None:

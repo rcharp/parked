@@ -24,7 +24,7 @@ def get_domain_availability(domain):
             # If the TLD is invalid and the domain can't be purchased outright, show an error.
             tld = get_domain_tld(domain)
             if (tld is None or tld not in valid_tlds()) and not availability['available']:
-                return None
+                return 500
 
             ext = tldextract.extract(domain)
             domain = ext.registered_domain
