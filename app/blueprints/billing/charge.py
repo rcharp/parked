@@ -219,7 +219,10 @@ def update_customer(pm, customer_id, save_card):
 def delete_payment(order_id):
     try:
         stripe.api_key = current_app.config.get('STRIPE_KEY')
-        return stripe.PaymentIntent.cancel(
+        # return stripe.PaymentIntent.cancel(
+        #     order_id
+        # )
+        return stripe.SetupIntent.cancel(
             order_id
         )
     except Exception as e:
