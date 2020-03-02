@@ -28,11 +28,15 @@ def check_domain(domain):
     r = requests.get(url=dynadot_url)
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
+    print(results)
+
     if 'Available' in results:
-        p = format(1.00, '.2f')
-        # p = None
-        price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f') if 'Price' in results else p
+        price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f') if 'Price' in results else None
         available = True if results['Available'] == 'yes' else False
+
+        # Testing purposes. Set Price to $1
+        price = format(1.00, '.2f')
+
         details.update({'name': domain, 'available': available, 'price': price})
         return details
     else:
