@@ -72,7 +72,7 @@ from app.blueprints.api.domain.dynadot import (
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
-send = False
+send = True
 
 # Login and Credentials -------------------------------------------------------------------
 @user.route('/login', methods=['GET', 'POST'])
@@ -247,7 +247,7 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    test = True
+    test = False
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
