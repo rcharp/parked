@@ -20,15 +20,14 @@ def get_domain_availability(domain):
 
     try:
         if availability is not None:
-            # Make sure it's a valid TLD before getting the availability
+
+            # If the TLD is invalid and the domain can't be purchased outright, show an error.
             tld = get_domain_tld(domain)
-            if tld is None or tld not in valid_tlds():
+            if (tld is None or tld not in valid_tlds()) and not availability['available']:
                 return None
 
-            print("Got to availability")
             ext = tldextract.extract(domain)
             domain = ext.registered_domain
-            print("getting whois")
 
             details = pythonwhois.get_whois(domain)
             if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
