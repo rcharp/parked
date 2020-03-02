@@ -273,7 +273,6 @@ def check_availability():
 
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
-        domain.update({'available':True})
 
         # Save the search if it is a valid domain
         if domain is not None and domain['available'] is not None:

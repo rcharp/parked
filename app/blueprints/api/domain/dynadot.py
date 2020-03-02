@@ -57,7 +57,7 @@ def register_domain(domain, backordered=False):
     # The real deal. The domain will be registered if the app is being used live
     if production:
         # Only purchase the domain if it's less than $60
-        if results is not None and results['price'] is not None and results['price'] <= limit:
+        if results is not None and 'price' in results and results['price'] is not None and Decimal(results['price']) <= limit:
             api_key = current_app.config.get('DYNADOT_API_KEY')
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain
             r = requests.get(url=dynadot_url)
