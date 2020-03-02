@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, valid_tlds
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
@@ -14,6 +14,10 @@ from app.blueprints.api.domain.dynadot import check_domain
 
 # Get WhoIs domain availability
 def get_domain_availability(domain):
+
+    # Make sure it's a valid TLD before getting the availability
+    if get_domain_tld(domain) not in valid_tlds():
+        return None
 
     # Get the availability
     availability = check_domain(domain)

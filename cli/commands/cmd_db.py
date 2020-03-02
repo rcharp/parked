@@ -87,7 +87,7 @@ def seed_customer():
         'user_id': 1,
         'customer_id': app.config['SEED_CUSTOMER_ID'],
         'email': app.config['SEED_MEMBER_EMAIL'],
-        'save_card': '1'
+        'save_card': True
     }
 
     return Customer(**params).save()
@@ -99,14 +99,14 @@ def seed_domains():
         'user_id': 1,
         'customer_id': app.config['SEED_CUSTOMER_ID'],
         'name': 'rickycharpentier.xyz',
-        'registered': '1'
+        'registered': True
     }
 
     domain2 = {
         'user_id': 1,
         'customer_id': app.config['SEED_CUSTOMER_ID'],
         'name': 'rickycharpentier.cc',
-        'registered': '1'
+        'registered': True
     }
 
     Domain(**domain1).save()

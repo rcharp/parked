@@ -17,6 +17,7 @@ from builtins import any
 
 
 def check_domain(domain):
+
     # Only send a request if it isn't already processing one
     if is_processing():
         check_domain(domain)

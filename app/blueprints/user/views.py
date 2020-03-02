@@ -49,6 +49,7 @@ from app.blueprints.billing.charge import (
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
+from app.blueprints.api.models.backorder import Backorder
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
@@ -270,6 +271,8 @@ def check_availability():
         domain = get_domain_availability(domain_name)
         details = get_domain_details(domain_name)
 
+        print(domain)
+
         # Save the search if it is a valid domain
         if domain is not None and 'available' in domain and domain['available'] is not None:
 
@@ -284,7 +287,7 @@ def check_availability():
 
             domains = Domain.query.filter(Domain.user_id == current_user.id).all()
             return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
-        flash("The domain was invalid. Please try again.", "error")
+        flash("This domain is invalid. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
     else:
         return redirect(url_for('user.dashboard'))
@@ -359,7 +362,8 @@ def delete_domain():
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
         # Get the PM to delete the PaymentIntent in Stripe
-        order_id = domain.pm
+        b = Backorder.query.filter(Backorder.domain == domain.id).scalar()
+        order_id = b.pi
 
         domain.delete()
         delete_backorder_request(domain.name)
@@ -369,7 +373,7 @@ def delete_domain():
         if d is None:
 
             # TODO: Delete the Payment Intent
-            # delete_payment(order_id)
+            delete_payment(order_id)
 
             flash('This domain reservation was successfully deleted.', 'success')
         else:
