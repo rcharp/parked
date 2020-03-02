@@ -31,7 +31,10 @@ def check_domain(domain):
     print(results)
 
     if 'Available' in results:
-        price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f') if 'Price' in results else None
+        if 'Price' in results:
+            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f')
+        else:
+            price = None
         available = True if results['Available'] == 'yes' else False
 
         # Testing purposes. Set Price to $1
