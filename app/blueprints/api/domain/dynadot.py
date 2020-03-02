@@ -43,6 +43,7 @@ def check_domain(domain):
         # price = format(1.00, '.2f')
 
         details.update({'name': domain, 'available': available, 'price': price})
+        print("Got details")
         return details
     else:
         return None
