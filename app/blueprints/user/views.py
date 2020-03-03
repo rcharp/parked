@@ -81,7 +81,12 @@ send = True
 # @cache.cached(timeout=timeout)
 @csrf.exempt
 def login():
-    form = LoginForm(next=url_for('user.dashboard'))
+
+    # This redirects to the link that the button was sending to before login
+    form = LoginForm(next=request.args.get('next'))
+
+    # This redirects to dashboard always.
+    # form = LoginForm(next=url_for('user.dashboard'))
 
     if form.validate_on_submit():
 
@@ -103,7 +108,7 @@ def login():
                 next_url = request.form.get('next')
 
                 if next_url:
-                    return redirect(safe_next_url(next_url))
+                    return redirect(safe_next_url(next_url), code=307)
 
                 if current_user.role == 'admin':
                     return redirect(url_for('admin.dashboard'))
@@ -257,15 +262,31 @@ def dashboard():
 
 
 # Domain Functions -------------------------------------------------------------------
-@user.route('/check_availability', methods=['GET','POST'])
-# @login_required
+@user.route('/check_availability', methods=['GET', 'POST'])
+@login_required
 @csrf.exempt
 def check_availability():
-    if request.method == 'POST':
-        # Uncomment this when ready to check multiple domains at once
-        # domains = [l for l in request.form['domains'].split('\n') if l]
-        
-        domain_name = request.form['domain'].replace(' ','').lower()
+    try:
+        domain_name = ''
+        if request.method == 'GET':
+            if 'domain' not in request.args:
+                return redirect(url_for('user.dashboard'))
+
+            domain_name = request.args.get('domain_name')
+
+        if request.method == 'POST':
+            if 'domain' not in request.args and 'domain' not in request.form:
+                flash("There was an error. Please try again.", "error")
+                return redirect(url_for('user.dashboard'))
+
+            if 'domain' in request.form:
+                domain_name = request.form['domain'].replace(' ', '').lower()
+            else:
+                domain_name = request.args.get('domain')
+
+            # Uncomment this when ready to check multiple domains at once
+            # domains = [l for l in request.form['domains'].split('\n') if l]
+
         domain = get_domain_availability(domain_name)
 
         # 500 is the error returned if the domain is valid but can't be backordered
@@ -283,9 +304,9 @@ def check_availability():
 
         flash("This domain is invalid. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
-    else:
+    except Exception as e:
+        flash("There was an error. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
-
 
 """
 Registers the domain after it has been reserved and successfully captured
@@ -426,6 +447,11 @@ Create a reservation/backorder for a domain
 def reserve_domain():
     if request.method == 'POST':
         domain = request.form['domain']
+
+        d = get_domain_availability(domain)
+        if d == 500 or not (d is not None and 'available' in d and d['available'] is not None):
+            flash('This domain can\'t be reserved.', 'error')
+            return redirect(url_for('user.dashboard'))
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 

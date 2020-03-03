@@ -62,7 +62,6 @@ def availability():
 def view():
     if request.method == 'POST':
         domain = ast.literal_eval(request.form['domain'])
-        print(domain)
         return render_template('page/view.html', domain=domain)
 
     return redirect(url_for('page.home'))
