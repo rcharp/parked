@@ -169,38 +169,73 @@
                                 <!--/ End Empty Space -->
                                 <p class="lead base-plus-font-size text-center">
                                     Have a domain in mind that you want?<br />Backorder it and we'll buy it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.</p><br /><br />
-                                <div style="font-size:24px;">
-                                    <span class="text-muted" style="font-size:18px;">Recent searches</span>
-                                                            </div><br />
-                                                            <table class="table table-borderless table-condensed" style="position:sticky;">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <td id="domain-name" name="domain-name" style="min-width:240px;max-width:600px;">
-                                                                            <span class="text-muted" style="font-size:18px;">Domain</span>
-                                                                        </td>
-                                                                        <td style="min-width:240px;">
-                                                                            <span class="text-muted" style="font-size:18px;">Expires</span>
-                                                                        </td>
-                                                                    </tr>
-                                                                </thead>
-                                                            </table>
-                                                            <div style="overflow-x: auto;max-height:200px;">
-                                                                <table class="table table-borderless table-condensed">
-                                                                    <tbody>
-                                                                        {% for domain in searched|reverse %}
-                                                                        <tr>
-                                                                            <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
-                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
-                                                                        </tr>
-                                                                        {% endfor %}
-                                                                    </tbody>
-                                                                </table>
-                                                                <script type="text/javascript">
-                                                                    var x = document.getElementById('searched-domain').offsetWidth;
-                                                                    document.getElementById('domain-name').style.width = x.toString() + 'px';
-                                                                </script>
-                                                            </div>
+                                    Only $99 per domain.</p>
+                                <div style="font-size:14px;">
+                                    <span class="text-muted" style="font-size:14px;">Domains available soon</span>
+                                </div>
+                                <!-- First half of list -->
+                                <div class="col-md-6" style="float:left">
+                                    <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
+                                        <thead>
+                                            <tr>
+                                                <td id="domain-name" name="domain-name" style="min-width:240px;">
+                                                    <span class="text-muted" style="font-size:14px;">Domain</span>
+                                                </td>
+                                                <td style="min-width:240px;">
+                                                    <span class="text-muted" style="font-size:14px;">Available</span>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <div style="width:100%;">
+                                        <table class="table table-borderless table-condensed table-sm">
+                                            <tbody>
+                                                {% for domain in dropping|batch((dropping|length)/2)|first %}
+                                                <tr style="max-height:10px;border:none">
+                                                    <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></td>
+                                                    <td style="min-width:240px;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <script type="text/javascript">
+                                            var x = document.getElementById('droppping-domain').offsetWidth;
+                                            document.getElementById('domain-name').style.width = x.toString() + 'px';
+                                        </script>
+                                    </div>
+                                </div>
+
+                                <!-- Second half of list -->
+                                <div class="col-md-6" style="float:right;margin-bottom:40px;">
+                                    <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
+                                        <thead>
+                                            <tr>
+                                                <td id="domain-name" name="domain-name" style="min-width:240px;">
+                                                    <span class="text-muted" style="font-size:14px;">Domain</span>
+                                                </td>
+                                                <td style="min-width:240px;">
+                                                    <span class="text-muted" style="font-size:14px;">Available</span>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <div style="width:100%;">
+                                        <table class="table table-borderless table-condensed table-sm">
+                                            <tbody>
+                                                {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse %}
+                                                <tr style="max-height:10px;border:none">
+                                                    <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></td>
+                                                    <td style="min-width:240px;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <script type="text/javascript">
+                                            var x = document.getElementById('droppping-domain').offsetWidth;
+                                            document.getElementById('domain-name').style.width = x.toString() + 'px';
+                                        </script>
+                                    </div>
+                                </div>
                                 {% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;">
                                         <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
@@ -280,7 +315,7 @@
                                     <form class="form-horizontal push-5-t" action="{{ url_for('page.availability' ) }}" method="post">
                                         <div class="form-group">
                                             <br />
-                                            <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none">
+                                            <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none;">
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:10px;font-size:24px;color:#606060; padding:30px;" />
                                             </div>
                                             <div style="margin:0 auto;float:none;height:100%;margin-bottom:10px;max-width:500px;">

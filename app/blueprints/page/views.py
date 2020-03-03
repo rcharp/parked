@@ -18,15 +18,19 @@ page = Blueprint('page', __name__, template_folder='templates')
 def home():
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
-    return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+
+    from app.blueprints.api.domain.domain import get_dropping_domains
+    dropping = get_dropping_domains()
+    return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping)
 
 
 @page.route('/availability', methods=['GET','POST'])
 @csrf.exempt
 def availability():
     if request.method == 'POST':
-        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain_tld
+
         from app.blueprints.api.api_functions import valid_tlds
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains
 
         domain_name = request.form['domain'].replace(' ', '').lower()
         domain = get_domain_availability(domain_name)

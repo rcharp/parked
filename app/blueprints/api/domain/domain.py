@@ -109,9 +109,10 @@ def get_dropping_domains():
     domains = list()
 
     for tld in tlds:
-        url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=500'
+        url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=1000'
         r = requests.get(url=url)
-        results = random.sample(json.loads(r.text)['domains'], k=20)
+        results = random.sample(json.loads(r.text)['domains'], k=10)
         domains += results
 
+    random.shuffle(domains)
     return domains
