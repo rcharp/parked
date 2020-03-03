@@ -150,6 +150,7 @@ def backorder_request(domain):
 
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
             response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
+            print(response)
 
             return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
@@ -245,7 +246,6 @@ def get_domain_status(domain):
         domain = ext.registered_domain
 
         details = pythonwhois.get_whois(domain)
-        print(details)
 
         # Remove the raw data
         status = details['status']

@@ -6,6 +6,7 @@ from flask import (
     Markup,
     url_for,
     render_template,
+    current_app,
     json,
     jsonify,
     session)
@@ -252,7 +253,7 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    test = False
+    test = not current_app.config.get('PRODUCTION')
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()

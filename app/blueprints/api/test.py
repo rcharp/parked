@@ -21,7 +21,8 @@ from app.blueprints.api.domain.dynadot import (
     list_backorder_requests,
     list_contacts,
     set_whois_info,
-    get_whois
+    get_whois,
+    get_domain_status
 )
 
 
@@ -54,6 +55,6 @@ def test(domain):
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
     # results = get_whois(domain)
-    results = get_dropping_domains()
-    print(len(results))
+    # results = get_dropping_domains()
+    results = get_domain_status('digitalcard.io')
     return results
