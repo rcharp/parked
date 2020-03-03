@@ -258,7 +258,7 @@ def dashboard():
 
 # Domain Functions -------------------------------------------------------------------
 @user.route('/check_availability', methods=['GET','POST'])
-@login_required
+# @login_required
 @csrf.exempt
 def check_availability():
     if request.method == 'POST':

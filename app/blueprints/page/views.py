@@ -5,6 +5,7 @@ from app.extensions import db, csrf
 from flask import redirect, url_for, request, current_app
 from flask_login import current_user, login_required
 import requests
+import ast
 import json
 import traceback
 from sqlalchemy import and_, exists
@@ -54,6 +55,17 @@ def availability():
         return redirect(url_for('page.home'))
 
     return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+
+
+@page.route('/view', methods=['GET','POST'])
+@csrf.exempt
+def view():
+    if request.method == 'POST':
+        domain = ast.literal_eval(request.form['domain'])
+        print(domain)
+        return render_template('page/view.html', domain=domain)
+
+    return redirect(url_for('page.home'))
 
 
 @page.route('/terms')
