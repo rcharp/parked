@@ -1,5 +1,7 @@
 from flask import flash
-
+import requests
+import json
+import xmltodict
 # from app.blueprints.api.domain.godaddy import (
 #     purchase_domain,
 #     check_domain,
@@ -51,6 +53,6 @@ def test(domain):
     # results = list_backorder_requests()
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
-    results = get_whois(domain)
+    # results = get_whois(domain)
 
     return results
