@@ -11,8 +11,8 @@ import xmltodict
 # )
 # from app.blueprints.api.domain.namecheap import purchase_domain
 from app.blueprints.api.domain.domain import get_domain_details, get_dropping_domains
+from app.blueprints.api.domain.domainr import get_domain_status
 from app.blueprints.api.domain.dynadot import (
-    check_domain,
     register_domain,
     get_domain_expiration,
     backorder_request,
@@ -22,7 +22,6 @@ from app.blueprints.api.domain.dynadot import (
     list_contacts,
     set_whois_info,
     get_whois,
-    get_domain_status
 )
 
 
@@ -47,14 +46,14 @@ def test(domain):
     #     flash("There was an error", 'error')
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
-    # results = check_domain(domain)
-    # results = backorder_request(domain)
-    # results = register_domain(domain)
+    # results = get_domain_status('digitalcard.io')
+    # results = backorder_request('digitalcard.io')
+    results = register_domain('rickycharpentier3.io')
     # results = get_domain_details('rickycharpentier.xyz')
     # results = list_backorder_requests()
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
     # results = get_whois(domain)
     # results = get_dropping_domains()
-    results = get_domain_status('digitalcard.io')
+    # results = get_domain_status('digitalcard.io')
     return results

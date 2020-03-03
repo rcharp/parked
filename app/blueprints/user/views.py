@@ -70,7 +70,8 @@ from app.blueprints.api.domain.dynadot import (
     delete_backorder_request,
     get_domain_expiration,
     backorder_request,
-    set_whois_info
+    set_whois_info,
+    get_domain_status
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
@@ -504,8 +505,8 @@ def save_reservation():
                 payment = create_payment(domain, None, customer_id, pm)
                 if payment:
 
-                    # Create the backorder request in Dynadot
-                    r = backorder_request(domain)
+                    # Check to see if the domain is in PendingDelete
+                    r = get_domain_status
 
                     # Save the domain
                     details = get_domain_availability(domain)
@@ -541,8 +542,8 @@ def saved_card_intent():
             payment = create_payment(domain, None, customer_id, pm)
             if payment:
 
-                # Create the backorder request in Dynadot
-                r = backorder_request(domain)
+                # Check to see if the domain is in PendingDelete
+                r = get_domain_status(domain)
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
