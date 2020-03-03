@@ -142,7 +142,8 @@ def backorder_request(domain):
         backorder_request(domain)
     try:
         # "Pending Delete" is in the domain's status, so it can be backordered now
-        if get_domain_status(domain):
+        status = get_domain_status(domain)
+        if status:
             api_key = current_app.config.get('DYNADOT_API_KEY')
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
             r = requests.get(url=dynadot_url)
@@ -239,14 +240,12 @@ def is_processing():
 # This needs to be here because importing it from domain.domain creates a circular dependency
 # Returns true if "pending delete" is in the domain's status, meaning it can be backordered
 def get_domain_status(domain):
-    # Only send a request if it isn't already processing one
-    if is_processing():
-        get_domain_status(domain)
     try:
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
 
         details = pythonwhois.get_whois(domain)
+        print(details)
 
         # Remove the raw data
         status = details['status']
