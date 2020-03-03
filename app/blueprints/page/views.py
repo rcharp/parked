@@ -25,7 +25,7 @@ def home():
 @csrf.exempt
 def availability():
     if request.method == 'POST':
-        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_domain_tld
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain_tld
         from app.blueprints.api.api_functions import valid_tlds
 
         domain_name = request.form['domain'].replace(' ', '').lower()
@@ -43,7 +43,8 @@ def availability():
             #     save_search(domain_name, domain['expires'], current_user.id)
 
             details = get_domain_details(domain_name)
-            return render_template('page/index.html', domain=domain, details=details)
+            dropping = get_dropping_domains()
+            return render_template('page/index.html', domain=domain, details=details, dropping=dropping)
 
         flash("This domain is invalid. Please try again.", "error")
         return redirect(url_for('page.home'))

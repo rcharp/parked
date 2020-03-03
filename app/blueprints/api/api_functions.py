@@ -125,3 +125,7 @@ def update_customer(pm, customer_id, save_card):
 
 def valid_tlds():
     return ['.com', '.net', '.org', '.co', '.io', '.cc', '.us', '.biz', '.info', '.mobi', '.bio', '.me', '.tv', '.pro', '.red', '.blue', '.black', '.pink', '.green', '.kim', '.poker', '.organic', '.lgbt', '.bet', '.vote', '.voto', '.promo', '.archi', '.ski']
+
+
+def dropping_tlds():
+    return ['.io', '.me']

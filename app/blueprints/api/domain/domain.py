@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback, valid_tlds
+from app.blueprints.api.api_functions import print_traceback, valid_tlds, dropping_tlds
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
@@ -9,6 +9,7 @@ import tldextract
 import pytz
 import requests
 import json
+import random
 from app.blueprints.api.domain.dynadot import check_domain
 
 
@@ -103,3 +104,14 @@ def get_domain_status(domain):
         return False
 
 
+def get_dropping_domains():
+    tlds = dropping_tlds()
+    domains = list()
+
+    for tld in tlds:
+        url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=500'
+        r = requests.get(url=url)
+        results = random.sample(json.loads(r.text)['domains'], k=20)
+        domains += results
+
+    return domains

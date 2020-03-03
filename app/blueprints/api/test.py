@@ -10,7 +10,7 @@ import xmltodict
 #     list_domains
 # )
 # from app.blueprints.api.domain.namecheap import purchase_domain
-# from app.blueprints.api.domain.domain import get_domain_details
+from app.blueprints.api.domain.domain import get_domain_details, get_dropping_domains
 from app.blueprints.api.domain.dynadot import (
     check_domain,
     register_domain,
@@ -54,5 +54,6 @@ def test(domain):
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
     # results = get_whois(domain)
-
+    results = get_dropping_domains()
+    print(len(results))
     return results
