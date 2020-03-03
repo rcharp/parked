@@ -271,7 +271,7 @@ def get_domain_status(domain):
         return False
     except Exception as e:
         print_traceback(e)
-    return None
+    return False
 
     # Old PythonWhois code
     # try:
