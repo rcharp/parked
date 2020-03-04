@@ -77,7 +77,7 @@ def filter_tlds(domains, tlds, limit):
     d = list()
     for tld in tlds:
         for i in range(int(limit/len(tlds))):
-            d += [x for x in domains if any(tld in x[0])]
+            d += [x for x in domains if any(tld in y[0] for y in x)]
 
             if i == int(limit/len(tlds)):
                 break
