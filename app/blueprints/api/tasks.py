@@ -5,10 +5,10 @@ celery = create_celery_app()
 
 @celery.task()
 def generate_drops():
-    from app.blueprints.api.domain.download import pool_domains, park_domains
+    # from app.blueprints.api.domain.download import pool_domains, park_domains
     from app.blueprints.api.domain.domain import get_dropping_domains, delete_dropping_domains, set_dropping_domains
 
-    domains = pool_domains()
+    domains = pool_domains.delay()
 
     if domains is not None:
         delete_dropping_domains()
@@ -16,7 +16,7 @@ def generate_drops():
 
         return True
     else:
-        domains = park_domains()
+        domains = park_domains.delay()
         if domains is not None:
             delete_dropping_domains()
             set_dropping_domains(domains)

@@ -167,8 +167,11 @@
                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                         <div class="form-group">
                                             <br />
+                                            {% set domain_name = domain['name'] %}
+                                            {% set date_available = domain['date_available'] %}
                                             <div class="col-xs-12 text-center" style="width:40%;min-width:350px;margin:0 auto; float:none">
                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available'] }}" />
                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Reserve this domain</button>
                                             </div>
                                         </div>

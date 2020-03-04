@@ -270,11 +270,12 @@ def dashboard():
 def check_availability():
     try:
         domain_name = ''
+
         if request.method == 'GET':
-            if 'domain' not in request.args:
+            if 'domain' not in request.args or 'available' not in request.args:
                 return redirect(url_for('user.dashboard'))
 
-            domain_name = request.args.get('domain_name')
+            domain_name = request.args.get('domain')
 
         if request.method == 'POST':
             if 'domain' not in request.args and 'domain' not in request.form:
@@ -290,6 +291,8 @@ def check_availability():
             # domains = [l for l in request.form['domains'].split('\n') if l]
 
         domain = get_domain_availability(domain_name)
+        if 'available' in request.args:
+            domain.update({'available_on': request.args.get('available')})
 
         # 500 is the error returned if the domain is valid but can't be backordered
         if domain == 500:
