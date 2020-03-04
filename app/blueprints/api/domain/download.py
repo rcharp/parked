@@ -31,7 +31,7 @@ def pool_domains(limit):
             # random.shuffle(domains)
 
             # Choose X of them at random
-            # domains = random.sample(domains, limit)
+            domains = random.sample(domains, limit)
 
             # Add the domains to a dictionary
             for domain in domains:
