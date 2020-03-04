@@ -11,7 +11,8 @@ def generate_drops():
 
         # Do not generate more drops if there are too many in the db
         from app.blueprints.api.models.drops import Drop
-        if db.session.query(Drop).count() < limit:
+        if db.session.query(Drop).count() > limit:
+            print("There was an error")
             return False
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
