@@ -128,7 +128,6 @@ def set_dropping_domains(drops, limit):
     from app.blueprints.api.models.drops import Drop
 
     for drop in drops:
-
         if db.session.query(Drop).count() > limit:
             return
 

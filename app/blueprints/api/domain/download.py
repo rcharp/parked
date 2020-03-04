@@ -25,7 +25,7 @@ def pool_domains(limit):
 
             # Split the lines from the csv and filter out the TLDs we want
             domains = [i.split(',') for i in data.splitlines()]
-            domains = filter_tlds(domains, dropping_tlds())
+            domains = filter_tlds(domains, dropping_tlds(), limit)
 
             # Shuffle the results
             # random.shuffle(domains)
@@ -54,9 +54,9 @@ def park_domains(limit):
         results = list()
 
         for tld in tlds:
-            url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=' + limit
+            url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=' + str(limit)
             r = requests.get(url=url)
-            domains = random.sample(json.loads(r.text)['domains'], k=limit/len(tlds))
+            domains = random.sample(json.loads(r.text)['domains'], k=int(limit/len(tlds)))
 
             random.shuffle(domains)
             for domain in domains:
@@ -73,5 +73,14 @@ def park_domains(limit):
         return None
 
 
-def filter_tlds(domains, tlds):
-    return [x for x in domains if any(tld in x[0] for tld in tlds)]
+def filter_tlds(domains, tlds, limit):
+    d = list()
+    for tld in tlds:
+        for i in range(int(limit/len(tlds))):
+            d += [x for x in domains if any(tld in x[0])]
+
+            if i == int(limit/len(tlds)):
+                break
+
+    return d
+    # return [x for x in domains if any(tld in x[0] for tld in tlds)]
