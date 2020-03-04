@@ -81,6 +81,15 @@ def view():
     return redirect(url_for('page.home'))
 
 
+@page.route('/drops', methods=['GET','POST'])
+@csrf.exempt
+def drops():
+    from app.blueprints.api.models.drops import Drop
+    from app.blueprints.api.api_functions import dropping_tlds
+    domains = Drop.query.all()
+    return render_template('page/drops.html', domains=domains, tlds=dropping_tlds())
+
+
 @page.route('/terms')
 def terms():
     return render_template('page/terms.html')

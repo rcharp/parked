@@ -54,5 +54,5 @@ def test(domain):
     # results = get_dropping_domains()
     # results = is_pending_delete('digitalcard.io')
 
-    results = generate_drops.delay()
+    results = generate_drops()
     return results

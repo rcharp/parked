@@ -200,6 +200,7 @@ def template_processors(app):
     app.jinja_env.filters['today_filter'] = today_filter
     app.jinja_env.filters['site_name_filter'] = site_name_filter
     app.jinja_env.filters['site_color_filter'] = site_color_filter
+    app.jinja_env.filters['tld_filter'] = tld_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -340,3 +341,10 @@ def site_name_filter(arg):
 
 def site_color_filter(arg):
     return '009fff'
+
+
+def tld_filter(arg, k):
+    print([x.name for x in arg if x.name.endswith(k)])
+    print('')
+    print('')
+    return [x for x in arg if x.name.endswith(k)]

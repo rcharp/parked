@@ -9,6 +9,7 @@ from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import print_traceback
 from app.extensions import db
 from sqlalchemy import exists
+from itertools import groupby
 
 
 def pool_domains():
@@ -26,9 +27,11 @@ def pool_domains():
             domains = [i.split(',') for i in data.splitlines()]
             domains = filter_tlds(domains, dropping_tlds())
 
-            # Shuffle the results and choose 100 of them at random
+            # Shuffle the results
             # random.shuffle(domains)
-            domains = random.sample(domains, 1000)
+
+            # Choose 1000 of them at random
+            # domains = random.sample(domains, 1000)
 
             # Add the domains to a dictionary
             for domain in domains:
@@ -72,6 +75,6 @@ def park_domains():
         return None
 
 
-def filter_tlds(string, substr):
-    return [x for x in string if
-            any(sub in x[0] for sub in substr)]
+def filter_tlds(domains, tlds):
+    return [x for x in domains if
+        any(tld in x[0] for tld in tlds)]
