@@ -146,6 +146,17 @@ def backup():
     return None
 
 
+@click.command()
+def reset_drops():
+    """
+    Reset Dropping domains table
+    :return: None
+    """
+
+    return None
+
+
 cli.add_command(init)
 cli.add_command(seed)
 cli.add_command(reset)
+cli.add_command(reset_drops)
