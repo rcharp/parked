@@ -119,6 +119,8 @@ def delete_dropping_domains():
 
 
 def set_dropping_domains(drops):
+    from app.blueprints.api.models.drops import Drop
+
     for drop in drops:
         if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
             d = Drop()
