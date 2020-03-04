@@ -63,7 +63,7 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.blueprints.api.tasks.generate_drops',
         # 'schedule': crontab(hour="*/1") # every hour
         # 'schedule': crontab(minute="*/1") # every minute
-        'schedule': crontab(hour=1, minute=13) # every night at midnight
+        'schedule': crontab(hour=1, minute=20) # every night at midnight
     },
 }
 
