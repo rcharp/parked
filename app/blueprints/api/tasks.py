@@ -21,14 +21,14 @@ def generate_drops():
 
         if domains is not None:
             if delete_dropping_domains():
-                set_dropping_domains(domains, limit)
+                set_dropping_domains(domains, limit * len(dropping_tlds()))
 
                 return True
         else:
             domains = park_domains(limit)  # .delay()
             if domains is not None:
                 if delete_dropping_domains():
-                    set_dropping_domains(domains, limit)
+                    set_dropping_domains(domains, limit * len(dropping_tlds()))
 
                     return True
 

@@ -18,18 +18,19 @@ def pool_domains(limit):
         from app.blueprints.api.api_functions import dropping_tlds, valid_tlds
         results = list()
 
+        # Download the list of PendingDelete domains
         url = 'https://www.pool.com/Downloads/PoolDeletingDomainsList.zip'
         request = requests.get(url)
-        file = zipfile.ZipFile(BytesIO(request.content))
-        for name in file.namelist():
-            data = file.read(name).decode("utf-8")
+        f = zipfile.ZipFile(BytesIO(request.content))
+        for name in f.namelist():
+            data = f.read(name).decode("utf-8")
 
             tlds = dropping_tlds()
             tld_length = len(tlds)
 
             domain_list = list()
 
-            # Split the lines from the csv and filter out the TLDs we want
+            # Split the lines from the downloaded file and filter out the TLDs we want
             lines = data.splitlines()
             lines = filter_tlds(lines, tlds)
 
@@ -42,9 +43,11 @@ def pool_domains(limit):
                         counter += 1
                     # lines.remove(line)
 
+                    # Add a max of (limit) domains per TLD to the list
                     if counter == limit or len(domain_list) == limit * tld_length:
                         break
 
+            # Each line is comma separated, turn each into a list
             domains = [i.split(',') for i in domain_list]
             # domains = filter_tlds(domains, dropping_tlds())
 
@@ -58,7 +61,7 @@ def pool_domains(limit):
             for domain in domains:
                 results.append({'name': domain[0], 'date_available': domain[1]})
 
-                # Limit the number of results
+                # Limit the number of results to max 100 per tld
                 if len(results) == limit * tld_length:
                     break
 
