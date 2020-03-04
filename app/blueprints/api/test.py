@@ -17,6 +17,7 @@ from app.blueprints.api.domain.dynadot import (
 )
 
 from app.blueprints.api.domain.download import pool_domains
+from celery.result import AsyncResult
 
 
 def test(domain):
@@ -42,7 +43,7 @@ def test(domain):
     #     flash("There was an error", 'error')
     #     flash("The following error occurred: " + purchase['message'], 'error')
 
-    # results = get_domain_status('digitalcard.io')
+    # results = is_pending_delete('digitalcard.io')
     # results = backorder_request('digitalcard.io')
     # results = register_domain('rickycharpentier3.io')
     # results = get_domain_details('rickycharpentier.xyz')
@@ -51,7 +52,7 @@ def test(domain):
     # results = set_whois_info('rickycharpentier.xyz')
     # results = get_whois(domain)
     # results = get_dropping_domains()
-    # results = get_domain_status('digitalcard.io')
+    # results = is_pending_delete('digitalcard.io')
 
     results = generate_drops.delay()
     return results

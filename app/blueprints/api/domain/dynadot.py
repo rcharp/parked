@@ -3,11 +3,13 @@ from app.blueprints.api.api_functions import print_traceback, active_backorders
 from app.blueprints.page.date import get_string_from_utc_datetime, convert_timestamp_to_datetime_utc
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
+from app.extensions import db
 import pythonwhois
 import datetime
 import tldextract
 import pytz
 import time
+from sqlalchemy import exists
 import requests
 import json
 import re
@@ -154,7 +156,7 @@ def backorder_request(domain):
         backorder_request(domain)
     try:
         # "Pending Delete" is in the domain's status, so it can be backordered now
-        pending_delete = get_domain_status(domain)
+        pending_delete = is_pending_delete(domain)
         if pending_delete:
             api_key = current_app.config.get('DYNADOT_API_KEY')
             dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
@@ -162,11 +164,11 @@ def backorder_request(domain):
 
             results = json.loads(json.dumps(xmltodict.parse(r.text)))
             response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
-            print(response)
+            # print(response)
 
             return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
-        # Still create the backorder in the db, but set backorder.available to False
+        # Still create the backorder in the db, but set backorder.pending_delete to False
         return False
     except Exception as e:
         print_traceback(e)
@@ -252,8 +254,14 @@ def is_processing():
 # Helper methods -------------------------------------------------------------------------------
 # This needs to be here because importing it from domain.Domainr creates a circular dependency
 # Returns true if "pending delete" is in the domain's status, meaning it can be attempted to be purchased
-def get_domain_status(domain):
+def is_pending_delete(domain):
     try:
+
+        # If the domain is in the Drops table, then it's pending delete
+        from app.blueprints.api.models.drops import Drop
+        if db.session.query(exists().where(Drop.name == domain)).scalar():
+            return True
+
         api_key = current_app.config.get('X_RAPID_API_KEY')
         url = "https://domainr.p.rapidapi.com/v2/status"
         querystring = {"domain": domain}

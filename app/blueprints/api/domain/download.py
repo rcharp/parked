@@ -24,7 +24,7 @@ def pool_domains():
 
             # Split the lines from the csv and filter out the TLDs we want
             domains = [i.split(',') for i in data.splitlines()]
-            domains = filter(domains, dropping_tlds())
+            domains = filter_tlds(domains, dropping_tlds())
 
             # Shuffle the results and choose 100 of them at random
             # random.shuffle(domains)
@@ -52,6 +52,7 @@ def pool_domains():
 
 def park_domains():
     try:
+        from app.blueprints.api.api_functions import dropping_tlds
         tlds = dropping_tlds()
         domains = list()
 
@@ -71,6 +72,6 @@ def park_domains():
         return None
 
 
-def filter(string, substr):
-    return [str for str in string if
-            any(sub in str[0] for sub in substr)]
+def filter_tlds(string, substr):
+    return [x for x in string if
+            any(sub in x[0] for sub in substr)]

@@ -105,7 +105,7 @@ def create_backorder(domain, pm, pi, customer_id, user_id, pending_delete):
     b.user_id = user_id
     b.customer_id = customer_id
     b.active = True
-    b.available = pending_delete
+    b.pending_delete = pending_delete
 
     b.save()
     return
