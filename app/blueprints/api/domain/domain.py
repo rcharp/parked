@@ -104,21 +104,6 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains(park=False):
-    from app.blueprints.api.domain.download import dl_file
-
-    if not park:
-        domains = dl_file()
-        return domains
-
-    tlds = dropping_tlds()
-    domains = list()
-
-    for tld in tlds:
-        url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=1000'
-        r = requests.get(url=url)
-        results = random.sample(json.loads(r.text)['domains'], k=10)
-        domains += results
-
-    random.shuffle(domains)
-    return domains
+def get_dropping_domains():
+    from app.blueprints.api.models.drops import Drop
+    return Drop.query.all()

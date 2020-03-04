@@ -11,6 +11,7 @@ import traceback
 from sqlalchemy import and_, exists
 from importlib import import_module
 import os
+import random
 
 page = Blueprint('page', __name__, template_folder='templates')
 
@@ -22,6 +23,9 @@ def home():
 
     from app.blueprints.api.domain.domain import get_dropping_domains
     dropping = get_dropping_domains()
+
+    # Shuffle the domains to spice things up a little
+    # random.shuffle(dropping)
     return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping)
 
 

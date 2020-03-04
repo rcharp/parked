@@ -4,5 +4,10 @@ celery = create_celery_app()
 
 
 @celery.task()
-def api_task():
+def generate_drops():
+    from app.blueprints.api.domain.download import pool_domains, park_domains
+
+    if not pool_domains():
+        park_domains()
+
     return

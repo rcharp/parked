@@ -24,7 +24,7 @@ from app.blueprints.api.domain.dynadot import (
     get_whois,
 )
 
-from app.blueprints.api.domain.download import dl_file
+from app.blueprints.api.domain.download import pool_domains
 
 
 def test(domain):
@@ -59,5 +59,5 @@ def test(domain):
     # results = get_dropping_domains()
     # results = get_domain_status('digitalcard.io')
 
-    results = dl_file()
+    results = pool_domains()
     return results

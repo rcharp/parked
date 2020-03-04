@@ -59,8 +59,8 @@ CELERY_RESULT_EXPIRES = 300
 CELERY_REDIS_MAX_CONNECTIONS = 20
 CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
 CELERYBEAT_SCHEDULE = {
-    'mark-soon-to-expire-credit-cards': {
-        'task': 'app.blueprints.billing.tasks.mark_old_credit_cards',
+    'dropping_domains': {
+        'task': 'app.blueprints.api.tasks.generate_drops',
         'schedule': crontab(hour=0, minute=0)
     },
 }
