@@ -112,11 +112,6 @@
                                             How It Works
                                         </a>
                                     </li>
-{#                                    <li class="nav-item">#}
-{#                                        <a href="#features" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">#}
-{#                                            Features#}
-{#                                        </a>#}
-{#                                    </li>#}
                                     <li class="nav-item">
                                         <a href="#pricing" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
                                             Pricing
@@ -153,6 +148,13 @@
             <!--/ End Header -->
             <!-- Hero -->
             <div class="jumbotron jumbotron-fluid bg-white font-weight__500 hero mb-0">
+                {% if test %}
+                    <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
+                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ 'site_name'|site_name_filter }}" /><br />
+                        <button class="btn btn-sm btn-success" id="submit-button" type="submit">
+                            <i class="si si-ghost pull-right"></i>Run Tests</button>
+                    </form>
+                {% endif %}
                 <!-- Empty Space -->
                 <div class="lg-space"></div>
                 <!--/ End Empty Space -->
@@ -215,7 +217,7 @@
                                         <br />
                                         </div>
                                         {% if not domain['available'] and details is not none %}
-                                            <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;">
+                                            <div class="block block-themed" style="float:right;width:50%;min-width:350px;display:block;height:450px;overflow:auto;border:1px solid #e3e3e3;padding:10px;margin-top:40px;">
                                                 <div style="text-align:center; font-size:20px;"><br />
                                                     Registration info for {{ domain['name'] }}<br /><br />
                                                 </div>
@@ -299,8 +301,8 @@
                                                         <tr style="max-height:10px;border:none">
                                                             <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:240px;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
+                                                                <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;padding:.75rem"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
+                                                                <td style="min-width:240px;padding:.75rem"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
                                                             </form>
                                                         </tr>
                                                         {% endfor %}
@@ -334,8 +336,8 @@
                                                         <tr style="max-height:10px;border:none">
                                                             <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:240px;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
+                                                                <td id="dropping-domain" style="min-width:240px;max-width:300px;max-height:10px;padding:.75rem"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
+                                                                <td style="min-width:240px;padding:.75rem"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']  }}</span></td>
                                                             </form>
                                                         </tr>
                                                         {% endfor %}

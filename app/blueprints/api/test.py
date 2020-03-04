@@ -2,15 +2,7 @@ from flask import flash
 import requests
 import json
 import xmltodict
-# from app.blueprints.api.domain.godaddy import (
-#     purchase_domain,
-#     check_domain,
-#     get_purchase_agreement,
-#     get_tld_schema,
-#     list_domains
-# )
-# from app.blueprints.api.domain.namecheap import purchase_domain
-from app.blueprints.api.domain.domain import get_domain_details, get_dropping_domains
+from app.blueprints.api.domain.domain import get_domain_details, get_dropping_domains#, generate_drops
 from app.blueprints.api.domain.domainr import get_domain_status
 from app.blueprints.api.domain.dynadot import (
     register_domain,
@@ -28,6 +20,8 @@ from app.blueprints.api.domain.download import pool_domains
 
 
 def test(domain):
+    from app.blueprints.api.tasks import pool_domains, park_domains, generate_drops
+
     # print(get_domain_details(domain))
     # get_purchase_agreement(domain)
     # get_tld_schema(domain)
@@ -59,5 +53,5 @@ def test(domain):
     # results = get_dropping_domains()
     # results = get_domain_status('digitalcard.io')
 
-    results = pool_domains()
+    results = generate_drops.delay()
     return results

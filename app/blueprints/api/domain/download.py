@@ -3,6 +3,7 @@ import requests
 import zipfile
 from io import BytesIO
 import json
+import re
 import random
 from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import print_traceback
@@ -12,8 +13,7 @@ from sqlalchemy import exists
 
 def pool_domains():
     try:
-        from app.blueprints.api.api_functions import dropping_tlds
-        # count = 0
+        from app.blueprints.api.api_functions import dropping_tlds, valid_tlds
         results = list()
 
         url = 'https://www.pool.com/Downloads/PoolDeletingDomainsList.zip'
@@ -21,13 +21,28 @@ def pool_domains():
         file = zipfile.ZipFile(BytesIO(request.content))
         for name in file.namelist():
             data = file.read(name).decode("utf-8")
-            for sub in dropping_tlds():
-                domains = [i.split(',') for i in data.splitlines(5) if sub in i]
-                for domain in domains:
-                    results.append({'name': domain[0], 'date_available': domain[1]})
 
-                    if len(results) == 40:
-                        break
+            # Split the lines from the csv and filter out the TLDs we want
+            domains = [i.split(',') for i in data.splitlines()]
+            domains = filter(domains, dropping_tlds())
+
+            # Shuffle the results and choose 100 of them at random
+            # random.shuffle(domains)
+            domains = random.sample(domains, 100)
+
+            # Add the domains to a dictionary
+            for domain in domains:
+                results.append({'name': domain[0], 'date_available': domain[1]})
+
+                # if len(results) == 100:
+                #     break
+            # for sub in valid_tlds():
+            #     domains = [i.split(',') for i in data.splitlines()] # if sub in i]
+            #     for domain in domains:
+            #         results.append({'name': domain[0], 'date_available': domain[1]})
+            #
+            #         if len(results) == 40:
+            #             break
 
         return results
     except Exception as e:
@@ -56,3 +71,6 @@ def park_domains():
         return None
 
 
+def filter(string, substr):
+    return [str for str in string if
+            any(sub in str[0] for sub in substr)]

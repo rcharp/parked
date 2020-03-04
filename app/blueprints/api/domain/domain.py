@@ -107,8 +107,13 @@ def get_domain_status(domain):
 
 
 def get_dropping_domains():
+    domains = list()
     from app.blueprints.api.models.drops import Drop
-    return Drop.query.all()
+    drops = Drop.query.limit(40).all()
+    for drop in drops:
+        domains.append({'name': drop.name, 'date_available': drop.date_available})
+
+    return domains
 
 
 def delete_dropping_domains():
@@ -128,3 +133,24 @@ def set_dropping_domains(drops):
             d.date_available = drop['date_available']
             d.save()
 
+
+# For testing purposes, live version can be found in app.blueprints.api.tasks
+def generate_drops():
+    from app.blueprints.api.domain.download import pool_domains, park_domains
+
+    domains = pool_domains()
+
+    if domains is not None:
+        delete_dropping_domains()
+        set_dropping_domains(domains)
+
+        return True
+    else:
+        domains = park_domains()
+        if domains is not None:
+            delete_dropping_domains()
+            set_dropping_domains(domains)
+
+            return True
+
+    return False

@@ -24,3 +24,15 @@ def generate_drops():
             return True
 
     return False
+
+
+@celery.task()
+def pool_domains():
+    from app.blueprints.api.domain.download import pool_domains
+    pool_domains()
+
+
+@celery.task()
+def park_domains():
+    from app.blueprints.api.domain.download import park_domains
+    park_domains()
