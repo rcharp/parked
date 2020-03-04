@@ -13,10 +13,14 @@ def generate_drops():
     if domains is not None:
         delete_dropping_domains()
         set_dropping_domains(domains)
+
+        return True
     else:
         domains = park_domains()
         if domains is not None:
             delete_dropping_domains()
             set_dropping_domains(domains)
 
-    return
+            return True
+
+    return False
