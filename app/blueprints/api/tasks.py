@@ -12,7 +12,6 @@ def generate_drops():
         # Do not generate more drops if there are too many in the db
         from app.blueprints.api.models.drops import Drop
         if db.session.query(Drop).count() > limit:
-            print("There was an error")
             return False
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
@@ -22,14 +21,14 @@ def generate_drops():
 
         if domains is not None:
             if delete_dropping_domains():
-                set_dropping_domains(domains)
+                set_dropping_domains(domains, limit)
 
                 return True
         else:
             domains = park_domains(limit)  # .delay()
             if domains is not None:
                 if delete_dropping_domains():
-                    set_dropping_domains(domains)
+                    set_dropping_domains(domains, limit)
 
                     return True
 

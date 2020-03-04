@@ -124,10 +124,14 @@ def delete_dropping_domains():
     return False
 
 
-def set_dropping_domains(drops):
+def set_dropping_domains(drops, limit):
     from app.blueprints.api.models.drops import Drop
 
     for drop in drops:
+
+        if db.session.query(Drop).count() > limit:
+            return
+
         if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
             d = Drop()
             d.name = drop['name']
