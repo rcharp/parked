@@ -509,7 +509,7 @@ def save_reservation():
                 if payment:
 
                     # Check to see if the domain is in PendingDelete
-                    r = get_domain_status
+                    r = get_domain_status(domain)
 
                     # Save the domain
                     details = get_domain_availability(domain)

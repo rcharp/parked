@@ -38,6 +38,7 @@ def availability():
 
         from app.blueprints.api.api_functions import valid_tlds
         from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains
+        from app.blueprints.api.models.drops import Drop
 
         domain_name = request.form['domain'].replace(' ', '').lower()
         domain = get_domain_availability(domain_name)
@@ -55,6 +56,13 @@ def availability():
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()
+
+            # There is a Drop in the db for this domain, so update the available date
+            if db.session.query(exists().where(Drop.name == domain['name'])).scalar():
+                drop = Drop.query.filter(Drop.name == domain['name']).scalar()
+                if drop is not None:
+                    domain.update({'available_on': drop.date_available})
+
             return render_template('page/index.html', domain=domain, details=details, dropping=dropping)
 
         flash("This domain is invalid. Please try again.", "error")

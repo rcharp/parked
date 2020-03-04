@@ -167,8 +167,6 @@
                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                         <div class="form-group">
                                             <br />
-                                            {% set domain_name = domain['name'] %}
-                                            {% set date_available = domain['date_available'] %}
                                             <div class="col-xs-12 text-center" style="width:40%;min-width:350px;margin:0 auto; float:none">
                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                 <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available'] }}" />
