@@ -111,7 +111,6 @@
   {% block litebody %}{% endblock %}
   <body class="font-w300;" style="margin:auto;width:100%;max-width:100%;overflow-x:hidden;padding-bottom:0; background-color:#fff;">
     {% block header %}{% endblock %}
-    {{ billing.card_expiring_warning() }}
 
     {% if request.path != '/demo' and request.path != '/inbox' and request.path != '/refresh'
     and request.path != '/rules' and not ('/add' in request.path) and not ('/parse' in request.path)

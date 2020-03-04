@@ -104,7 +104,13 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains():
+def get_dropping_domains(park=False):
+    from app.blueprints.api.domain.download import dl_file
+
+    if not park:
+        domains = dl_file()
+        return domains
+
     tlds = dropping_tlds()
     domains = list()
 
