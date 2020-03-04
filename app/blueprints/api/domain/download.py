@@ -38,8 +38,8 @@ def pool_domains(limit):
                 results.append({'name': domain[0], 'date_available': domain[1]})
 
                 # Limit the number of results
-                # if len(results) == limit:
-                #     break
+                if len(results) == limit:
+                    break
 
         return results
     except Exception as e:
@@ -51,19 +51,23 @@ def park_domains(limit):
     try:
         from app.blueprints.api.api_functions import dropping_tlds
         tlds = dropping_tlds()
-        domains = list()
+        results = list()
 
         for tld in tlds:
             url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=' + limit
             r = requests.get(url=url)
-            results = random.sample(json.loads(r.text)['domains'], k=limit/len(tlds))
+            domains = random.sample(json.loads(r.text)['domains'], k=limit/len(tlds))
 
-            random.shuffle(results)
-            for result in results:
-                domains.append({'name': result['name'], 'date_available': result['date_available']})
+            random.shuffle(domains)
+            for domain in domains:
+                results.append({'name': domain['name'], 'date_available': domain['date_available']})
 
-        random.shuffle(domains)
-        return domains
+                # Limit the number of results
+                if len(results) == limit:
+                    break
+
+        random.shuffle(results)
+        return results
     except Exception as e:
         print_traceback(e)
         return None
