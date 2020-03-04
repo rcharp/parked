@@ -65,7 +65,7 @@ def create_celery_app(app=None):
     app = app or create_app()
     celery = Celery(broker=app.config.get('CELERY_BROKER_URL'), include=CELERY_TASK_LIST)
     celery.conf.update(app.config)
-    celery.conf.beat_schedule = {}
+    celery.conf.beat_schedule = app.config.get('CELERYBEAT_SCHEDULE')
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):
