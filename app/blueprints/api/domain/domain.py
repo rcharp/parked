@@ -118,9 +118,10 @@ def get_dropping_domains():
 
 def delete_dropping_domains():
     from app.blueprints.api.models.drops import Drop
-    drops = Drop.query.all()
-    for drop in drops:
-        drop.delete()
+    Drop.query.delete()
+    if db.session.query(Drop).count() == 0:
+        return True
+    return False
 
 
 def set_dropping_domains(drops):
