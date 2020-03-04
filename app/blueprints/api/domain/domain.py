@@ -10,6 +10,8 @@ import pytz
 import requests
 import json
 import random
+from app.extensions import db
+from sqlalchemy import exists
 from app.blueprints.api.domain.dynadot import check_domain
 
 
@@ -107,3 +109,20 @@ def get_domain_status(domain):
 def get_dropping_domains():
     from app.blueprints.api.models.drops import Drop
     return Drop.query.all()
+
+
+def delete_dropping_domains():
+    from app.blueprints.api.models.drops import Drop
+    drops = Drop.query.all()
+    for drop in drops:
+        drop.delete()
+
+
+def set_dropping_domains(drops):
+    for drop in drops:
+        if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
+            d = Drop()
+            d.name = drop['name']
+            d.date_available = drop['date_available']
+            d.save()
+
