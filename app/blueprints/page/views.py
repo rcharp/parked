@@ -24,11 +24,14 @@ def home():
     from app.blueprints.api.domain.domain import get_dropping_domains
     dropping = get_dropping_domains()
 
+    from app.blueprints.api.models.drops import Drop
+    drop_count = db.session.query(Drop).count()
+
     test = not current_app.config.get('PRODUCTION')
 
     # Shuffle the domains to spice things up a little
     random.shuffle(dropping)
-    return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping, test=test)
+    return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping, test=test, drop_count=drop_count)
 
 
 @page.route('/availability', methods=['GET','POST'])
