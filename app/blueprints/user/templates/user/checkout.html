@@ -200,10 +200,10 @@
                                     <div class="tab-pane active" id="check" name="check" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
-                                            <div class="block block-themed" style="height:800px;">
-                                                <div style="text-align:center; font-size:24px;max-height:100px;width:100%;min-width:350px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
+                                            <div class="block block-themed" style="min-height:800px;">
+                                                <div style="text-align:center; font-size:24px;max-height:300px;width:100%;min-width:350px;display:block;margin-bottom:175px;" class="col-md-12"><br><br>
                                                     Buy <span style="color:green">{{ domain }}</span> -- ${{ price }}<br />
-                                                    <span style="font-size:18px">Includes the first year.</span><br /><br />
+                                                    <span style="font-size:18px">Includes a year of registration.</span><br /><br />
                                                     {% if pm is not none %}
                                                         <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary">
                                                             <input type="checkbox" id="use-card" name="use-card" checked onchange="UseCard();"><span></span> <span style="font-size:20px;">Use {{ pm['card']['brand']|capitalize }} ****{{ pm['card']['last4'] }} to buy this domain</span>
@@ -327,7 +327,7 @@
 
         <script>
             function StripeCheckout() {
-                var stripe = Stripe('pk_test_DX6xHgQH53sA1l78sasUZ9gA');
+                var stripe = Stripe('pk_live_Nwbqc3RiygVrl3aRrPSnG0Jj');
                 var elements = stripe.elements();
 
                 // Set up Stripe.js and Elements to use in checkout form

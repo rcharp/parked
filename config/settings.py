@@ -59,9 +59,12 @@ CELERY_RESULT_EXPIRES = 300
 CELERY_REDIS_MAX_CONNECTIONS = 20
 CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
 CELERYBEAT_SCHEDULE = {
-    'mark-soon-to-expire-credit-cards': {
-        'task': 'app.blueprints.billing.tasks.mark_old_credit_cards',
-        'schedule': crontab(hour=0, minute=0)
+    'dropping_domains': {
+        'task': 'app.blueprints.api.tasks.generate_drops',
+        #'schedule': crontab(hour="*/1") # every hour
+        # 'schedule': crontab(minute="*/1") # every minute
+        'schedule': crontab(minute="*/5") # every 5 minutes
+        # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
 }
 
@@ -152,7 +155,7 @@ STRIPE_API_VERSION = '2018-02-28'
 STRIPE_AUTHORIZATION_LINK = os.environ.get('STRIPE_CONNECT_AUTHORIZE_LINK', None)
 
 # Change this to the live key when ready to take payments
-STRIPE_KEY = STRIPE_TEST_SECRET_KEY
+STRIPE_KEY = STRIPE_SECRET_KEY
 
 STRIPE_PLANS = {
     '0': {

@@ -59,12 +59,8 @@ def contact_us_email(email, message):
 
     response.html = render_template('user/mail/contact_email.html',email=email, message=message)
 
-    print(msg)
-
     mail.send(msg)
     mail.send(response)
-
-    print("Email sent")
 
 
 def request_email(email, request_to, request_from, message):

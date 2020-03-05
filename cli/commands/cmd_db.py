@@ -8,6 +8,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app.app import create_app
 from app.extensions import db
 from app.blueprints.user.models import User
+from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
@@ -70,8 +71,8 @@ def seed():
 
     member2 = {
         'role': 'member',
-        'email': app.config['SEED_MEMBER_2_EMAIL'],
-        'password': app.config['SEED_ADMIN_PASSWORD']
+        'email': app.config['SEED_TEST_EMAIL'],
+        'password': app.config['SEED_TEST_PASSWORD']
     }
 
     User(**member).save()
@@ -80,17 +81,36 @@ def seed():
     return User(**params).save()
 
 
+@click.command()
+def seed_customer():
+    params = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'email': app.config['SEED_MEMBER_EMAIL'],
+        'save_card': True
+    }
+
+    return Customer(**params).save()
+
 
 @click.command()
-def seedintegrations():
-    """
-    Seed the database with a couple integrations.
+def seed_domains():
+    domain1 = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'name': 'rickycharpentier.xyz',
+        'registered': True
+    }
 
-    :return: Nothing
-    """
+    domain2 = {
+        'user_id': 1,
+        'customer_id': app.config['SEED_CUSTOMER_ID'],
+        'name': 'rickycharpentier.cc',
+        'registered': True
+    }
 
-    # Seed auths
-    # auths = app.config['SEED_AUTHS']
+    Domain(**domain1).save()
+    return Domain(**domain2).save()
 
 
 @click.command()
@@ -106,7 +126,8 @@ def reset(ctx, with_testdb):
     """
     ctx.invoke(init, with_testdb=with_testdb)
     ctx.invoke(seed)
-    # ctx.invoke(seedauth)
+    ctx.invoke(seed_customer)
+    ctx.invoke(seed_domains)
 
     return None
 
@@ -125,6 +146,17 @@ def backup():
     return None
 
 
+@click.command()
+def reset_drops():
+    """
+    Reset Dropping domains table
+    :return: None
+    """
+
+    return None
+
+
 cli.add_command(init)
 cli.add_command(seed)
 cli.add_command(reset)
+cli.add_command(reset_drops)

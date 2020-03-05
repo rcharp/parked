@@ -54,6 +54,9 @@ Flask-Cache==0.13.1
 Flask-Caching==1.4.0
 pythonwhois==2.4.3
 pythonwhois-alt==2.4.4
+#whois==0.9.6
+pywhois==0.1
+#python-whois==0.7.2
 tldextract==2.2.2
 dynadotpy==0.1.0
 xmltodict==0.12.0

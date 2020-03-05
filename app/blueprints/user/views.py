@@ -6,6 +6,7 @@ from flask import (
     Markup,
     url_for,
     render_template,
+    current_app,
     json,
     jsonify,
     session)
@@ -49,6 +50,7 @@ from app.blueprints.billing.charge import (
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
+from app.blueprints.api.models.backorder import Backorder
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
@@ -67,11 +69,13 @@ from app.blueprints.api.domain.dynadot import (
     register_domain as register,
     delete_backorder_request,
     get_domain_expiration,
-    backorder_request
+    backorder_request,
+    set_whois_info,
+    is_pending_delete
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
-
+send = True
 
 # Login and Credentials -------------------------------------------------------------------
 @user.route('/login', methods=['GET', 'POST'])
@@ -79,7 +83,12 @@ user = Blueprint('user', __name__, template_folder='templates')
 # @cache.cached(timeout=timeout)
 @csrf.exempt
 def login():
-    form = LoginForm(next=url_for('user.dashboard'))
+
+    # This redirects to the link that the button was sending to before login
+    form = LoginForm(next=request.args.get('next'))
+
+    # This redirects to dashboard always.
+    # form = LoginForm(next=url_for('user.dashboard'))
 
     if form.validate_on_submit():
 
@@ -101,7 +110,7 @@ def login():
                 next_url = request.form.get('next')
 
                 if next_url:
-                    return redirect(safe_next_url(next_url))
+                    return redirect(safe_next_url(next_url), code=307)
 
                 if current_user.role == 'admin':
                     return redirect(url_for('admin.dashboard'))
@@ -188,11 +197,11 @@ def signup():
             from app.blueprints.user.tasks import send_welcome_email
             from app.blueprints.contact.mailerlite import create_subscriber
 
-            send_welcome_email.delay(current_user.email)
+            if send:
+                send_welcome_email.delay(current_user.email)
             create_subscriber(current_user.email)
 
             flash("You've successfully signed up!", 'success')
-                
             return redirect(url_for('user.dashboard'))
 
     return render_template('user/signup.html', form=form)
@@ -245,7 +254,7 @@ def dashboard():
     if current_user.role == 'admin':
         return redirect(url_for('admin.dashboard'))
 
-    test = False
+    test = not current_app.config.get('PRODUCTION')
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
@@ -255,34 +264,54 @@ def dashboard():
 
 
 # Domain Functions -------------------------------------------------------------------
-@user.route('/check_availability', methods=['GET','POST'])
+@user.route('/check_availability', methods=['GET', 'POST'])
 @login_required
 @csrf.exempt
 def check_availability():
-    if request.method == 'POST':
-        # Uncomment this when ready to check multiple domains at once
-        # domains = [l for l in request.form['domains'].split('\n') if l]
-        
-        domain_name = request.form['domain'].replace(' ','').lower()
-        tld = get_domain_tld(domain_name)
-        if tld not in valid_tlds():
-            flash("This TLD can't be backordered. Please try another TLD.", "error")
-            return redirect(url_for('user.dashboard'))
+    try:
+        domain_name = ''
+
+        if request.method == 'GET':
+            if 'domain' not in request.args or 'available' not in request.args:
+                return redirect(url_for('user.dashboard'))
+
+            domain_name = request.args.get('domain')
+
+        if request.method == 'POST':
+            if 'domain' not in request.args and 'domain' not in request.form:
+                flash("There was an error. Please try again.", "error")
+                return redirect(url_for('user.dashboard'))
+
+            if 'domain' in request.form:
+                domain_name = request.form['domain'].replace(' ', '').lower()
+            else:
+                domain_name = request.args.get('domain')
+
+            # Uncomment this when ready to check multiple domains at once
+            # domains = [l for l in request.form['domains'].split('\n') if l]
 
         domain = get_domain_availability(domain_name)
-        details = get_domain_details(domain_name)
+        if 'available' in request.args:
+            domain.update({'available_on': request.args.get('available')})
+
+        # 500 is the error returned if the domain is valid but can't be backordered
+        if domain == 500:
+            flash("This domain extension can't be backordered. Please try another domain extension.", "error")
+            return redirect(url_for('user.dashboard'))
 
         # Save the search if it is a valid domain
-        if domain is not None and domain['available'] is not None:
+        if domain is not None and 'available' in domain and domain['available'] is not None:
             save_search(domain_name, domain['expires'], current_user.id)
 
             domains = Domain.query.filter(Domain.user_id == current_user.id).all()
+            details = get_domain_details(domain_name)
             return render_template('user/dashboard.html', current_user=current_user, domain=domain, details=details, domains=domains)
-        flash("The domain was invalid. Please try again.", "error")
-        return redirect(url_for('user.dashboard'))
-    else:
-        return redirect(url_for('user.dashboard'))
 
+        flash("This domain is invalid. Please try again.", "error")
+        return redirect(url_for('user.dashboard'))
+    except Exception as e:
+        flash("There was an error. Please try again.", "error")
+        return redirect(url_for('user.dashboard'))
 
 """
 Registers the domain after it has been reserved and successfully captured
@@ -300,6 +329,9 @@ def register_domain():
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
+
+            # Set the Whois info to GetParked.io
+            set_whois_info(domain.name)
 
             flash('This domain has been registered.', 'success')
         else:
@@ -350,22 +382,25 @@ def delete_domain():
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
         # Get the PM to delete the PaymentIntent in Stripe
-        order_id = domain.pm
+        b = Backorder.query.filter(Backorder.domain == domain.id).scalar()
 
-        domain.delete()
-        delete_backorder_request(domain.name)
+        if b is not None:
+            order_id = b.pi
 
-        # Ensure the domain has been deleted
-        d = Domain.query.get(domain_id)
-        if d is None:
+            domain.delete()
+            delete_backorder_request(domain.name)
 
-            # TODO: Delete the Payment Intent
-            # delete_payment(order_id)
+            # Ensure the domain has been deleted
+            d = Domain.query.get(domain_id)
+            if d is None:
 
-            flash('This domain reservation was successfully deleted.', 'success')
-        else:
-            flash('There was a problem deleting your reservation. Please try again.', 'error')
+                # TODO: Delete the Payment Intent
+                delete_payment(order_id)
 
+                flash('This domain reservation was successfully deleted.', 'success')
+                return redirect(url_for('user.dashboard'))
+
+    flash('There was a problem deleting your reservation. Please try again.', 'error')
     return redirect(url_for('user.dashboard'))
 
 
@@ -386,9 +421,10 @@ def update_domain():
             # Update the customer's payment info
             update_customer(pm, customer_id, save_card)
 
-            # Send a successful purchase email
-            from app.blueprints.user.tasks import send_purchase_email
-            send_purchase_email.delay(current_user.email, domain)
+            if send:
+                # Send a successful purchase email
+                from app.blueprints.user.tasks import send_purchase_email
+                send_purchase_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
@@ -416,6 +452,11 @@ Create a reservation/backorder for a domain
 def reserve_domain():
     if request.method == 'POST':
         domain = request.form['domain']
+
+        d = get_domain_availability(domain)
+        if d == 500 or not (d is not None and 'available' in d and d['available'] is not None):
+            flash('This domain can\'t be reserved.', 'error')
+            return redirect(url_for('user.dashboard'))
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
@@ -459,17 +500,16 @@ def save_reservation():
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
-            customer_id = request.form['customer_id']#
-
-            # print(request.form)
+            customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id, save_card):
 
-                # Create the payment intent with the existing payment method
-                if create_payment(domain, None, customer_id, pm):
+                # Create the payment intent with the payment method
+                payment = create_payment(domain, None, customer_id, pm)
+                if payment:
 
-                    # Create the backorder request in Dynadot
-                    r = backorder_request(domain)
+                    # Check to see if the domain is in PendingDelete
+                    r = is_pending_delete(domain)
 
                     # Save the domain
                     details = get_domain_availability(domain)
@@ -477,7 +517,7 @@ def save_reservation():
 
                     # Save the backorder to the db
                     c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                    create_backorder(d, pm, c.id, current_user.id, r)
+                    create_backorder(d, pm, payment.id, c.id, current_user.id, r)
 
                     flash('Your domain was successfully reserved!', 'success')
                     return render_template('user/success.html', current_user=current_user)
@@ -502,10 +542,11 @@ def saved_card_intent():
             customer_id = request.form['customer_id']
 
             # Create the payment intent with the existing payment method
-            if create_payment(domain, None, customer_id, pm):
+            payment = create_payment(domain, None, customer_id, pm)
+            if payment:
 
-                # Create the backorder request in Dynadot
-                r = backorder_request(domain)
+                # Check to see if the domain is in PendingDelete
+                r = is_pending_delete(domain)
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
@@ -513,11 +554,12 @@ def saved_card_intent():
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, pm, c.id, current_user.id, r)
+                create_backorder(d, pm, payment.id, c.id, current_user.id, r)
 
-                # Send a successful reservation email
-                from app.blueprints.user.tasks import send_reservation_email
-                send_reservation_email.delay(current_user.email, domain)
+                if send:
+                    # Send a successful reservation email
+                    from app.blueprints.user.tasks import send_reservation_email
+                    send_reservation_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
@@ -544,6 +586,9 @@ def checkout():
         try:
             # Secure the domain.
             if register(domain):
+
+                # Set the Whois info to GetParked.io
+                set_whois_info(domain)
 
                 # Setup the customer's payment method
                 si = stripe_checkout(current_user.email, domain, price, True)
@@ -592,8 +637,9 @@ def saved_card_payment():
                 save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
-                from app.blueprints.user.tasks import send_purchase_email
-                send_purchase_email.delay(current_user.email, domain)
+                if send:
+                    from app.blueprints.user.tasks import send_purchase_email
+                    send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
@@ -642,8 +688,9 @@ def settings():
 @csrf.exempt
 def contact():
     if request.method == 'POST':
-        from app.blueprints.user.tasks import send_contact_us_email
-        send_contact_us_email.delay(request.form['email'], request.form['message'])
+        if send:
+            from app.blueprints.user.tasks import send_contact_us_email
+            send_contact_us_email.delay(request.form['email'], request.form['message'])
 
         flash('Thanks for your email! You can expect a response shortly.', 'success')
         return redirect(url_for('user.contact'))

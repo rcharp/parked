@@ -70,8 +70,8 @@ def stripe_checkout(email, domain, price, purchase=False):
 # Either purchase or setup a PaymentIntent for the customer's card.
 # Used by the stripe_checkout function above
 def create_payment(domain, price, customer_id, pm=None, purchase=False, confirm=False):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
-    price = int(price.replace('.', '')) if price is not None else 9900
+    stripe.api_key = current_app.config.get('STRIPE_KEY')
+    price = int(float(price) * 100) if price is not None else 9900
 
     description = "Buy " + domain + " from " + site_name + "." if confirm or purchase \
         else "Reserve " + domain + " with " + site_name + " for $99. Your card won't be charged until we secure the domain."
@@ -102,7 +102,7 @@ def create_payment(domain, price, customer_id, pm=None, purchase=False, confirm=
 def create_customer(u, email, create_db=True):
 
     # Create the customer in Stripe
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    stripe.api_key = current_app.config.get('STRIPE_KEY')
     customer = stripe.Customer.create(
         email=email
     )
@@ -121,7 +121,7 @@ def create_customer(u, email, create_db=True):
 # Setup the PaymentIntent for the reservation
 def setup_intent(domain, customer_id):
     try:
-        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
 
         # Get the customer from the db if they exist
         c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
@@ -160,7 +160,7 @@ def setup_intent(domain, customer_id):
 # TODO: Implement the functionality for calling this when the domain is secured
 def confirm_intent(si, pm):
     try:
-        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         return stripe.SetupIntent.confirm(
             si,
             payment_method=pm,
@@ -172,7 +172,7 @@ def confirm_intent(si, pm):
 
 def confirm_payment(pi, pm):
     try:
-        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         return stripe.PaymentIntent.confirm(
             pi,
             payment_method=pm
@@ -186,7 +186,7 @@ def confirm_payment(pi, pm):
 def update_customer(pm, customer_id, save_card):
     try:
         # Change to Live key when done testing
-        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
 
         payment_method = stripe.PaymentMethod.retrieve(pm)
 
@@ -218,7 +218,7 @@ def update_customer(pm, customer_id, save_card):
 # TODO: Implement the functionality to delete the payment in Stripe
 def delete_payment(order_id):
     try:
-        stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+        stripe.api_key = current_app.config.get('STRIPE_KEY')
         return stripe.PaymentIntent.cancel(
             order_id
         )
@@ -229,7 +229,7 @@ def delete_payment(order_id):
 
 # Gets the customer's payment method from Stripe
 def get_payment_method(si):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    stripe.api_key = current_app.config.get('STRIPE_KEY')
 
     pm = None
     c = Customer.query.filter(Customer.customer_id == si.customer).scalar()
@@ -242,7 +242,7 @@ def get_payment_method(si):
 
 # Get's the customer's card info from Stripe. Used to display the last 4 digits on the settings/checkout pages
 def get_card(c):
-    stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+    stripe.api_key = current_app.config.get('STRIPE_KEY')
 
     if c is None:
         return None
@@ -259,7 +259,7 @@ def get_card(c):
 # Confirm an existing payment
 # Not currently used
 # def confirm_payment(domain):
-#     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+#     stripe.api_key = current_app.config.get('STRIPE_KEY')
 #     return stripe.PaymentIntent.create(
 #         amount=9900,
 #         currency="usd",
@@ -271,7 +271,7 @@ def get_card(c):
 # Charge the user's card for the immediate payment
 # Not currently used
 # def confirm_payment_intent(domain, pi, pm):
-#     stripe.api_key = current_app.config.get('STRIPE_TEST_SECRET_KEY')
+#     stripe.api_key = current_app.config.get('STRIPE_KEY')
 #     return stripe.PaymentIntent.confirm(
 #         pi,
 #         payment_method=pm

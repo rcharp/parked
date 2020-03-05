@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, valid_tlds, dropping_tlds
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
@@ -9,6 +9,9 @@ import tldextract
 import pytz
 import requests
 import json
+import random
+from app.extensions import db
+from sqlalchemy import exists, func
 from app.blueprints.api.domain.dynadot import check_domain
 
 
@@ -20,6 +23,12 @@ def get_domain_availability(domain):
 
     try:
         if availability is not None:
+
+            # If the TLD is invalid and the domain can't be purchased outright, show an error.
+            tld = get_domain_tld(domain)
+            if (tld is None or tld not in valid_tlds()) and not availability['available']:
+                return 500
+
             ext = tldextract.extract(domain)
             domain = ext.registered_domain
 
@@ -72,7 +81,10 @@ def get_domain_tld(domain):
     try:
         ext = tldextract.extract(domain)
         tld = ext.suffix
-        return '.' + tld
+        if tld is not None:
+            return '.' + tld
+
+        return None
     except Exception as e:
         print_traceback(e)
         return None
@@ -94,3 +106,55 @@ def get_domain_status(domain):
         return False
 
 
+def get_dropping_domains():
+    domains = list()
+    from app.blueprints.api.models.drops import Drop
+    drops = Drop.query.order_by(func.random()).limit(40).all()
+    for drop in drops:
+        domains.append({'name': drop.name, 'date_available': drop.date_available})
+
+    return domains
+
+
+def delete_dropping_domains():
+    from app.blueprints.api.models.drops import Drop
+    Drop.query.delete()
+    if db.session.query(Drop).count() == 0:
+        return True
+    return False
+
+
+def set_dropping_domains(drops, limit):
+    from app.blueprints.api.models.drops import Drop
+
+    for drop in drops:
+        if db.session.query(Drop).count() > limit:
+            return
+
+        if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
+            d = Drop()
+            d.name = drop['name']
+            d.date_available = drop['date_available']
+            d.save()
+
+
+# For testing purposes, live version can be found in app.blueprints.api.tasks
+def generate_drops():
+    from app.blueprints.api.domain.download import pool_domains, park_domains
+
+    domains = pool_domains()
+
+    if domains is not None:
+        delete_dropping_domains()
+        set_dropping_domains(domains)
+
+        return True
+    else:
+        domains = park_domains()
+        if domains is not None:
+            delete_dropping_domains()
+            set_dropping_domains(domains)
+
+            return True
+
+    return False
