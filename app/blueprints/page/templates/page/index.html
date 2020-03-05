@@ -297,14 +297,14 @@
                                             </table>
                                             <div style="width:100%;">
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
-                                                    <tbody>
-                                                        {% for domain in dropping|batch((dropping|length)/2)|first %}
-                                                        <tr style="max-height:10px;border:none">
+                                                    <tbody style="line-height:1 !important;">
+                                                        {% for domain in dropping|batch((dropping|length)/2)|first|sort(attribute='date_available', reverse=true) %}
+                                                        <tr style="max-height:10px;border:none; line-height:1 !important">
                                                             <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                 <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                <td id="domain-row" class="domain-row" style="min-width:160px;max-height:10px;padding:.75rem"><button class="domain-button" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:160px;padding:.75rem;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
+                                                                <td id="domain-row" class="domain-row" style="min-width:160px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
+                                                                <td style="min-width:160px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                             </form>
                                                         </tr>
                                                         {% endfor %}
@@ -341,14 +341,14 @@
                                             </table>
                                             <div style="width:100%;">
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table-2" style="table-layout:fixed;min-width:350px;">
-                                                    <tbody>
-                                                        {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse %}
-                                                        <tr style="max-height:10px;border:none">
+                                                    <tbody style="line-height:1 !important;">
+                                                        {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse|sort(attribute='date_available', reverse=true) %}
+                                                        <tr style="max-height:10px;border:none; line-height:1 !important;">
                                                             <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                 <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                <td id="domain-row-2" class="domain-row-2" style="min-width:160px;max-width:300px;max-height:10px;padding:.75rem"><button class="domain-button-2" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:160px;padding:.75rem;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
+                                                                <td id="domain-row-2" class="domain-row-2" style="min-width:160px;max-width:300px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button-2" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
+                                                                <td style="min-width:160px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                             </form>
                                                         </tr>
                                                         {% endfor %}
