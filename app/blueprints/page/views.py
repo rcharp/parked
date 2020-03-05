@@ -75,8 +75,10 @@ def availability():
 @csrf.exempt
 def view():
     if request.method == 'POST':
-        domain = ast.literal_eval(request.form['domain'])
-        return render_template('page/view.html', domain=domain)
+        if 'domain' in request.form and 'available' in request.form:
+            domain = request.form['domain']
+            available = request.form['available']
+            return render_template('page/view.html', domain=domain, available=available)
 
     return redirect(url_for('page.home'))
 

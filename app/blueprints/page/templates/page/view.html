@@ -156,9 +156,9 @@
                         <div class="col-12 col-lg-12 mx-lg-auto">
                             <div class="text-center">
                                 <h1 class="xxxl-font-size font-weight__700 text-center" style="color:#009fff">
-                                    {{ domain['name'] }}
+                                    {{ domain }}
                                 </h1>
-                                Available: {{ domain['date_available']|dropping_date_filter }}
+                                Available: {{ available }}
                                 <!-- Empty Space -->
                                 <div class="md-space"></div>
                                 <!--/ End Empty Space -->
@@ -168,8 +168,8 @@
                                         <div class="form-group">
                                             <br />
                                             <div class="col-xs-12 text-center" style="width:40%;min-width:350px;margin:0 auto; float:none">
-                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
+                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain}}" />
+                                                <input class="form-control" id="available" name="available" type="hidden" value="{{ available }}" />
                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Reserve this domain</button>
                                             </div>
                                         </div>
