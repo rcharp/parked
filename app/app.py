@@ -5,6 +5,7 @@ from logging.handlers import SMTPHandler
 import os
 import stripe
 import datetime
+import random
 
 from werkzeug.contrib.fixers import ProxyFix
 from flask import Flask, render_template, url_for, flash, redirect
@@ -201,6 +202,8 @@ def template_processors(app):
     app.jinja_env.filters['site_name_filter'] = site_name_filter
     app.jinja_env.filters['site_color_filter'] = site_color_filter
     app.jinja_env.filters['tld_filter'] = tld_filter
+    app.jinja_env.filters['shuffle_filter'] = shuffle_filter
+    app.jinja_env.filters['percent_filter'] = percent_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -344,7 +347,16 @@ def site_color_filter(arg):
 
 
 def tld_filter(arg, k):
-    print([x.name for x in arg if x.name.endswith(k)])
-    print('')
-    print('')
     return [x for x in arg if x.name.endswith(k)]
+
+
+def shuffle_filter(arg):
+    try:
+        random.shuffle(arg)
+        return arg
+    except Exception as e:
+        return arg
+
+
+def percent_filter(arg):
+    return float(100 / len(arg))

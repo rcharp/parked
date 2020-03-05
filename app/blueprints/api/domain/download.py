@@ -42,7 +42,7 @@ def pool_domains(limit):
                         counter += 1
                     # lines.remove(line)
 
-                    if counter == limit/tld_length or len(domain_list) == limit:
+                    if counter == limit or len(domain_list) == limit * tld_length:
                         break
 
             domains = [i.split(',') for i in domain_list]
@@ -77,14 +77,14 @@ def park_domains(limit):
         for tld in tlds:
             url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=' + str(limit)
             r = requests.get(url=url)
-            domains = random.sample(json.loads(r.text)['domains'], k=int(limit/len(tlds)))
+            domains = random.sample(json.loads(r.text)['domains'], k=int(limit))
 
             random.shuffle(domains)
             for domain in domains:
                 results.append({'name': domain['name'], 'date_available': domain['date_available']})
 
                 # Limit the number of results
-                if len(results) == limit:
+                if len(results) == limit * len(tlds):
                     break
 
         random.shuffle(results)

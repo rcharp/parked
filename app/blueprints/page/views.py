@@ -27,7 +27,7 @@ def home():
     test = not current_app.config.get('PRODUCTION')
 
     # Shuffle the domains to spice things up a little
-    # random.shuffle(dropping)
+    random.shuffle(dropping)
     return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping, test=test)
 
 
@@ -87,6 +87,7 @@ def drops():
     from app.blueprints.api.models.drops import Drop
     from app.blueprints.api.api_functions import dropping_tlds
     domains = Drop.query.all()
+    domains.sort(key=lambda x: x.name)
     return render_template('user/drops.html', domains=domains, tlds=dropping_tlds())
 
 

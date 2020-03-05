@@ -11,7 +11,7 @@ import requests
 import json
 import random
 from app.extensions import db
-from sqlalchemy import exists
+from sqlalchemy import exists, func
 from app.blueprints.api.domain.dynadot import check_domain
 
 
@@ -109,7 +109,7 @@ def get_domain_status(domain):
 def get_dropping_domains():
     domains = list()
     from app.blueprints.api.models.drops import Drop
-    drops = Drop.query.limit(40).all()
+    drops = Drop.query.order_by(func.random()).limit(40).all()
     for drop in drops:
         domains.append({'name': drop.name, 'date_available': drop.date_available})
 
