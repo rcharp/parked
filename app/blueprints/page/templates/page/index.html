@@ -279,10 +279,10 @@
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
                                             <span class="text-muted" style="font-size:14px;float:left">Domains dropping soon:</span>
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains ></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
-                                        <div style="float:left;width:47%;min-width:350px;">
+                                        <div style="float:left;width:50%;min-width:350px;">
                                             <table class="table table-borderless table-condensed" id="header-table" style="position:sticky;margin-bottom:0;">
                                                 <thead>
                                                     <tr>
@@ -326,7 +326,7 @@
                                         </div>
 
                                         <!-- Second half of list -->
-                                        <div style="width:47%;float:left;margin-bottom:10px;">
+                                        <div style="width:50%;float:left;margin-bottom:10px;">
                                             <table class="table table-borderless table-condensed" id="header-table-2" style="position:sticky;margin-bottom:0;">
                                                 <thead>
                                                     <tr>
@@ -365,16 +365,16 @@
                                                         domain_rows[i].style.width = x.toString() + 'px';
                                                     }
 
-                                                    var table_2 = document.getElementById('domain-table-2');
+                                                    var table_2 = document.getElementById('header-table-2');
                                                     if (table_2.offsetWidth < 360){
                                                         table_2.style.display = 'none';
-                                                        document.getElementById('domain-table').style.marginBottom = "0px";
+                                                        document.getElementById('domain-table').style.marginBottom = "0";
                                                     }
                                                 </script>
                                             </div>
                                         </div>
                                         <div style="font-size:16px;width:100%;text-align:left;float:right;margin-bottom:10px;">
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains ></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                     </div>
                                 {% endif %}
