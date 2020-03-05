@@ -1,5 +1,5 @@
 from app.app import create_celery_app, db
-from app.blueprints.api.api_functions import print_traceback
+from app.blueprints.api.api_functions import print_traceback, dropping_tlds
 
 celery = create_celery_app()
 
@@ -11,7 +11,7 @@ def generate_drops():
 
         # Do not generate more drops if there are too many in the db
         from app.blueprints.api.models.drops import Drop
-        if db.session.query(Drop).count() > limit:
+        if db.session.query(Drop).count() > limit * len(dropping_tlds()):
             return False
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
