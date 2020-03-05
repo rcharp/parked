@@ -41,7 +41,6 @@ def pool_domains(limit):
                     if tld in line:
                         domain_list.append(line)
                         counter += 1
-                    # lines.remove(line)
 
                     # Add a max of (limit) domains per TLD to the list
                     if counter == limit or len(domain_list) == limit * tld_length:
@@ -49,7 +48,6 @@ def pool_domains(limit):
 
             # Each line is comma separated, turn each into a list
             domains = [i.split(',') for i in domain_list]
-            # domains = filter_tlds(domains, dropping_tlds())
 
             # Shuffle the results
             # random.shuffle(domains)
@@ -98,13 +96,4 @@ def park_domains(limit):
 
 
 def filter_tlds(domains, tlds):
-    # d = list()
-    # for tld in tlds:
-    #     for i in range(int(limit/len(tlds))):
-    #         d.append([x for x in domains if any(tld in y[0] for y in x)])
-    #
-    #         if i == int(limit/len(tlds)):
-    #             break
-    #
-    # return d
     return [x for x in domains if any(tld in x for tld in tlds)]

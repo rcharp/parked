@@ -204,6 +204,7 @@ def template_processors(app):
     app.jinja_env.filters['tld_filter'] = tld_filter
     app.jinja_env.filters['shuffle_filter'] = shuffle_filter
     app.jinja_env.filters['percent_filter'] = percent_filter
+    app.jinja_env.filters['dropping_date_filter'] = dropping_date_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -360,3 +361,10 @@ def shuffle_filter(arg):
 
 def percent_filter(arg):
     return float(100 / len(arg))
+
+
+def dropping_date_filter(arg):
+    if ' 12:00:00 AM' in arg:
+        arg = arg.replace(' 12:00:00 AM', '')
+        return arg
+    return arg

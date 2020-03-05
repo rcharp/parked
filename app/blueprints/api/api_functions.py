@@ -128,4 +128,4 @@ def valid_tlds():
 
 
 def dropping_tlds():
-    return ['.io', '.com', '.co', '.cc', '.us', '.org', '.net']
+    return ['.io', '.com', '.co', '.us', '.cc', '.org', '.net']
