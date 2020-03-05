@@ -148,8 +148,8 @@
                                 <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" style="padding:1px;">
                                     {% for tld in tlds %}
                                         {% set tld_name = tld|replace('.', '') %}
-                                    <li id="{{ tld_name }}_nav" class="text-center {% if loop.first %}active{% endif %}" style="padding-top:5px;padding-left:0;width:{{ tlds|percent_filter }}%;display:block;text-align:center">
-                                        <a href="#{{ tld_name }}"><h3 class="font-w300">{{ tld }}</h3></a>
+                                    <li id="{{ tld_name }}_nav" class="text-center {% if loop.first %}active{% endif %}" style="padding-top:5px;font-size:1.1em;width:{{ tlds|percent_filter }}%;display:block;text-align:center">
+                                        <a href="#{{ tld_name }}"><span class="font-w300">{{ tld }}</span></a>
                                     </li>
                                     {% endfor %}
                                 </ul>
