@@ -87,7 +87,7 @@ def drops():
     from app.blueprints.api.models.drops import Drop
     from app.blueprints.api.api_functions import dropping_tlds
     domains = Drop.query.all()
-    return render_template('page/drops.html', domains=domains, tlds=dropping_tlds())
+    return render_template('user/drops.html', domains=domains, tlds=dropping_tlds())
 
 
 @page.route('/terms')
