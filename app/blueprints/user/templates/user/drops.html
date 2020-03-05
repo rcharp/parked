@@ -189,7 +189,7 @@
                                                                                 <div class="col-xs-12" style="min-width:60px;margin:0 auto; float:none;text-align:right;">
                                                                                     <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                                     <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                                    <button class="btn btn-sm" id="submit-button" type="submit" style="background-color:#009fff;width:30%;min-width:100px;min-height:10px; margin:0 auto;font-size:14px;padding:5px;white-space:normal;"><i class="push-5-r"></i>View</button>
+                                                                                    <button class="btn btn-sm" id="submit-button" title="{{ domain['name'] }}" type="submit" style="background-color:#009fff;width:30%;min-width:100px;min-height:10px; margin:0 auto;font-size:14px;padding:5px;white-space:normal;"><i class="push-5-r"></i>View</button>
                                                                                 </div>
                                                                             </td>
                                                                         </form>
