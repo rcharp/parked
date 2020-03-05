@@ -59,7 +59,7 @@ def pool_domains(limit):
                 results.append({'name': domain[0], 'date_available': domain[1]})
 
                 # Limit the number of results
-                if len(results) == limit:
+                if len(results) == limit * tld_length:
                     break
 
         return results
