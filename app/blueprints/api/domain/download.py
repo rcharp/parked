@@ -10,6 +10,7 @@ from app.blueprints.api.api_functions import print_traceback
 from app.extensions import db
 from sqlalchemy import exists
 from itertools import groupby
+from collections import OrderedDict
 
 
 def pool_domains(limit):
@@ -23,15 +24,35 @@ def pool_domains(limit):
         for name in file.namelist():
             data = file.read(name).decode("utf-8")
 
+            tlds = dropping_tlds()
+            tld_length = len(tlds)
+
+            domain_list = list()
+
             # Split the lines from the csv and filter out the TLDs we want
-            domains = [i.split(',') for i in data.splitlines()]
-            domains = filter_tlds(domains, dropping_tlds(), limit)
+            lines = data.splitlines()
+            lines = filter_tlds(lines, tlds)
+
+            for tld in tlds:
+                counter = 0
+
+                for line in lines:
+                    if tld in line:
+                        domain_list.append(line)
+                        counter += 1
+                    # lines.remove(line)
+
+                    if counter == limit/tld_length or len(domain_list) == limit:
+                        break
+
+            domains = [i.split(',') for i in domain_list]
+            # domains = filter_tlds(domains, dropping_tlds())
 
             # Shuffle the results
             # random.shuffle(domains)
 
             # Choose X of them at random
-            domains = random.sample(domains, limit)
+            # domains = random.sample(domains, limit)
 
             # Add the domains to a dictionary
             for domain in domains:
@@ -73,14 +94,14 @@ def park_domains(limit):
         return None
 
 
-def filter_tlds(domains, tlds, limit):
-    d = list()
-    for tld in tlds:
-        for i in range(int(limit/len(tlds))):
-            d += [x for x in domains if any(tld in y[0] for y in x)]
-
-            if i == int(limit/len(tlds)):
-                break
-
-    return d
-    # return [x for x in domains if any(tld in x[0] for tld in tlds)]
+def filter_tlds(domains, tlds):
+    # d = list()
+    # for tld in tlds:
+    #     for i in range(int(limit/len(tlds))):
+    #         d.append([x for x in domains if any(tld in y[0] for y in x)])
+    #
+    #         if i == int(limit/len(tlds)):
+    #             break
+    #
+    # return d
+    return [x for x in domains if any(tld in x for tld in tlds)]

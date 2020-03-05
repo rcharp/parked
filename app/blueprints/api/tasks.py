@@ -7,7 +7,7 @@ celery = create_celery_app()
 @celery.task()
 def generate_drops():
     try:
-        limit = 1000
+        limit = 500
 
         # Do not generate more drops if there are too many in the db
         from app.blueprints.api.models.drops import Drop
