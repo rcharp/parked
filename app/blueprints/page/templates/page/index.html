@@ -283,7 +283,7 @@
                                         </div>
                                         <!-- First half of list -->
                                         <div style="float:left;width:47%;min-width:350px;">
-                                            <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
+                                            <table class="table table-borderless table-condensed" id="header-table" style="position:sticky;margin-bottom:0;">
                                                 <thead>
                                                     <tr>
                                                         <td id="domain-header" style="min-width:175px;">
@@ -296,7 +296,7 @@
                                                 </thead>
                                             </table>
                                             <div style="width:100%;">
-                                                <table class="table table-borderless table-condensed table-sm" style="table-layout:fixed;min-width:350px;">
+                                                <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
                                                     <tbody>
                                                         {% for domain in dropping|batch((dropping|length)/2)|first %}
                                                         <tr style="max-height:10px;border:none">
@@ -327,7 +327,7 @@
 
                                         <!-- Second half of list -->
                                         <div style="width:47%;float:left;margin-bottom:10px;">
-                                            <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
+                                            <table class="table table-borderless table-condensed" id="header-table-2" style="position:sticky;margin-bottom:0;">
                                                 <thead>
                                                     <tr>
                                                         <td id="domain-header-2" style="min-width:175px;">
@@ -340,7 +340,7 @@
                                                 </thead>
                                             </table>
                                             <div style="width:100%;">
-                                                <table class="table table-borderless table-condensed table-sm" style="table-layout:fixed;min-width:350px;">
+                                                <table class="table table-borderless table-condensed table-sm" id="domain-table-2" style="table-layout:fixed;min-width:350px;">
                                                     <tbody>
                                                         {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse %}
                                                         <tr style="max-height:10px;border:none">
@@ -363,6 +363,12 @@
                                                     var domain_rows = document.getElementsByClassName('domain-row-2');
                                                     for (var i=0; i<domain_rows.length; i++){
                                                         domain_rows[i].style.width = x.toString() + 'px';
+                                                    }
+
+                                                    var table_2 = document.getElementById('domain-table-2');
+                                                    if (table_2.offsetWidth < 360){
+                                                        table_2.style.display = 'none';
+                                                        document.getElementById('domain-table').style.marginBottom = "0px";
                                                     }
                                                 </script>
                                             </div>

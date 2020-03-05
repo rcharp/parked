@@ -96,4 +96,5 @@ def park_domains(limit):
 
 
 def filter_tlds(domains, tlds):
-    return [x for x in domains if any(tld in x for tld in tlds)]
+    # Return domains that end in our selected TLDs, and don't have a double hyphen in them.
+    return [x for x in domains if any(tld in x for tld in tlds) and x.count('--') == 0]
