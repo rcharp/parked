@@ -154,9 +154,9 @@
                                     {% endfor %}
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
-                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">
-                                    <input type="search" class="form-control" id="search" name="search" aria-controls="domain-table" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
-                                </div>
+{#                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">#}
+{#                                    <input type="search" class="form-control" id="search" name="search" aria-controls="domain-table" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />#}
+{#                                </div>#}
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
