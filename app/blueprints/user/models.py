@@ -13,11 +13,10 @@ from itsdangerous import URLSafeTimedSerializer, \
     TimedJSONWebSignatureSerializer
 
 from lib.util_sqlalchemy import ResourceMixin, AwareDateTime
-from app.blueprints.billing.models.credit_card import CreditCard
-# from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.domains import Domain
 from app.blueprints.api.models.searched import SearchedDomain
+from app.blueprints.api.models.backorder import Backorder
 from app.extensions import db
 
 
@@ -31,10 +30,6 @@ class User(UserMixin, ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Relationships.
-    credit_card = db.relationship(CreditCard, uselist=False, backref='users', lazy='subquery',
-                                  passive_deletes=True)
-    # subscription = db.relationship(Subscription, uselist=False, lazy='subquery',
-    #                                backref='users', passive_deletes=True)
     customer = db.relationship(Customer, uselist=False, lazy='subquery',
                                    backref='users', passive_deletes=True)
     domain = db.relationship(Domain, uselist=False, backref='users', lazy='subquery',
@@ -54,13 +49,6 @@ class User(UserMixin, ResourceMixin, db.Model):
 
     # Billing.
     name = db.Column(db.String(128), index=True)
-    payment_id = db.Column(db.String(128), index=True)
-    cancelled_subscription_on = db.Column(AwareDateTime())
-    trial = db.Column('trial', db.Boolean(), nullable=False,
-                      server_default='1')
-
-    # Notifications
-    send_failure_email = db.Column('send_failure_email', db.Boolean(), nullable=False, server_default='0')
 
     sign_in_count = db.Column(db.Integer, nullable=False, default=0)
     current_sign_in_on = db.Column(AwareDateTime())
@@ -202,15 +190,48 @@ class User(UserMixin, ResourceMixin, db.Model):
             if user is None:
                 continue
 
-            if user.customer is None:
-                user.delete()
-            else:
-                customer = Customer()
-                cancelled = customer.cancel(user=user)
+            # Delete the user
+            user.delete()
 
-                # If successful, delete it locally.
-                if cancelled:
-                    user.delete()
+            # if user.customer is None:
+            #     # user.delete()
+            # else:
+            #     customer = Customer()
+            #     cancelled = customer.cancel(user=user)
+            #
+            #     # If successful, delete it locally.
+            #     if cancelled:
+            #         # user.delete()
+
+            # Use this to deactivate the user instead of deleting their account completely
+            # user.active = False
+            # user.save()
+
+            # Delete backorders and domains
+            b = Backorder.query.filter(Backorder.user_id == id).all()
+            d = Domain.query.filter(Domain.user_id == id).all()
+            s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
+            c = Customer.query.filter(Customer.user_id == id).scalar()
+
+            for backorder in b:
+                if backorder is None:
+                    continue
+                backorder.delete()
+
+            for domain in d:
+                if domain is None:
+                    continue
+                domain.delete()
+
+            for searched in s:
+                if searched is None:
+                    continue
+                searched.delete()
+
+            if c is None:
+                continue
+            else:
+                c.delete()
 
             delete_count += 1
 

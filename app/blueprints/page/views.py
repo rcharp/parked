@@ -5,11 +5,13 @@ from app.extensions import db, csrf
 from flask import redirect, url_for, request, current_app
 from flask_login import current_user, login_required
 import requests
+import ast
 import json
 import traceback
 from sqlalchemy import and_, exists
 from importlib import import_module
 import os
+import random
 
 page = Blueprint('page', __name__, template_folder='templates')
 
@@ -18,27 +20,80 @@ page = Blueprint('page', __name__, template_folder='templates')
 def home():
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
-    return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+
+    from app.blueprints.api.domain.domain import get_dropping_domains
+    dropping = get_dropping_domains()
+
+    from app.blueprints.api.models.drops import Drop
+    drop_count = db.session.query(Drop).count()
+
+    test = not current_app.config.get('PRODUCTION')
+
+    # Shuffle the domains to spice things up a little
+    random.shuffle(dropping)
+    return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping, test=test, drop_count=drop_count)
 
 
 @page.route('/availability', methods=['GET','POST'])
 @csrf.exempt
 def availability():
     if request.method == 'POST':
-        from app.blueprints.api.api_functions import save_search
-        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details
 
-        domain_name = request.form['domain'].replace(' ', '')
+        from app.blueprints.api.api_functions import valid_tlds
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains
+        from app.blueprints.api.models.drops import Drop
+
+        domain_name = request.form['domain'].replace(' ', '').lower()
         domain = get_domain_availability(domain_name)
-        details = get_domain_details(domain_name)
 
-        # Save the search if it is a valid domain
-        # if domain['available'] is not None:
-        #     save_search(domain_name, domain['expires'], current_user.id)
+        # 500 is the error returned if the domain is valid but can't be backordered
+        if domain == 500:
+            flash("This domain extension can't be backordered. Please try another domain extension.", "error")
+            return redirect(url_for('page.home'))
 
-        return render_template('page/index.html', domain=domain, details=details)
-    else:
-        return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+        if domain is not None and 'available' in domain and domain['available'] is not None:
+
+            # Save the search if it is a valid domain
+            # if domain['available'] is not None:
+            #     save_search(domain_name, domain['expires'], current_user.id)
+
+            details = get_domain_details(domain_name)
+            dropping = get_dropping_domains()
+
+            # There is a Drop in the db for this domain, so update the available date
+            if db.session.query(exists().where(Drop.name == domain['name'])).scalar():
+                drop = Drop.query.filter(Drop.name == domain['name']).scalar()
+                if drop is not None:
+                    domain.update({'available_on': drop.date_available})
+
+            return render_template('page/index.html', domain=domain, details=details, dropping=dropping)
+
+        flash("This domain is invalid. Please try again.", "error")
+        return redirect(url_for('page.home'))
+
+    return render_template('page/index.html', plans=settings.STRIPE_PLANS)
+
+
+@page.route('/view', methods=['GET','POST'])
+@csrf.exempt
+def view():
+    if request.method == 'POST':
+        if 'domain' in request.form and 'available' in request.form:
+            domain = request.form['domain']
+            available = request.form['available']
+            return render_template('page/view.html', domain=domain, available=available)
+
+    return redirect(url_for('page.home'))
+
+
+@page.route('/drops', methods=['GET','POST'])
+@csrf.exempt
+def drops():
+    from app.blueprints.api.models.drops import Drop
+    from app.blueprints.api.api_functions import all_tlds
+    domains = Drop.query.all()
+    domains.sort(key=lambda x: x.name)
+    return render_template('user/drops.html', domains=domains, tlds=all_tlds())
 
 
 @page.route('/terms')

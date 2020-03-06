@@ -70,7 +70,6 @@ def purchase_domain(domain, test=True):
     try:
         # Make sure the domain is available before trying to buy it
         availability = check_domain(domain, test)
-        print(availability)
 
         # Don't buy any domains that are more than $59
         if availability is not None and availability['available'] and availability['price'] <= 59990000:

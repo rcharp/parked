@@ -4,6 +4,8 @@ from celery.schedules import crontab
 
 SITE_NAME = 'getparked.io'
 
+PRODUCTION = True
+
 DEBUG = True
 LOG_LEVEL = 'DEBUG'  # CRITICAL / ERROR / WARNING / INFO / DEBUG
 
@@ -57,18 +59,13 @@ CELERY_RESULT_EXPIRES = 300
 CELERY_REDIS_MAX_CONNECTIONS = 20
 CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
 CELERYBEAT_SCHEDULE = {
-    'mark-soon-to-expire-credit-cards': {
-        'task': 'app.blueprints.billing.tasks.mark_old_credit_cards',
-        'schedule': crontab(hour=0, minute=0)
+    'dropping_domains': {
+        'task': 'app.blueprints.api.tasks.generate_drops',
+        'schedule': crontab(minute=0, hour="*/1") # every hour
+        # 'schedule': crontab(minute="*/1") # every minute
+        # 'schedule': crontab(minute="*/5") # every 5 minutes
+        # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
-    'send_three_day_expiration_emails': {
-        'task': 'app.blueprints.billing.tasks.send_three_day_expiration_emails',
-        'schedule': crontab(hour=12, minute=0)
-    },
-    'send_trial_expired_emails': {
-        'task': 'app.blueprints.billing.tasks.send_trial_expired_emails',
-        'schedule': crontab(hour=12, minute=0)
-    }
 }
 
 '''
@@ -141,10 +138,10 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://getparked.herokuapp.com'
+SITE_URL = 'https://getparked.io'
 
 # Webhook
-WEBHOOK_URL = 'https://www.domain.com/webhook'
+WEBHOOK_URL = 'https://www.getparked.io/webhook'
 
 # Mailerlite
 # MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)
@@ -158,7 +155,7 @@ STRIPE_API_VERSION = '2018-02-28'
 STRIPE_AUTHORIZATION_LINK = os.environ.get('STRIPE_CONNECT_AUTHORIZE_LINK', None)
 
 # Change this to the live key when ready to take payments
-STRIPE_KEY = STRIPE_TEST_SECRET_KEY
+STRIPE_KEY = STRIPE_SECRET_KEY
 
 STRIPE_PLANS = {
     '0': {

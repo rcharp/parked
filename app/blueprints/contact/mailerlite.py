@@ -3,7 +3,7 @@ from flask import current_app
 
 
 def create_subscriber(email):
-    url = "https://api.mailerlite.com/api/v2/groups/27065448/subscribers"
+    url = "https://api.mailerlite.com/api/v2/groups/94534374/subscribers"
 
     data = {
         'email': email,

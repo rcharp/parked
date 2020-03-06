@@ -4,14 +4,24 @@ celery = create_celery_app()
 
 
 @celery.task()
-def api_task():
-    return
+def generate_drops():
+    from app.blueprints.api.domain.domain import generate_drops
+    generate_drops()
 
 
 @celery.task()
-def delete_table(table_id):
-    # Delete the table
+def order_domains():
+    from app.blueprints.api.models.backorder import Backorder
+    # backorders = Backorder.query.filter(Backorder.date_available == ).all()
 
-    from app.blueprints.api.models.tables import Table
-    Table.query.filter(Table.id == table_id).delete()
-    db.session.commit()
+
+@celery.task()
+def pool_domains(limit):
+    from app.blueprints.api.domain.download import pool_domains
+    pool_domains(limit)
+
+
+@celery.task()
+def park_domains(limit):
+    from app.blueprints.api.domain.download import park_domains
+    park_domains(limit)

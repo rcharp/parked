@@ -5,9 +5,10 @@ from logging.handlers import SMTPHandler
 import os
 import stripe
 import datetime
+import random
 
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, flash, redirect
 from celery import Celery
 from itsdangerous import URLSafeTimedSerializer
 from flask_compress import Compress
@@ -65,7 +66,7 @@ def create_celery_app(app=None):
     app = app or create_app()
     celery = Celery(broker=app.config.get('CELERY_BROKER_URL'), include=CELERY_TASK_LIST)
     celery.conf.update(app.config)
-    celery.conf.beat_schedule = {}
+    celery.conf.beat_schedule = app.config.get('CELERYBEAT_SCHEDULE')
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):
@@ -145,6 +146,18 @@ def create_app(settings_override=None):
     COMPRESS_MIN_SIZE = 500
     Compress(app)
 
+    @app.errorhandler(500)
+    def error_502(e):
+        return render_template('errors/500.html')
+
+    @app.errorhandler(404)
+    def error_404(e):
+        return render_template('errors/404.html')
+
+    @app.errorhandler(502)
+    def error_502(e):
+        return render_template('errors/500.html')
+
     return app
 
 
@@ -187,6 +200,11 @@ def template_processors(app):
     app.jinja_env.filters['dict_filter'] = dict_filter
     app.jinja_env.filters['today_filter'] = today_filter
     app.jinja_env.filters['site_name_filter'] = site_name_filter
+    app.jinja_env.filters['site_color_filter'] = site_color_filter
+    app.jinja_env.filters['tld_filter'] = tld_filter
+    app.jinja_env.filters['shuffle_filter'] = shuffle_filter
+    app.jinja_env.filters['percent_filter'] = percent_filter
+    app.jinja_env.filters['dropping_date_filter'] = dropping_date_filter
     app.jinja_env.globals.update(current_year=current_year)
 
     return app.jinja_env
@@ -323,3 +341,30 @@ def today_filter(arg):
 
 def site_name_filter(arg):
     return 'getparked.io'
+
+
+def site_color_filter(arg):
+    return '009fff'
+
+
+def tld_filter(arg, k):
+    return [x for x in arg if x.name.endswith(k)]
+
+
+def shuffle_filter(arg):
+    try:
+        random.shuffle(arg)
+        return arg
+    except Exception as e:
+        return arg
+
+
+def percent_filter(arg):
+    return float(100 / len(arg))
+
+
+def dropping_date_filter(arg):
+    if ' 12:00:00 AM' in arg:
+        arg = arg.replace(' 12:00:00 AM', '')
+        return arg
+    return arg

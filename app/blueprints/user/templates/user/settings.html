@@ -14,13 +14,13 @@
 
         <!-- Icons -->
         <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-        <link rel="shortcut icon" href="../../../../static/oneui/assets/img/favicons/favicon.png">
+        <link rel="shortcut icon" href="../../../../static/favicon.ico">
 
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-160x160.png" sizes="160x160">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-192x192.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="160x160">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="192x192">
 
         <link rel="apple-touch-icon" sizes="57x57" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-60x60.png">
@@ -47,11 +47,11 @@
         <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/dropzonejs/dropzone.min.css">
         <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/jquery-tags-input/jquery.tagsinput.min.css">
 
-        <link rel="stylesheet" href="../../../static/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/datatables/jquery.dataTables.min.css">
 
         <!-- Stylesheets -->
         <!-- Web fonts -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7CRoboto:300,400,400italic,600,700">
         <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
@@ -61,8 +61,17 @@
         <!-- Shepherd JS -->
         <link rel="stylesheet" href="../../../../static/shepherd.js/dist/css/shepherd-theme-square.css"/>
 
+        <!-- CSS for form -->
+        <link rel="stylesheet" href="../../../../static/form/form.css"/>
+
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
+
+        <!-- Load Stripe.js on your website. -->
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/normalize.css" />
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/global.css" />
+        <script src="../../../../static/payment/using-webhooks/client/web/script.js" defer></script>
+        <script src="https://js.stripe.com/v3/"></script>
         <!-- END Stylesheets -->
     </head>
     <body style="zoom: 80%;">
@@ -93,7 +102,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -109,7 +118,7 @@
                                 <li class="dropdown-header">Actions</li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Check A Domain
+                                        <i class="si si-check pull-right"></i>Find a Domain
                                     </a>
                                 </li>
                                 <li>
@@ -142,13 +151,13 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -158,7 +167,7 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
@@ -177,10 +186,11 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-lg-12" style="width:90%; margin:0 auto; min-width:450px; float:none;">
+                        <div class="col-lg-12" style="width:90%; margin:0 auto; margin-top:100px; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
-                                <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
+                            <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
+                            <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
+                                <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs" style="padding:1px;">
                                     <li id="settings_nav" style="padding-top:5px;min-width:140px;width:100%;display:block">
                                         <a href="#settings"><h3>My Settings &nbsp;&nbsp;<i class="si si-settings"></i></h3></a>
                                     </li>
@@ -210,50 +220,14 @@
                                               </div>
                                             </div>
                                             <div class="col-md-5 col-md-offset-1">
-                                              {% if current_user.customer and current_user.credit_card %}
-                                                <h3> Parked {{ current_user.customer.name | title }}
-                                                  Plan</h3>
-                                                <h4 class="text-muted margin-bottom">
-                                                  {{ current_user.credit_card.brand }}
-                                                  ****{{ current_user.credit_card.last4 }}
-                                                  ({{ current_user.credit_card.exp_date.strftime('%m/%Y') }})
-                                                </h4>
-
-                                                <div class="list-group">
-                                                  <a class="list-group-item"
-                                                     href="{{ url_for('billing.update_payment_method') }}">
-                                                    Update payment info
-                                                  </a>
-                                                  <a class="list-group-item"
-                                                     href="{{ url_for('billing.billing_details') }}">
-                                                    Billing details
-                                                  </a>
-                                                  <a class="list-group-item"
-                                                     href="{{ url_for('billing.update') }}">
-                                                    Change plan
-                                                  </a>
-                                                  <a class="list-group-item"
-                                                     href="{{ url_for('billing.cancel') }}">
-                                                    <span class="text-muted" style="color:red">Delete my account</span>
-                                                  </a>
-                                                </div>
+                                              {% if card %}
+                                                <h1 class="font-w300">Card on file</h1>
+                                                <h3 class="text-muted margin-bottom font-w400">
+                                                  {{ card['card']['brand']|capitalize }}
+                                                  ****{{ card['card']['last4'] }}<br />
+                                                  Exp: {{ card['card']['exp_month'] }}/{{ card['card']['exp_year'] }}
+                                                </h3>
                                               {% else %}
-                                                  {% if trial_days_left == -1 %}
-                                                      <h3>Your free trial has <span style="color:red">expired</span>.</h3>
-                                                  {% elif trial_days_left == 0 %}
-                                                      <h3>Your free trial <span style="color:red">expires</span> today.</h3>
-                                                  {% elif trial_days_left == 1 %}
-                                                      <h3>Your free trial ends in <span style="color:red">1</span> day.</h3>
-                                                  {% else %}
-                                                      <h3>Your free trial will end in <span style="color:red">{{ trial_days_left }}</span> days.</h3>
-                                                  {% endif %}
-
-                                                <p>
-                                                  Since you've created an account, now would be the perfect time
-                                                  to sign up for a plan to make sure you'll still be able to create integrations after your trial ends!
-                                                </p>
-                                                <a href="{{ url_for('billing.pricing') }}"
-                                                   class="btn btn-primary">Choose a Plan</a>
                                                 {% if current_user.invoices %}
                                                   <h3>Previous subscription info</h3>
                                                   <div class="list-group">
@@ -273,7 +247,7 @@
                                         <div class="block">
                                             <div class="block-content" style="padding:0;overflow-x:auto;overflow-y:auto;">
                                                 <label class="css-input css-checkbox css-checkbox-lg css-checkbox-primary" style="margin-right:10px;">
-                                                    <input id="send_failure_email" style="display:inline-block;" name="send_failure_email" type="checkbox" class="checkbox" onclick="UpdateSendFailureEmail(this)" {% if current_user.send_failure_email %}checked{% endif %} /><span></span>
+                                                    <input disabled id="send_failure_email" style="display:inline-block;" name="send_failure_email" type="checkbox" class="checkbox" onclick="UpdateSendFailureEmail(this)" {% if current_user.send_failure_email %}checked{% endif %} /><span></span>
                                                 </label>
                                                 <span class="h4 font-w400 text-muted" style="word-wrap:break-word">Send me an email when a domain I have reserved gets purchased.<br /></span>
                                             </div>
@@ -335,9 +309,9 @@
             <!-- END Main Container -->
 
             <!-- Footer -->
-            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#009fff">
                 <div class="pull-right">
-                    <a href="https://www.getquickflow.com/contact">Contact Us</a> | <a href="https://www.getquickflow.com/privacy">Privacy Policy</a> | <a href="https://www.getquickflow.com/terms">Terms of Service</a>
+                    <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>
                 <div class="pull-left">
                     <a class="font-w600" href="http://goo.gl/6LF10W" target="_blank">OneUI 3.1</a> &copy; <span class="js-year-copy"></span>

@@ -14,13 +14,13 @@
 
         <!-- Icons -->
         <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-        <link rel="shortcut icon" href="../../../../static/oneui/assets/img/favicons/favicon.png">
+        <link rel="shortcut icon" href="../../../../static/favicon.ico">
 
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-160x160.png" sizes="160x160">
-        <link rel="icon" type="image/png" href="../../../../static/oneui/assets/img/favicons/favicon-192x192.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="64x64">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="160x160">
+        <link rel="icon" type="image/png" href="../../../../static/logo.png" sizes="192x192">
 
         <link rel="apple-touch-icon" sizes="57x57" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="../../../../static/oneui/assets/img/favicons/apple-touch-icon-60x60.png">
@@ -47,11 +47,11 @@
         <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/dropzonejs/dropzone.min.css">
         <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/jquery-tags-input/jquery.tagsinput.min.css">
 
-        <link rel="stylesheet" href="../../../static/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="../../../../static/oneui/assets/js/plugins/datatables/jquery.dataTables.min.css">
 
         <!-- Stylesheets -->
         <!-- Web fonts -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7CRoboto:300,400,400italic,600,700">
         <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
         <!-- Bootstrap and OneUI CSS framework -->
@@ -61,11 +61,20 @@
         <!-- Shepherd JS -->
         <link rel="stylesheet" href="../../../../static/shepherd.js/dist/css/shepherd-theme-square.css"/>
 
+        <!-- CSS for form -->
+        <link rel="stylesheet" href="../../../../static/form/form.css"/>
+
         <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
         <!-- <link rel="stylesheet" id="css-theme" href="../../../../static/oneui/assets/css/themes/flat.min.css"> -->
+
+        <!-- Load Stripe.js on your website. -->
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/normalize.css" />
+        <link rel="stylesheet" href="../../../../static/payment/using-webhooks/client/web/css/global.css" />
+        <script src="../../../../static/payment/using-webhooks/client/web/script.js" defer></script>
+        <script src="https://js.stripe.com/v3/"></script>
         <!-- END Stylesheets -->
     </head>
-    <body style="zoom: 80%;">
+    <body style="zoom: 80%;" onload="ScrollTable();">
         <!-- Page Container -->
         <!--
             Available Classes:
@@ -93,7 +102,7 @@
                 <ul class="nav-header pull-right">
                     <li>
                         <div class="btn-group">
-                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                            <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                 <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                 <i class="si si-user"></i>
                                 <span class="caret"></span>
@@ -109,7 +118,7 @@
                                 <li class="dropdown-header">Actions</li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Check A Domain
+                                        <i class="si si-check pull-right"></i>Find a Domain
                                     </a>
                                 </li>
                                 <li>
@@ -132,17 +141,6 @@
                                         <i class="si si-logout pull-right"></i>Log out
                                     </a>
                                 </li>
-                                {% if test %}
-                                    <li class="divider"></li>
-                                    <li class="dropdown-header">Testing</li>
-                                    <li class="text-center">
-                                        <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
-                                            <input class="form-control" id="domain" name="domain" type="text" value="rickycharpentier.xyz" /><br />
-                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit">
-                                                <i class="si si-ghost pull-right"></i>Run Tests</button>
-                                        </form>
-                                    </li>
-                                {% endif %}
                             </ul>
                         </div>
                     </li>
@@ -153,15 +151,24 @@
                 <ul class="nav-header pull-left">
                     <li>
                         <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                        <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                        <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                             <i class="si si-home"></i>
                         </button>
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
+                    {% if test %}
+                    <li class="nav-item">
+                        <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
+                            <input class="form-control" id="domain" name="domain" type="text" value="{{ 'site_name'|site_name_filter }}" /><br />
+                            <button class="btn btn-sm btn-success" id="submit-button" type="submit">
+                                <i class="si si-ghost pull-right"></i>Run Tests</button>
+                        </form>
+                    </li>
+                    {% endif %}
                 </ul>
                 <!-- END Header Navigation Left -->
             </header>
@@ -169,11 +176,11 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#007FD8">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
                     <div class="row items-push">
-                        <div class="col-sm-7" style="margin-bottom:20px;">
+                        <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
-                                Dashboard
+                                {% if domain is defined and domain is not none %}Check Availability{% else %}Dashboard{% endif %}
                             </h1>
                         </div>
 
@@ -192,15 +199,22 @@
                 <div class="content" style="min-height:1000px;">
                     <!-- Start Content -->
                     <div class="row" style="margin-bottom:150px;">
-                        <div class="col-md-4" style="width:80%;margin:0 auto; min-width:450px; float:none;">
+                        <div class="col-md-4" style="width:80%; margin:0 auto; margin-top:100px; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <div class="block" style="border-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);min-width:350px;">
-                                <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs">
+                            <!-- Old block with shadow -->
+                            <!--bTorder-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);-->
+                            {% if domain is defined and domain is not none %}
+                                <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
+                            {% else %}
+                                <h4 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
+                            {% endif %}
+                            <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
+                                <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs" style="padding:1px;">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
-                                        <a href="#check"><h3 class="font-w300">Check a domain &nbsp;&nbsp;<i class="si si-check"></i></h3></a>
+                                        <a href="#check"><h3 class="font-w300">Find a Domain</h3></a>
                                     </li>
                                     <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#domains"><h3 class="font-w300">My Domains &nbsp;&nbsp;<i class="si si-grid"></i></h3></a>
+                                        <a href="#domains"><h3 class="font-w300">My Domains</h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -208,46 +222,43 @@
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                {% if domain|length %}
-                                                    <div style="text-align:center; font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;display:block;{% endif %}"><br /><br />
+                                                {% if domain is defined and domain is not none %}
+                                                    <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
-                                                                The domain {{ domain['name'] }} is {% if not domain['available'] %}<span style="color: red; ">currently registered</span>{% endif %}.<br /><br />
-                                                                It expires {{ domain['expires'] }} UTC.
+                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
+                                                                <span class="text-muted">Available:</span> {{ domain['available_on'] }} UTC.
 
+                                                                {% set domain_name = domain['name'] %}
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
                                                                     <div class="form-group">
                                                                         <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Reserve this domain</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Reserve this domain</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
-                                                                <br />
-                                                                - or -
                                                             {% else %}
-                                                                The domain {{ domain['name'] }} <span style="color: green; ">is unregistered and available</span>!
+                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
-                                                                        <br />
-                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
+                                                                        <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
+                                                                            <input class="form-control" id="price" name="price" type="hidden" value="{{ domain['price'] }}" />
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - $99</button>
+                                                                            <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Buy this domain - ${{ domain['price'] }}</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
-                                                                <br />
-                                                                - or -
                                                             {% endif %}
                                                         {% else %}
                                                             There was an error checking this domain. Is it valid? Please try again.
                                                         {% endif %}
+                                                        <hr width="50%" style="margin-left:0" />
                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.dashboard' ) }}" method="get">
                                                             <div class="form-group">
-                                                                <br />
-                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="min-width:60%;min-height:40px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check another domain</button>
+                                                                <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
+                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i> Check another domain</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -291,43 +302,47 @@
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-{#                                                                <input required class="form-control" id="domain" name="domain" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />#}
-                                                                <input class="form-control" id="domain" name="domain" value="rickyc.xyz" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <input required class="form-control" id="domain" name="domain" value="" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;text-align:center;">
-                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i> Check</button>
+                                                                <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-height:40px;min-width:300px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i> Find your domain</button>
                                                             </div>
                                                         </div>
                                                     </form><br />
                                                     {% if searched|length > 0 %}
-                                                        <div class="block block-themed" style="width:50%;max-width:600px;min-width:350px;">
+                                                        <div class="block block-themed" style="width:100%;min-width:350px;margin:0 auto;float:none">
                                                             <div style="font-size:24px;">
-                                                                <span class="text-muted" style="font-size:18px;">Recent searches
+                                                                <span class="text-muted" style="font-size:18px;">Recent searches</span>
                                                             </div><br />
-{#                                                            <div style="column-count:2;-moz-column-count:2;-webkit-column-count:2;">#}
-                                                            <div style="overflow-x: auto;">
+                                                            <table class="table table-borderless table-condensed" style="position:sticky;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td id="domain-name" name="domain-name" style="min-width:240px;max-width:600px;">
+                                                                            <span class="text-muted" style="font-size:18px;">Domain</span>
+                                                                        </td>
+                                                                        <td style="min-width:240px;">
+                                                                            <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </thead>
+                                                            </table>
+                                                            <div style="overflow-x: auto;max-height:200px;">
                                                                 <table class="table table-borderless table-condensed">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <td>
-                                                                                <span class="text-muted" style="font-size:18px;">Domain</span>
-                                                                            </td>
-                                                                            <td>
-                                                                                <span class="text-muted" style="font-size:18px;">Expires</span>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </thead>
                                                                     <tbody>
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.name }}</span></td>
-                                                                            <td style="max-width:100px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#007fd8;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                            <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
+                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
                                                                 </table>
+                                                                <script type="text/javascript">
+                                                                    var x = document.getElementById('searched-domain').offsetWidth;
+                                                                    document.getElementById('domain-name').style.width = x.toString() + 'px';
+                                                                </script>
                                                             </div>
                                                         </div>
                                                     {% endif %}
@@ -337,17 +352,17 @@
                                         </div>
                                     </div>
 
-                                    <div class="tab-pane" id="domains" name="domains" style="min-height:250px;overflow:hidden">
+                                    <div class="tab-pane" id="domains" name="domains" style="min-height:250px;overflow:hidden;">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
-                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;">
+                                                <table class="table table-responsive table-hover table-condensed js-dataTable-simple dataTable no-footer" id="DataTables_Table_1" role="grid" aria-describedby="DataTables_Table_1_info" style="width:100%;min-width:500px;overflow-x:scroll;">
                                                     <thead>
                                                         <tr role="row">
                                                             <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
                                                             <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
                                                             <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Expires" onclick="ChangeSortIcon(this)" style="width: 200px;">Expires&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
+                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Available On" onclick="ChangeSortIcon(this)" style="width: 200px;">Available On&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
                                                             <th class="sorting_disabled text-center font-w300" style="width: 69px;" rowspan="1" colspan="1" aria-label="Owned">Owned</th>
                                                             <th class="sorting_disabled text-center font-w300" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
@@ -360,10 +375,10 @@
                                                             <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#007fd8;font-weight:100;">{{ domain.name }}</span>
+                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#009fff;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.expires %}{{ domain.expires }}{% else %}N/A{% endif %}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.available_on %}{{ domain.available_on }}{% else %}N/A{% endif %}</span></td>
                                                                 <td class="text-center" style="min-width:75px;padding:10px 0;">
                                                                     {% if domain.registered %}
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>
@@ -385,16 +400,6 @@
                                                                         </form>
                                                                     {% if not domain.registered %}
                                                                         </div>
-                                                                        {% if test %}
-                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
-                                                                                    <div class="form-group">
-                                                                                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
-                                                                                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
-                                                                                                    style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </form>
-                                                                            {% endif %}
                                                                         <div style="width:50%;float:right">
                                                                             <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                                 <div class="form-group">
@@ -405,6 +410,17 @@
                                                                                 </div>
                                                                             </form>
                                                                         </div>
+                                                                        {% if test %}
+                                                                            <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
+                                                                                <br /><br />
+                                                                                <div class="form-group">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
+                                                                                                style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        {% endif %}
                                                                     {% endif %}
                                                                 </td>
                                                             </span>
@@ -418,6 +434,26 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <br />
+                            <div class="text-center">
+                                <h1 class="font-w300">How do I backorder a domain?</h1>
+                                <h3 class="font-w300">Start by searching for a domain in the search box above.
+                                    You will get results that show whether the domain is available for purchase, or if it's owned by someone. If it is owned, you can create a
+                                    backorder request by clicking "Reserve this Domain".<br /><br />
+                                    Next, you will be prompted to enter your card info to save the reservation. Don't worry, we won't chart your card unless we actually are able to get
+                                    the domain for you.
+                                </h3>
+                                <br />
+                                <h1 class="font-w300">How will I know if I got the domain?</h1>
+                                <h3 class="font-w300">We'll let you know if we were able to get the domain for you, and automatically charge your card when that happens.
+                                </h3>
+                                <br />
+                                <h1 class="font-w300">What if someone else backorders the same domain that I want?</h1>
+                                <h3 class="font-w300">For the time being, reservations are first come, first serve.<br/>
+                                    In the future, we plan to add the ability to bid on domains that are requested by multiple people.
+                                </h3>
+                            </div>
                             <!-- END Block Tabs Alternative Style -->
                         </div>
                     </div>
@@ -428,9 +464,9 @@
             <!-- END Main Container -->
 
             <!-- Footer -->
-            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#009fff">
                 <div class="pull-right">
-                    <a href="https://www.getquickflow.com/contact">Contact Us</a> | <a href="https://www.getquickflow.com/privacy">Privacy Policy</a> | <a href="https://www.getquickflow.com/terms">Terms of Service</a>
+                    <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>
                 <div class="pull-left">
                     <a class="font-w600" href="http://goo.gl/6LF10W" target="_blank">OneUI 3.1</a> &copy; <span class="js-year-copy"></span>
@@ -540,6 +576,12 @@
                     document.getElementById('name-sort-icon').classList.remove('si','si-arrow-up');
                     document.getElementById('name-sort-icon').classList.add('fa','fa-sort');
                 }
+            }
+        </script>
+        <script>
+            function ScrollTable() {
+                var x = document.getElementsByClassName('col-sm-12')[0];
+                x.style.overflowX = 'auto';
             }
         </script>
 

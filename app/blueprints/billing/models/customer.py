@@ -5,8 +5,6 @@ import pytz
 from config import settings
 from lib.util_sqlalchemy import ResourceMixin
 from app.extensions import db
-from app.blueprints.billing.models.credit_card import CreditCard
-# from app.blueprints.billing.models.coupon import Coupon
 from app.blueprints.billing.gateways.stripecom import Card as PaymentCard
 from app.blueprints.billing.gateways.stripecom import \
     Customer as PaymentCustomer
@@ -26,6 +24,7 @@ class Customer(ResourceMixin, db.Model):
     customer_id = db.Column(db.String(128))
     name = db.Column(db.String(128))
     email = db.Column(db.String(128))
+    save_card = db.Column('save_card', db.Boolean(), nullable=False, server_default='0')
 
     def __init__(self, **kwargs):
         # Call Flask-SQLAlchemy's constructor.
@@ -58,12 +57,7 @@ class Customer(ResourceMixin, db.Model):
         # Set the customer details.
         self.user_id = user.id
 
-        # Create the credit card.
-        credit_card = CreditCard(user_id=user.id,
-                                 **CreditCard.extract_card_params(customer))
-
         db.session.add(user)
-        db.session.add(credit_card)
         db.session.add(self)
 
         db.session.commit()
@@ -135,20 +129,5 @@ class Customer(ResourceMixin, db.Model):
         """
         if token is None:
             return False
-
-        customer = PaymentCard.update(user.payment_id, token)
-        user.name = name
-
-        # Update the credit card.
-        new_card = CreditCard.extract_card_params(customer)
-        credit_card.brand = new_card.get('brand')
-        credit_card.last4 = new_card.get('last4')
-        credit_card.exp_date = new_card.get('exp_date')
-        credit_card.is_expiring = new_card.get('is_expiring')
-
-        db.session.add(user)
-        db.session.add(credit_card)
-
-        db.session.commit()
 
         return True

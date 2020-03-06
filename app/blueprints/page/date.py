@@ -78,6 +78,12 @@ def get_dt_string(dt):
     return dt.strftime("%B %d, %Y %H:%M:%S")
 
 
+def convert_string_dates(date_string):
+    date_string = str(date_string)
+    dt = dtime.strptime(date_string, '%Y-%m-%d')
+    return '{0}/{1}/{2:02}'.format(dt.month, dt.day, dt.year)
+
+
 def get_string_from_datetime(dt):
     tz = tzlocal.get_localzone()
     date = tz.localize(dt)

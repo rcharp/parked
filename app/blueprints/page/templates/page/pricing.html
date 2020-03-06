@@ -14,7 +14,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.domain.com">
+    <link rel="canonical" href="https://www.getparked.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,7 +25,7 @@
 
     <!-- Facebook Open Graph -->
     <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.domain.com" />
+    <meta property="og:url" content="https://www.getparked.io" />
     <meta property="og:image" content="../../../../static/favicon128x128.png" />
     <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
     <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
@@ -39,7 +39,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700,900" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -96,7 +96,7 @@
                         <nav class="navbar navbar-expand-lg py-1">
                             <div class="container-fluid">
                                 <a href="/">
-                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                                 </a>
                                 <button class="navbar-toggler base-plus-font-size" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="base-color fas fa-bars xl-font-size"></span>
@@ -154,7 +154,7 @@
                     <ul class="nav-header pull-right">
                         <li>
                             <div class="btn-group">
-                                <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="padding-left:10px;">
+                                <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top:0; padding-left:10px;">
                                     <!--<img src="../../../../static/oneui/assets/img/avatars/avatar10.jpg" alt="Avatar">-->
                                     <i class="si si-user"></i>
                                     <span class="caret"></span>
@@ -188,13 +188,13 @@
                     <ul class="nav-header pull-left">
                         <li>
                             <!-- Opens the Apps modal found at the bottom of the page, before including JS code -->
-                            <button class="btn btn-default pull-right" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
+                            <button class="btn btn-default pull-right" style="margin-top:0px;" data-toggle="modal" onclick="window.location.href='{{ url_for('user.dashboard') }}'" type="button">
                                 <i class="si si-home"></i>
                             </button>
                         </li>
                         <li>
                             <a href="{{ url_for('page.home') }}">
-                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#007fd8;">{{ 'site_name'|site_name_filter }}</span>
+                              <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
                             </a>
                         </li>
                     </ul>
@@ -205,156 +205,31 @@
         </div>
 
         <!-- Pricing -->
-        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:420px;">
+        <div id="pricing" style="width:60%; margin:0 auto; float:none;text-align:center;min-width:240px;">
             <h3 class="xl-font-size font-weight__500">
-                Simple pricing plans to fit your needs.
+                One easy price.
             </h3>
             <h5 class="md-font-size font-weight__500">
-                All plans come with a free 14 day trial. No credit card required.
+                Your card doesn't get charged unless we get the domain for you.
             </h5>
         </div>
-        <section class="pricing section">
+        <section class="pricing section" style="padding-top:10px;">
             <div class="container" style="min-width:90%;">
                 {% import 'billing/macros/billing.html' as billing with context %}
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12 mx-auto">
                         <div class="row">
-                            {% if current_user.id == 1 %}
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
+                            <div class="d-lg-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
                                 <!-- Single Price Table -->
                                 <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-                                    <div class="d-block">
-                                        <div class="qdo-pricing font-weight__900">
-                                            <span class="lg-font-size font-weight__300">Free Forever</span>
-                                        </div>
-                                    </div>
                                     <div class="qdo-pricing font-weight__900">
-                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxl-font-size font-weight__300">0</span>
-                                        <span class="md-font-size font-weight__300">/month</span>
+                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxxl-font-size font-weight__300" style="font-size:100px;">99</span><br />
+                                        <span class="sm-font-size font-weight__300">per backordered domain</span>
                                     </div>
                                     <!-- Empty Space -->
                                     <div class="md-space"></div>
+                                    <a href="{{ url_for('user.signup') }}" class="btn btn-primary py-2 px-4 sm-font-size font-weight__700">Get started</a>
                                     <!--/ End Empty Space -->
-                                    {% call billing.plan(plans['0']) %}
-                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">
-                                        <li class="py-2">0 active integrations</li>
-                                        <li class="py-2">0 step integrations</li>
-                                        <li class="py-2">Access to all apps</li>
-                                        <li class="py-2">Email support</li>
-                                        <li class="py-2"></li>
-                                        <!--<li class="py-2">Venenatis turpis sed</li>-->
-                                    </ul><br />
-                                    {% endcall %}
-                                </div>
-                                <!-- End Single Price Table -->
-                            </div>
-                            {% endif %}
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="padding-left:5px;padding-right:5px;min-width:350px;display:block;float:left;margin:0 auto;">
-                                <!-- Single Price Table -->
-                                <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-                                    <div class="d-block">
-                                        <div class="qdo-pricing font-weight__900">
-                                            <span class="lg-font-size font-weight__300">Hobby</span>
-                                        </div>
-                                    </div>
-                                    <div class="qdo-pricing font-weight__900">
-                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxl-font-size font-weight__300">7</span>
-                                        <span class="md-font-size font-weight__300">/month</span>
-                                    </div>
-                                    <!-- Empty Space -->
-                                    <div class="md-space"></div>
-                                    <!--/ End Empty Space -->
-                                    {% call billing.plan(plans['1']) %}
-                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">
-                                        <li class="py-2">5 active integrations</li>
-                                        <li class="py-2">2 step integrations</li>
-                                        <li class="py-2">Access to all apps</li>
-                                        <li class="py-2">Email support</li>
-                                        <li class="py-2"></li>
-                                        <!--<li class="py-2">Venenatis turpis sed</li>-->
-                                    </ul><br />
-                                    {% endcall %}
-                                </div>
-                                <!-- End Single Price Table -->
-                            </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
-                                <!-- Single Price Table -->
-                                <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-                                    <div class="d-block">
-                                        <div class="qdo-pricing font-weight__900">
-                                            <span class="lg-font-size font-weight__300">Startup</span>
-                                        </div>
-                                    </div>
-                                    <div class="qdo-pricing font-weight__900">
-                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxl-font-size font-weight__300">20</span>
-                                        <span class="md-font-size font-weight__300">/month</span>
-                                    </div>
-                                    <!-- Empty Space -->
-                                    <div class="md-space"></div>
-                                    <!--/ End Empty Space -->
-                                    {% call billing.plan(plans['2']) %}
-                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">
-                                        <li class="py-2">20 active integrations</li>
-                                        <li class="py-2">3+ step integrations</li>
-                                        <li class="py-2">Access to all apps</li>
-                                        <li class="py-2">Email support</li>
-                                        <li class="py-2"></li>
-                                    </ul><br />
-                                    {% endcall %}
-                                </div>
-                                <!-- End Single Price Table -->
-                            </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
-                                <!-- Single Price Table -->
-                                <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-                                    <div class="d-block">
-                                        <div class="qdo-pricing font-weight__900">
-                                            <span class="lg-font-size font-weight__300">Professional</span>
-                                        </div>
-                                    </div>
-                                    <div class="qdo-pricing font-weight__900">
-                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxl-font-size font-weight__300">50</span>
-                                        <span class="md-font-size font-weight__300">/month</span>
-                                    </div>
-                                    <!-- Empty Space -->
-                                    <div class="md-space"></div>
-                                    <!--/ End Empty Space -->
-                                    {% call billing.plan(plans['3']) %}
-                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">
-                                        <li class="py-2">50 active integrations</li>
-                                        <li class="py-2">3+ step integrations</li>
-                                        <li class="py-2">Access to all apps</li>
-                                        <li class="py-2">Email support</li>
-                                        <li class="py-2"></li>
-                                    </ul><br />
-                                    {% endcall %}
-                                </div>
-                                <!-- End Single Price Table -->
-                            </div>
-                            <div class="d-md-block col-4 col-md-2 price-table box box-shadow my-5" style="min-width:350px;display:block;float:right;margin:0 auto;">
-                                <!-- Single Price Table -->
-                                <div class="single-price-col text-center p-md-3 p-lg-4 p-xl-5" style="padding:10px !important;">
-                                    <div class="d-block">
-                                        <div class="qdo-pricing font-weight__900">
-                                            <span class="lg-font-size font-weight__300">Premium</span>
-                                        </div>
-                                    </div>
-                                    <div class="qdo-pricing font-weight__900">
-                                        <sup class="md-font-size font-weight__300">$</sup><span class="xxxl-font-size font-weight__300">120</span>
-                                        <span class="md-font-size font-weight__300">/month</span>
-                                    </div>
-                                    <!-- Empty Space -->
-                                    <div class="md-space"></div>
-                                    <!--/ End Empty Space -->
-                                    {% call billing.plan(plans['3']) %}
-                                    <ul class="pricing-inner__list list-unstyled base-font-size text-dark-gray font-weight__700">
-                                        <li class="py-2">Unlimited</li>
-                                        <li class="py-2">3+ step integrations</li>
-                                        <li class="py-2">Access to all apps</li>
-                                        <li class="py-2">Priority support</li>
-                                        <li class="py-2"></li>
-                                    </ul><br />
-                                    {% endcall %}
                                 </div>
                                 <!-- End Single Price Table -->
                             </div>
@@ -369,7 +244,7 @@
             <div class="container" style="min-width:80%; max-width:95%;">
                 <!-- Empty Space --
                 <div class="lg-space"></div>
-                <!--/ End Empty Space --
+                </ End Empty Space --
                 <div class="row">
                     <div class="col-10 col-lg-8 mx-auto">
                         <div class="row">
