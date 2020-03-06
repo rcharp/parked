@@ -154,6 +154,9 @@
                                     {% endfor %}
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
+                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">
+                                    <input type="search" class="form-control" id="search" name="search" aria-controls="domain-table" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
+                                </div>
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
@@ -164,7 +167,7 @@
                                                     <!-- Dropping Domains list -->
                                                     <div style="font-size:1.1em;min-width:350px;display:block;"><br /><br />
                                                         {% if domains|tld_filter(tld)|length > 0 %}
-                                                        <table id="domain-table" class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
+                                                        <table id="domain-table" class="table table-borderless table-condensed js-dataTable-full dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
                                                                 <tr>
                                                                     <td id="domain-name" class="domain-name" style="min-width:275px !important;">
@@ -178,7 +181,7 @@
                                                             </thead>
                                                             <tbody>
                                                                 {% for domain in domains|tld_filter(tld) %}
-                                                                    <tr style="max-height:10px;border:none">
+                                                                    <tr id="{{ domain }}-row" class="domain-row" style="max-height:10px;border:none">
                                                                         <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
@@ -323,6 +326,28 @@
             function ScrollTable() {
                 var x = document.getElementsByClassName('col-sm-12')[0];
                 x.style.overflowX = 'auto';
+            }
+        </script>
+
+        <script>
+            function FilterDomains(e){
+                var input = '';
+                input += e.value;
+                var domains = document.getElementsByClassName('domain-row');
+                var count = 0;
+
+                for (var i = 0; i < domains.length; i++) {
+                    var domain = domains[i];
+                    if(domain.id.toLowerCase().includes(input.toLowerCase()) === false){
+                        domain.style.display = 'none';
+                    }
+                    else {
+                        domain.style.display = 'block';
+                    }
+                    count += 1;
+                }
+
+
             }
         </script>
 
