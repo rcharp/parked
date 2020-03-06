@@ -149,7 +149,7 @@
                                     {% for tld in tlds %}
                                         {% set tld_name = tld|replace('.', '') %}
                                     <li id="{{ tld_name }}_nav" class="text-center {% if loop.first %}active{% endif %}" style="padding-top:5px;font-size:1.1em;width:{{ tlds|percent_filter }}%;display:block;text-align:center">
-                                        <a href="#{{ tld_name }}"><span class="font-w300">{{ tld }}</span></a>
+                                        <a href="#{{ tld_name }}" style="padding-left:0;padding-right:0;"><span class="font-w300">{{ tld }}</span></a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -164,10 +164,10 @@
                                                     <!-- Dropping Domains list -->
                                                     <div style="font-size:1.1em;min-width:350px;display:block;"><br /><br />
                                                         {% if domains|tld_filter(tld)|length > 0 %}
-                                                        <table id="domain-table" class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:320px">
+                                                        <table id="domain-table" class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
                                                                 <tr>
-                                                                    <td id="domain-name" style="min-width:275px !important;width:50%;">
+                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;">
                                                                         <span class="text-muted">Domain</span>
                                                                     </td>
                                                                     <td style="min-width:75px;">
@@ -201,6 +201,10 @@
                                                             var domain_table = document.getElementById('domain-table');
                                                             if (domain_table.offsetWidth < 360){
                                                                 document.getElementById('reserve-header').style.display = 'none';
+                                                                var domain_names = document.getElementsByClassName('domain-name');
+                                                                for (var i=0; i<domain_names.length; i++){
+                                                                    domain_names[i].style.width = '75%';
+                                                                }
 
                                                                 var reserve_buttons = document.getElementsByClassName('reserve-button');
                                                                 for (var i=0; i<reserve_buttons.length; i++){
