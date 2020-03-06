@@ -40,10 +40,9 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import (
     stripe_checkout,
-    confirm_intent,
     create_payment,
     delete_payment,
-    confirm_payment,
+    charge_card,
     get_payment_method,
     get_card
 )
@@ -84,8 +83,12 @@ send = True
 @csrf.exempt
 def login():
 
+    # if request.args.get('next') == url_for('user.login'):
+    #     next = url_for('user.dashboard')
+    # else:
+    #     next = request.args.get('next')
     # This redirects to the link that the button was sending to before login
-    form = LoginForm(next=request.args.get('next'))
+    form = LoginForm(next=next)
 
     # This redirects to dashboard always.
     # form = LoginForm(next=url_for('user.dashboard'))
@@ -108,6 +111,8 @@ def login():
                 u.update_activity_tracking(request.remote_addr)
 
                 next_url = request.form.get('next')
+
+                next_url = url_for('user.dashboard') if next_url == url_for('user.login') else next_url
 
                 if next_url:
                     return redirect(safe_next_url(next_url), code=307)
@@ -318,7 +323,8 @@ def check_availability():
         return redirect(url_for('user.dashboard'))
 
 """
-Registers the domain after it has been reserved and successfully captured
+Registers the domain after it has been reserved and successfully captured.
+Currently unused.
 """
 @user.route('/register_domain', methods=['GET','POST'])
 @login_required
@@ -628,7 +634,7 @@ def saved_card_payment():
             pm = request.form['pm']
 
             # Confirm the payment
-            if confirm_payment(si, pm) is not None:
+            if charge_card(si, pm) is not None:
 
                 domain = request.form['domain']
                 customer_id = request.form['customer_id']

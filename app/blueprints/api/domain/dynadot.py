@@ -37,8 +37,6 @@ def check_domain(domain):
     r = requests.get(url=dynadot_url)
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
-    # print(results)
-
     if 'Available' in results:
         if 'Price' in results:
             price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f')
@@ -53,10 +51,9 @@ def check_domain(domain):
         return details
     else:
         return None
-    # dyn = Dynadot(api_key=current_app.config.get('DYNADOT_API_KEY'))
-    # return dyn.search(domains=[domain])
 
 
+# Register's the domain. This will actually purchase the domain in Dynadot.
 def register_domain(domain, backordered=False):
     try:
         # Get the production level
@@ -69,33 +66,36 @@ def register_domain(domain, backordered=False):
         if is_processing():
             register_domain(domain, backordered)
 
-        # Ensure that the domain can be registered
-        price = Decimal(get_domain_price(domain))
+        # Get the price of the domain, since we will only purchase domains under a certain price
+        price = get_domain_price(domain)
 
-        if price is None or price > limit:
-            return {'domain': domain, 'success': False}
+        if price is None or Decimal(price) > limit:
+            pass
+            # return {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
 
         # The real deal. The domain will be registered if the app is being used live
         # Otherwise return True in the dev environment
         if not production:
-            return "Domain " + domain + " bought in test for " + str(price) + "."
+            return "Domain " + domain + " was purchased."
 
         api_key = current_app.config.get('DYNADOT_API_KEY')
         dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + '&duration=1'
         r = requests.get(url=dynadot_url)
         results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
-        print(results)
 
         if 'SuccessCode' in results and results['SuccessCode'] == '0':
-            return {'domain': domain, 'success': True}
-        return {'domain': domain, 'success': False}
+            return {'domain': domain, 'success': True, 'code': 0}
+
+        return {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
     except Exception as e:
         print_traceback(e)
-        return {'success': False}
+        return {'domain': domain, 'success': False, 'code': 2, 'reason': 'An exception occurred.'}
 
 
 def order_domains():
     from app.blueprints.api.models.backorder import Backorder
+    from app.blueprints.api.models.domains import Domain
+    from app.blueprints.billing.charge import charge_card
 
     # Create a list of results
     results = list()
@@ -110,7 +110,16 @@ def order_domains():
         result = register_domain(backorder.domain_name, True)
         if result['success']:
             backorder.secured = True
+
+            # Charge the customer's card. Leave uncommented until live.
+            # if charge_card(backorder.pi, backorder.pm) is not None:
+            #     backorder.paid = True
+
             backorder.save()
+
+            domain = Domain.query.filter(Domain.id == backorder.domain).scalar()
+            domain.registered = True
+            domain.save()
 
         results.append(result)
 

@@ -58,6 +58,7 @@ def test(domain):
     # results = generate_drops()
     # results = park_domains(500)
 
+    # TODO: This WILL order the domains. Be very careful.
     results = order_domains()
     return results
 
