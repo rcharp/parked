@@ -142,7 +142,6 @@ def generate_drops():
     try:
         # The max number of domains to get, per TLD
         limit = 500
-        print(limit)
 
         # Do not generate more drops if there are too many in the db
         from app.blueprints.api.models.drops import Drop

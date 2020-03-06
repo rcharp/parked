@@ -85,7 +85,6 @@ def park_domains(limit):
         for tld in tlds:
             domains = [x for x in d if x['name'].endswith(tld)]
             for domain in domains:
-                print(convert_string_dates(domain['date_available']))
                 results.append({'name': domain['name'], 'date_available': convert_string_dates(domain['date_available'])})
 
                 # Limit the number of results
