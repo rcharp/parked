@@ -111,8 +111,11 @@ def order_domains():
         if result['success']:
             backorder.secured = True
 
-            # Charge the customer's card. Leave uncommented until live.
-            if charge_card(backorder.pi, backorder.pm) is not None:
+            if backorder.user_id != 1:
+                # Charge the customer's card. Leave uncommented until live.
+                if charge_card(backorder.pi, backorder.pm) is not None:
+                    backorder.paid = True
+            else:
                 backorder.paid = True
 
             backorder.save()
