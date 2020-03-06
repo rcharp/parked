@@ -17,6 +17,7 @@ from flask_login import (
     logout_user)
 
 import time
+import random
 
 from lib.safe_next_url import safe_next_url
 from app.blueprints.user.decorators import anonymous_required
@@ -263,7 +264,22 @@ def dashboard():
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
     tlds = active_tlds()
 
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched, tlds=tlds)
+    from app.blueprints.api.domain.domain import get_dropping_domains
+    dropping = get_dropping_domains()
+
+    from app.blueprints.api.models.drops import Drop
+    drop_count = db.session.query(Drop).count()
+
+    # Shuffle the domains to spice things up a little
+    random.shuffle(dropping)
+
+    return render_template('user/dashboard.html', current_user=current_user,
+                           domains=domains,
+                           test=test,
+                           searched=searched,
+                           tlds=tlds,
+                           dropping=dropping,
+                           drop_count=drop_count,)
 
 
 # Domain Functions -------------------------------------------------------------------

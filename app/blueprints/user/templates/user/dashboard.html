@@ -308,30 +308,132 @@
                                                             </div>
                                                         </div>
                                                     </form><br />
+                                                    <div style="width:100%;">
+                                                    {% if dropping is not none and dropping|length > 0 %}
+                                                        <div style="width:50%;float:left;margin-right:20px;min-width:350px;padding-top:10px;">
+                                                            <!-- Dropping Domains -->
+                                                            <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
+                                                                <span class="text-muted" style="font-size:16px;float:left">Domains dropping soon:</span>
+                                                                <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
+                                                            </div>
+                                                            <!-- First half of list -->
+                                                            <div style="float:left;width:50%;min-width:350px;">
+                                                                <table class="table table-borderless table-condensed" id="header-table" style="position:sticky;margin-bottom:0;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td id="domain-header" style="min-width:265px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Domain</span>
+                                                                            </td>
+                                                                            <td style="min-width:75px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Available</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                                <div style="width:100%;">
+                                                                    <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
+                                                                        <tbody style="line-height:1 !important;">
+                                                                            {% for domain in dropping|batch((dropping|length)/2)|first|sort(attribute='date_available', reverse=true) %}
+                                                                            <tr style="max-height:10px;border:none; line-height:1 !important">
+                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                                    <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
+                                                                                    <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button" type="submit" style="box-shadow:none;text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:16px;color:#009fff;"><u>{{ domain['name'] }}</u></span></button></td>
+                                                                                    <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w400" style="font-size:16px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                            {% endfor %}
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <script type="text/javascript">
+                                                                        var x = document.getElementById('domain-header').offsetWidth;
+                                                                        var domain_buttons = document.getElementsByClassName('domain-button');
+                                                                        for (var i=0; i<domain_buttons.length; i++){
+                                                                            domain_buttons[i].style.width = x.toString() + 'px';
+                                                                        }
+
+                                                                        var domain_rows = document.getElementsByClassName('domain-row');
+                                                                        for (var i=0; i<domain_rows.length; i++){
+                                                                            domain_rows[i].style.width = x.toString() + 'px';
+                                                                        }
+                                                                    </script>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Second half of list -->
+                                                            <div style="width:50%;float:left;margin-bottom:10px;">
+                                                                <table class="table table-borderless table-condensed" id="header-table-2" style="position:sticky;margin-bottom:0;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td id="domain-header-2" style="min-width:265px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Domain</span>
+                                                                            </td>
+                                                                            <td style="min-width:75px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Available</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                                <div style="width:100%;">
+                                                                    <table class="table table-borderless table-condensed table-sm" id="domain-table-2" style="table-layout:fixed;min-width:350px;">
+                                                                        <tbody style="line-height:1 !important;">
+                                                                            {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse|sort(attribute='date_available', reverse=true) %}
+                                                                            <tr style="max-height:10px;border:none; line-height:1 !important;">
+                                                                                <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                                    <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
+                                                                                    <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button-2" type="submit" style="text-align:left;box-shadow:none;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:16px;color:#009fff;"><u>{{ domain['name'] }}</u></span></button></td>
+                                                                                    <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w400" style="font-size:16px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                            {% endfor %}
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <script type="text/javascript">
+                                                                        var x = document.getElementById('domain-header-2').offsetWidth;
+                                                                        var domain_buttons = document.getElementsByClassName('domain-button-2');
+                                                                        for (var i=0; i<domain_buttons.length; i++){
+                                                                            domain_buttons[i].style.width = x.toString() + 'px';
+                                                                        }
+                                                                        var domain_rows = document.getElementsByClassName('domain-row-2');
+                                                                        for (var i=0; i<domain_rows.length; i++){
+                                                                            domain_rows[i].style.width = x.toString() + 'px';
+                                                                        }
+
+                                                                        var table_2 = document.getElementById('header-table-2');
+                                                                        if (table_2.offsetWidth < 360){
+                                                                            table_2.style.display = 'none';
+                                                                            document.getElementById('domain-table').style.marginBottom = "0";
+                                                                        }
+                                                                    </script>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                     {% if searched|length > 0 %}
-                                                        <div class="block block-themed" style="width:100%;min-width:350px;margin:0 auto;float:none">
-                                                            <div style="font-size:24px;">
+                                                        <div class="block block-themed" style="width:47%;float:left;min-width:350px;">
+                                                            <div style="font-size:24px;margin-bottom:10px;">
                                                                 <span class="text-muted" style="font-size:18px;">Recent searches</span>
-                                                            </div><br />
-                                                            <table class="table table-borderless table-condensed" style="position:sticky;">
+                                                            </div>
+                                                            <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
                                                                 <thead>
                                                                     <tr>
                                                                         <td id="domain-name" name="domain-name" style="min-width:240px;max-width:600px;">
-                                                                            <span class="text-muted" style="font-size:18px;">Domain</span>
+                                                                            <span class="text-muted" style="font-size:16px;">Domain</span>
                                                                         </td>
                                                                         <td style="min-width:240px;">
-                                                                            <span class="text-muted" style="font-size:18px;">Expires</span>
+                                                                            <span class="text-muted" style="font-size:16px;">Expires</span>
                                                                         </td>
                                                                     </tr>
                                                                 </thead>
                                                             </table>
-                                                            <div style="overflow-x: auto;max-height:200px;">
+                                                            <div style="overflow-x: auto;max-height:100%;">
                                                                 <table class="table table-borderless table-condensed">
                                                                     <tbody>
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
-                                                                            <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.name }}</span></td>
-                                                                            <td style="min-width:240px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:18px;color:#009fff;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                            <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:16px;color:#009fff;">{{ domain.name }}</span></td>
+                                                                            <td style="min-width:240px;"><span class="text-muted font-w400" style="font-size:16px;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
@@ -343,6 +445,7 @@
                                                             </div>
                                                         </div>
                                                     {% endif %}
+                                                    </div>
                                                 {% endif %}
                                             </div>
                                             <!-- END Bootstrap Login -->
