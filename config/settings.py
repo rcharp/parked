@@ -66,6 +66,12 @@ CELERYBEAT_SCHEDULE = {
         # 'schedule': crontab(minute="*/5") # every 5 minutes
         # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
+
+    # Uncommented until Live.
+    # 'retry_charges': {
+    #     'task': 'app.blueprints.api.tasks.retry_charges',
+    #     'schedule': crontab(minute=0, hour="*/1") # every hour
+    # },
 }
 
 '''

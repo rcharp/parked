@@ -11,7 +11,7 @@ import requests
 import json
 import random
 from app.extensions import db
-from sqlalchemy import exists, func
+from sqlalchemy import exists, func, and_
 from app.blueprints.api.domain.dynadot import check_domain
 
 
@@ -22,6 +22,7 @@ def get_domain(domain):
         return domain
     except Exception as e:
         return None
+
 
 # Get WhoIs domain availability
 def get_domain_availability(domain):
@@ -174,3 +175,26 @@ def generate_drops():
     except Exception as e:
         print_traceback(e)
         return False
+
+
+def retry_charges():
+    try:
+        from app.blueprints.api.models.backorder import Backorder
+        from app.blueprints.api.models.domains import Domain
+        from app.blueprints.billing.charge import charge_card
+        backorders = Backorder.query.filter(and_(Backorder.paid.is_(False), Backorder.secured.is_(True))).all()
+
+        for backorder in backorders:
+            domain = Domain.query.filter(Domain.id == backorder.domain).scalar()
+
+            # The domain doesn't exist or it hasn't been registered, so don't charge the card.
+            if domain is None or not domain.registered:
+                continue
+
+            # Charge the customer's card. Leave uncommented until live.
+            if charge_card(backorder.pi, backorder.pm) is not None:
+                backorder.paid = True
+                backorder.save()
+
+    except Exception as e:
+        print_traceback(e)

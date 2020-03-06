@@ -16,6 +16,12 @@ def order_domains():
 
 
 @celery.task()
+def retry_charges():
+    from app.blueprints.api.domain.domain import retry_charges
+    retry_charges()
+
+
+@celery.task()
 def pool_domains(limit):
     from app.blueprints.api.domain.download import pool_domains
     pool_domains(limit)
