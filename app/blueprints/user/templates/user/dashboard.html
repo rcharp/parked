@@ -196,8 +196,6 @@
                             <!--bTorder-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);-->
                             {% if domain is defined and domain is not none %}
                                 <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
-                            {% else %}
-                                <h4 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
                             {% endif %}
                             <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs" style="padding:1px;">
@@ -300,7 +298,8 @@
                                                         <div class="form-group">
                                                             <br /><br />
                                                             <div class="col-md-12" style="width:80%;min-width:380px; margin:0 auto; float:none">
-                                                                <input required class="form-control" id="domain" name="domain" value="" placeholder="Enter a domain to check its availability (e.g. google.com)" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                <h4 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
+                                                                <input required class="form-control" id="domain" name="domain" value="" placeholder="Search for a domain" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -438,7 +437,7 @@
                                 <h1 class="font-w300">How do I backorder a domain?</h1>
                                 <h3 class="font-w300">Start by searching for a domain in the search box above.
                                     You will get results that show whether the domain is available for purchase, or if it's owned by someone. If it is owned, you can create a
-                                    backorder request by clicking "Reserve this Domain".<br /><br />
+                                    backorder request by clicking "<span style="color:#009fff">Reserve this Domain</span>".<br /><br />
                                     Next, you will be prompted to enter your card info to save the reservation. Don't worry, we won't chart your card unless we actually are able to get
                                     the domain for you.
                                 </h3>

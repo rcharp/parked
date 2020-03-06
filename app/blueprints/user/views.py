@@ -55,6 +55,7 @@ from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
     valid_tlds,
+    active_tlds,
     update_customer,
     print_traceback,
     create_backorder
@@ -260,7 +261,7 @@ def dashboard():
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
-    tlds = valid_tlds()
+    tlds = active_tlds()
 
     return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched, tlds=tlds)
 
@@ -318,6 +319,7 @@ def check_availability():
     except Exception as e:
         flash("There was an error. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
+
 
 """
 Registers the domain after it has been reserved and successfully captured.
@@ -458,8 +460,6 @@ Create a reservation/backorder for a domain
 @csrf.exempt
 def reserve_domain():
     if request.method == 'POST':
-        print(request.form)
-        print(request.args)
         domain = request.form['domain']
 
         d = get_domain_availability(domain)

@@ -182,22 +182,23 @@
                                                     <span class="text-muted">Available:</span> {{ domain['date_available'] }}
 
                                                     {% set domain_name = domain['name'] %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                                         <div class="form-group">
                                                             <br />
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['date_available'] }}" />
                                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Reserve this domain</button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 {% else %}
                                                     <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
-                                                                <input class="form-control" id="price" name="price" type="hidden" value="{{ domain['price'] }}" />
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['date_available'] }}" />
                                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - ${{ domain['price'] }}</button>
                                                             </div>
                                                         </div>
