@@ -121,7 +121,7 @@
                 <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
-                            <h1 class="font-w300 text-white">
+                            <h1 class="font-w400 text-white">
                                 Domains dropping in the next few days:
                             </h1>
                         </div>
@@ -149,7 +149,7 @@
                                     {% for tld in tlds %}
                                         {% set tld_name = tld|replace('.', '') %}
                                     <li id="{{ tld_name }}_nav" class="text-center {% if loop.first %}active{% endif %}" style="padding-top:5px;font-size:1.1em;width:{{ tlds|percent_filter }}%;display:block;text-align:center">
-                                        <a href="#{{ tld_name }}" style="padding-left:0;padding-right:0;"><span class="font-w300">{{ tld }}</span></a>
+                                        <a href="#{{ tld_name }}" style="padding-left:0;padding-right:0;"><span class="font-w400">{{ tld }}</span></a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -186,7 +186,7 @@
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
                                                                             <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem"><button type="submit" style="min-width:275px;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none;text-align:left;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span></button></td>
-                                                                            <td style="min-width:75px;padding:.75rem"><span class="text-muted font-w300">{{ domain['date_available']|dropping_date_filter  }}</span>
+                                                                            <td style="min-width:75px;padding:.75rem"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span>
                                                                                 </td>
                                                                             <td class="reserve-button" style="min-width:60px;padding:.75rem">
                                                                                 <div class="col-xs-12" style="min-width:60px;margin:0 auto; float:none;text-align:right;">

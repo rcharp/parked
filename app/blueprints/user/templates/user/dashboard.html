@@ -433,7 +433,7 @@
                                                                         {% for domain in searched|reverse %}
                                                                         <tr>
                                                                             <td id="searched-domain" style="min-width:240px;max-width:600px;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:16px;color:#009fff;">{{ domain.name }}</span></td>
-                                                                            <td style="min-width:240px;"><span class="text-muted font-w400" style="font-size:16px;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
+                                                                            <td style="min-width:320px;"><span class="text-muted font-w400" style="font-size:16px;">{{ domain.expires + ' UTC' if domain.expires != '' else 'N/A'  }}</span></td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                     </tbody>
