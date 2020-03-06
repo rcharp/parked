@@ -218,7 +218,7 @@
                                                         {% if domain['available'] is not none %}
                                                             {% if not domain['available'] %}
                                                                 <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
-                                                                <span class="text-muted">Available:</span> {{ domain['available_on'] }} UTC.
+                                                                <span class="text-muted">Available:</span> {{ domain['date_available'] }}
 
                                                                 {% set domain_name = domain['name'] %}
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
@@ -376,7 +376,7 @@
                                                                     <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#009fff;font-weight:100;">{{ domain.name }}</span>
                                                                 </td>
                                                                 <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.available_on %}{{ domain.available_on }}{% else %}N/A{% endif %}</span></td>
+                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.date_available %}{{ domain.date_available }}{% else %}N/A{% endif %}</span></td>
                                                                 <td class="text-center" style="min-width:75px;padding:10px 0;">
                                                                     {% if domain.registered %}
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>

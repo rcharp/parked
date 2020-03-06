@@ -50,6 +50,7 @@ from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
+from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
@@ -83,12 +84,8 @@ send = True
 @csrf.exempt
 def login():
 
-    # if request.args.get('next') == url_for('user.login'):
-    #     next = url_for('user.dashboard')
-    # else:
-    #     next = request.args.get('next')
     # This redirects to the link that the button was sending to before login
-    form = LoginForm(next=next)
+    form = LoginForm(next=request.args.get('next'))
 
     # This redirects to dashboard always.
     # form = LoginForm(next=url_for('user.dashboard'))
@@ -301,7 +298,7 @@ def check_availability():
 
         domain = get_domain_availability(domain_name)
         if 'available' in request.args:
-            domain.update({'available_on': request.args.get('available')})
+            domain.update({'date_available': request.args.get('available')})
 
         # 500 is the error returned if the domain is valid but can't be backordered
         if domain == 500:
@@ -461,6 +458,8 @@ Create a reservation/backorder for a domain
 @csrf.exempt
 def reserve_domain():
     if request.method == 'POST':
+        print(request.form)
+        print(request.args)
         domain = request.form['domain']
 
         d = get_domain_availability(domain)
@@ -523,7 +522,8 @@ def save_reservation():
 
                     # Save the domain
                     details = get_domain_availability(domain)
-                    d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+
+                    d = save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()))
 
                     # Save the backorder to the db
                     c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
@@ -560,7 +560,7 @@ def saved_card_intent():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
@@ -644,7 +644,7 @@ def saved_card_payment():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
+                save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
                 if send:

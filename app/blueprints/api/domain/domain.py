@@ -2,7 +2,7 @@ from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
-from app.blueprints.page.date import get_dt_string
+from app.blueprints.page.date import get_dt_string, convert_datetime_to_available
 import pythonwhois
 import datetime
 import tldextract
@@ -17,6 +17,8 @@ from app.blueprints.api.domain.dynadot import check_domain
 
 def get_domain(domain):
     try:
+        from app.blueprints.api.api_functions import format_domain_search
+        domain = format_domain_search(domain)
         ext = tldextract.extract(domain)
         domain = ext.registered_domain
         return domain
@@ -32,7 +34,6 @@ def get_domain_availability(domain):
 
     try:
         if availability is not None:
-
             # If the TLD is invalid and the domain can't be purchased outright, show an error.
             tld = get_domain_tld(domain)
             if (tld is None or tld not in valid_tlds()) and not availability['available']:
@@ -42,12 +43,27 @@ def get_domain_availability(domain):
             domain = ext.registered_domain
 
             details = pythonwhois.get_whois(domain)
+
+            # If this is a dropping domain, update the available date
+            from app.blueprints.api.models.drops import Drop
+            if db.session.query(exists().where(Drop.name == domain)).scalar():
+                drop = Drop.query.filter(Drop.name == domain).scalar()
+                availability.update({'date_available': drop.date_available})
+
             if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
                 expires = get_dt_string(details['expiration_date'][0])
-                available_on = get_dt_string(details['expiration_date'][0] + datetime.timedelta(days=78))
-                availability.update({'expires': expires, 'available_on': available_on})
+                availability.update({'expires': expires})
+
+                # Old way to calculate date_available. Returns in format Month Day, Year (e.g. January 1, 2020)
+                # date_available = get_dt_string(details['expiration_date'][0] + datetime.timedelta(days=78))
+
+                if 'date_available' not in availability:
+                    availability.update({'date_available': convert_datetime_to_available(details['expiration_date'][0] + datetime.timedelta(days=78))})
             else:
-                availability.update({'expires': None, 'available_on': None})
+                if 'date_available' not in availability:
+                    availability.update({'date_available': None})
+
+                availability.update({'expires': None})
     except Exception as e:
         print_traceback(e)
 

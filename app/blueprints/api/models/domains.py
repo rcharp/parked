@@ -12,7 +12,7 @@ class Domain(ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
-    available_on = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    date_available = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     customer_id = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     registered = db.Column('registered', db.Boolean(), nullable=False, server_default='0')
 

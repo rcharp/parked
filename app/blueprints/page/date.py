@@ -84,6 +84,10 @@ def convert_string_dates(date_string):
     return '{0}/{1}/{2:02}'.format(dt.month, dt.day, dt.year)
 
 
+def convert_datetime_to_available(dt):
+    return '{0}/{1}/{2:02}'.format(dt.month, dt.day, dt.year)
+
+
 def get_string_from_datetime(dt):
     tz = tzlocal.get_localzone()
     date = tz.localize(dt)

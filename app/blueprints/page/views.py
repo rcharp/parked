@@ -46,7 +46,7 @@ def home():
 def availability():
     if request.method == 'POST':
 
-        from app.blueprints.api.api_functions import save_search, format_domain_search
+        from app.blueprints.api.api_functions import save_search
         from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain
         from app.blueprints.api.models.drops import Drop
 
@@ -69,12 +69,6 @@ def availability():
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()
-
-            # There is a Drop in the db for this domain, so update the available date
-            if db.session.query(exists().where(Drop.name == domain['name'])).scalar():
-                drop = Drop.query.filter(Drop.name == domain['name']).scalar()
-                if drop is not None:
-                    domain.update({'available_on': drop.date_available})
 
             return render_template('page/index.html', domain=domain, details=details, dropping=dropping)
 
