@@ -15,7 +15,7 @@ from collections import OrderedDict
 
 def pool_domains(limit):
     try:
-        from app.blueprints.api.api_functions import dropping_tlds, valid_tlds
+        from app.blueprints.api.api_functions import pool_tlds, valid_tlds
         results = list()
 
         # Download the list of PendingDelete domains
@@ -25,7 +25,7 @@ def pool_domains(limit):
         for name in f.namelist():
             data = f.read(name).decode("utf-8")
 
-            tlds = dropping_tlds()
+            tlds = pool_tlds()
             tld_length = len(tlds)
 
             domain_list = list()
@@ -57,7 +57,7 @@ def pool_domains(limit):
 
             # Add the domains to a dictionary
             for domain in domains:
-                results.append({'name': domain[0], 'date_available': domain[1]})
+                results.append({'name': domain[0], 'date_available': domain[1].replace(' 12:00:00 AM', '')})
 
                 # Limit the number of results to max 100 per tld
                 if len(results) == limit * tld_length:
@@ -66,33 +66,37 @@ def pool_domains(limit):
         return results
     except Exception as e:
         print_traceback(e)
-        return None
+        return []
 
 
 def park_domains(limit):
     try:
-        from app.blueprints.api.api_functions import dropping_tlds
-        tlds = dropping_tlds()
+        from app.blueprints.page.date import convert_string_dates
+        from app.blueprints.api.api_functions import park_tlds
+        tlds = park_tlds()
         results = list()
 
-        for tld in tlds:
-            url = 'https://park.io/domains/index/' + tld.replace('.', '') + '.json?limit=' + str(limit)
-            r = requests.get(url=url)
-            domains = random.sample(json.loads(r.text)['domains'], k=int(limit))
+        url = 'https://park.io/domains/index/all.json?limit=10000'
+        r = requests.get(url=url)
+        d = random.sample(json.loads(r.text)['domains'], k=int(limit * len(tlds)))
 
-            random.shuffle(domains)
+        # random.shuffle(d)
+
+        for tld in tlds:
+            domains = [x for x in d if x['name'].endswith(tld)]
             for domain in domains:
-                results.append({'name': domain['name'], 'date_available': domain['date_available']})
+                print(convert_string_dates(domain['date_available']))
+                results.append({'name': domain['name'], 'date_available': convert_string_dates(domain['date_available'])})
 
                 # Limit the number of results
                 if len(results) == limit * len(tlds):
                     break
 
-        random.shuffle(results)
+        # random.shuffle(results)
         return results
     except Exception as e:
         print_traceback(e)
-        return None
+        return []
 
 
 def filter_tlds(domains, tlds):

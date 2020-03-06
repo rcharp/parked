@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback, valid_tlds, dropping_tlds
+from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string
@@ -138,23 +138,32 @@ def set_dropping_domains(drops, limit):
             d.save()
 
 
-# For testing purposes, live version can be found in app.blueprints.api.tasks
 def generate_drops():
-    from app.blueprints.api.domain.download import pool_domains, park_domains
+    try:
+        # The max number of domains to get, per TLD
+        limit = 500
+        print(limit)
 
-    domains = pool_domains()
+        # Do not generate more drops if there are too many in the db
+        from app.blueprints.api.models.drops import Drop
+        if db.session.query(Drop).count() > limit * tld_length():
+            return False
 
-    if domains is not None:
-        delete_dropping_domains()
-        set_dropping_domains(domains)
+        from app.blueprints.api.domain.download import pool_domains, park_domains
 
-        return True
-    else:
-        domains = park_domains()
-        if domains is not None:
-            delete_dropping_domains()
-            set_dropping_domains(domains)
+        # Get the domains from the Pool list and the Park list
+        pool = pool_domains(limit)  # .delay()
+        park = park_domains(limit)  # .delay()
 
-            return True
+        domains = pool + park
 
-    return False
+        # We got at least one domain
+        if len(domains) > 0:
+            if delete_dropping_domains():
+                set_dropping_domains(domains, limit * tld_length())
+                return True
+
+        return False
+    except Exception as e:
+        print_traceback(e)
+        return False

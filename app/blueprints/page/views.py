@@ -90,10 +90,10 @@ def view():
 @csrf.exempt
 def drops():
     from app.blueprints.api.models.drops import Drop
-    from app.blueprints.api.api_functions import dropping_tlds
+    from app.blueprints.api.api_functions import pool_tlds
     domains = Drop.query.all()
     domains.sort(key=lambda x: x.name)
-    return render_template('user/drops.html', domains=domains, tlds=dropping_tlds())
+    return render_template('user/drops.html', domains=domains, tlds=pool_tlds())
 
 
 @page.route('/terms')

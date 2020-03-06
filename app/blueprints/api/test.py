@@ -16,12 +16,12 @@ from app.blueprints.api.domain.dynadot import (
     get_whois,
 )
 
-from app.blueprints.api.domain.download import pool_domains
 from celery.result import AsyncResult
 
 
 def test(domain):
-    from app.blueprints.api.tasks import pool_domains, park_domains, generate_drops
+    from app.blueprints.api.domain.domain import generate_drops
+    from app.blueprints.api.domain.download import pool_domains, park_domains
 
     # print(get_domain_details(domain))
     # get_purchase_agreement(domain)
@@ -54,5 +54,6 @@ def test(domain):
     # results = get_dropping_domains()
     # results = is_pending_delete('digitalcard.io')
 
-    results = generate_drops()
+    # results = generate_drops()
+    results = park_domains(500)
     return results

@@ -14,6 +14,7 @@ class Backorder(ResourceMixin, db.Model):
     pm = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     pi = db.Column(db.String(255), unique=True, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    date_available = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     active = db.Column('active', db.Boolean(), nullable=False, server_default='0')
     pending_delete = db.Column('pending_delete', db.Boolean(), nullable=False, server_default='0')
 

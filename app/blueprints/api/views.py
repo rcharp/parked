@@ -17,7 +17,7 @@ def test():
 
         try:
             results = t(domain)
-            # print(results)
+            print(results)
             flash("Test was successful.", 'success')
             flash("Results are: " + str(results), 'danger')
             return redirect(url_for('user.dashboard'))

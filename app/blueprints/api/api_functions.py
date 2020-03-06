@@ -124,8 +124,16 @@ def update_customer(pm, customer_id, save_card):
 
 
 def valid_tlds():
-    return ['.com', '.net', '.org', '.co', '.io', '.cc', '.us', '.biz', '.info', '.mobi', '.bio', '.me', '.tv', '.pro', '.red', '.blue', '.black', '.pink', '.green', '.kim', '.poker', '.organic', '.lgbt', '.bet', '.vote', '.voto', '.promo', '.archi', '.ski']
+    return ['.com', '.net', '.org', '.co', '.io', '.pro', '.ly', '.cc', '.us', '.biz', '.info', '.mobi', '.bio', '.me', '.tv', '.pro', '.red', '.blue', '.black', '.pink', '.green', '.kim', '.poker', '.organic', '.lgbt', '.bet', '.vote', '.voto', '.promo', '.archi', '.ski']
 
 
-def dropping_tlds():
-    return ['.io', '.com', '.co', '.us', '.cc', '.org', '.net']
+def pool_tlds():
+    return ['.io', '.com', '.info', '.us', '.org', '.net']
+
+
+def park_tlds():
+    return ['.me', '.pro']
+
+
+def tld_length():
+    return len(pool_tlds()) + len(park_tlds())
