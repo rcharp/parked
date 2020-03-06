@@ -167,10 +167,10 @@
                                                         <table id="domain-table" class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:320px">
                                                             <thead>
                                                                 <tr>
-                                                                    <td id="domain-name" style="min-width:220px;">
+                                                                    <td id="domain-name" style="min-width:275px;">
                                                                         <span class="text-muted">Domain</span>
                                                                     </td>
-                                                                    <td style="min-width:100px;">
+                                                                    <td style="min-width:75px;">
                                                                         <span class="text-muted">Available</span>
                                                                     </td>
                                                                     <td id="reserve-header" style="min-width:60px;"></td>
@@ -182,8 +182,8 @@
                                                                         <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                            <td id="dropping-domain" style="min-width:220px;max-height:10px;padding:.75rem"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none;text-align:left;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span></button></td>
-                                                                            <td style="min-width:100px;padding:.75rem"><span class="text-muted font-w300">{{ domain['date_available']|dropping_date_filter  }}</span>
+                                                                            <td id="dropping-domain" style="min-width:275px;max-height:10px;padding:.75rem"><button type="submit" style="background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none;text-align:left;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span></button></td>
+                                                                            <td style="min-width:75px;padding:.75rem"><span class="text-muted font-w300">{{ domain['date_available']|dropping_date_filter  }}</span>
                                                                                 </td>
                                                                             <td class="reserve-button" style="min-width:60px;padding:.75rem">
                                                                                 <div class="col-xs-12" style="min-width:60px;margin:0 auto; float:none;text-align:right;">
