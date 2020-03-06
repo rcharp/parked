@@ -62,7 +62,7 @@ from app.blueprints.api.api_functions import (
 from app.blueprints.api.domain.domain import (
     get_domain_details,
     get_domain_availability,
-    get_domain_tld,
+    get_domain,
     get_domain_expiration as get_expiry
 )
 from app.blueprints.api.domain.dynadot import (
@@ -275,7 +275,7 @@ def check_availability():
             if 'domain' not in request.args or 'available' not in request.args:
                 return redirect(url_for('user.dashboard'))
 
-            domain_name = request.args.get('domain')
+            domain_name = get_domain(request.args.get('domain'))
 
         if request.method == 'POST':
             if 'domain' not in request.args and 'domain' not in request.form:
@@ -283,12 +283,16 @@ def check_availability():
                 return redirect(url_for('user.dashboard'))
 
             if 'domain' in request.form:
-                domain_name = request.form['domain'].replace(' ', '').lower()
+                domain_name = get_domain(request.form['domain'])
             else:
-                domain_name = request.args.get('domain')
+                domain_name = get_domain(request.args.get('domain'))
 
             # Uncomment this when ready to check multiple domains at once
             # domains = [l for l in request.form['domains'].split('\n') if l]
+
+        if domain_name is None:
+            flash("This domain is invalid. Please try again.", "error")
+            return redirect(url_for('page.home'))
 
         domain = get_domain_availability(domain_name)
         if 'available' in request.args:
@@ -325,7 +329,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name, True):
+        if register(domain.name, True)['success']:
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
@@ -585,7 +589,7 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain.
-            if register(domain):
+            if register(domain)['success']:
 
                 # Set the Whois info to GetParked.io
                 set_whois_info(domain)

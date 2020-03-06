@@ -129,6 +129,22 @@ def get_utc_datetime_from_string(time_string):
     return dt.astimezone(pytz.UTC)
 
 
+def get_utc_date(time_string):
+    time_string = str(time_string)
+    time_string = time_string.replace('+00:00', '')
+    dt = dtime.strptime(time_string, '%m/%d/%Y')
+    return dt.astimezone(pytz.UTC).date()
+
+
+def get_utc_date_today():
+    return dtime.now(pytz.UTC).date
+
+
+def get_utc_date_today_string():
+    dt = dtime.now(pytz.UTC)
+    return '{0}/{1}/{2:02}'.format(dt.month, dt.day, dt.year)
+
+
 def convert_local_timestring_to_utc_string(time_string):
     time_string = str(time_string)
     offset = time_string[-6:]

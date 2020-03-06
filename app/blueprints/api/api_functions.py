@@ -93,6 +93,13 @@ def save_search(domain, expires, user_id):
     return
 
 
+def format_domain_search(domain):
+    if domain is not None:
+        domain = domain.replace('https://www.', '').replace('https://', '').replace('http://', '').replace('www.','')
+        domain = domain.replace(' ', '').lower()
+        return domain
+
+
 def create_backorder(domain, pm, pi, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
 

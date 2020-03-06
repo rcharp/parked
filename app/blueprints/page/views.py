@@ -39,11 +39,15 @@ def home():
 def availability():
     if request.method == 'POST':
 
-        from app.blueprints.api.api_functions import valid_tlds
-        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains
+        from app.blueprints.api.api_functions import save_search, format_domain_search
+        from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain
         from app.blueprints.api.models.drops import Drop
 
-        domain_name = request.form['domain'].replace(' ', '').lower()
+        domain_name = get_domain(request.form['domain'])
+        if domain_name is None:
+            flash("This domain is invalid. Please try again.", "error")
+            return redirect(url_for('page.home'))
+
         domain = get_domain_availability(domain_name)
 
         # 500 is the error returned if the domain is valid but can't be backordered
@@ -52,10 +56,9 @@ def availability():
             return redirect(url_for('page.home'))
 
         if domain is not None and 'available' in domain and domain['available'] is not None:
-
             # Save the search if it is a valid domain
-            # if domain['available'] is not None:
-            #     save_search(domain_name, domain['expires'], current_user.id)
+            if domain['available'] is not None:
+                save_search(domain_name, domain['expires'], 3)  # '3' is the admin ID
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()

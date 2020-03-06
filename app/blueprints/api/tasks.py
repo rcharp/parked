@@ -11,8 +11,8 @@ def generate_drops():
 
 @celery.task()
 def order_domains():
-    from app.blueprints.api.models.backorder import Backorder
-    # backorders = Backorder.query.filter(Backorder.date_available == ).all()
+    from app.blueprints.api.domain.dynadot import order_domains
+    order_domains()
 
 
 @celery.task()

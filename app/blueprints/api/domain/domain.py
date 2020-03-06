@@ -15,6 +15,14 @@ from sqlalchemy import exists, func
 from app.blueprints.api.domain.dynadot import check_domain
 
 
+def get_domain(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+        return domain
+    except Exception as e:
+        return None
+
 # Get WhoIs domain availability
 def get_domain_availability(domain):
 
