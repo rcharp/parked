@@ -142,7 +142,7 @@ def park_tlds():
     return ['.me', '.pro']
 
 
-def all_tlds():
+def active_tlds():
     return pool_tlds() + park_tlds()
 
 

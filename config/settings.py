@@ -71,6 +71,7 @@ CELERYBEAT_SCHEDULE = {
     # 'retry_charges': {
     #     'task': 'app.blueprints.api.tasks.retry_charges',
     #     'schedule': crontab(minute=0, hour="*/1") # every hour
+    #     'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     # },
 }
 

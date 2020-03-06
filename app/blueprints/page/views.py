@@ -27,11 +27,18 @@ def home():
     from app.blueprints.api.models.drops import Drop
     drop_count = db.session.query(Drop).count()
 
+    from app.blueprints.api.api_functions import active_tlds
+
     test = not current_app.config.get('PRODUCTION')
 
     # Shuffle the domains to spice things up a little
     random.shuffle(dropping)
-    return render_template('page/index.html', plans=settings.STRIPE_PLANS, dropping=dropping, test=test, drop_count=drop_count)
+    return render_template('page/index.html',
+                           plans=settings.STRIPE_PLANS,
+                           dropping=dropping,
+                           test=test,
+                           drop_count=drop_count,
+                           tlds=active_tlds())
 
 
 @page.route('/availability', methods=['GET','POST'])
@@ -93,10 +100,10 @@ def view():
 @csrf.exempt
 def drops():
     from app.blueprints.api.models.drops import Drop
-    from app.blueprints.api.api_functions import all_tlds
+    from app.blueprints.api.api_functions import active_tlds
     domains = Drop.query.all()
     domains.sort(key=lambda x: x.name)
-    return render_template('user/drops.html', domains=domains, tlds=all_tlds())
+    return render_template('user/drops.html', domains=domains, tlds=active_tlds())
 
 
 @page.route('/terms')
