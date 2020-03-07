@@ -156,9 +156,6 @@
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
-                                    <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;">
-                                        <input type="search" class="form-control" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:24px;color:#606060;padding:10px;margin-top:30px;min-width:270px;width:50%;" />
-                                    </div>
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
@@ -167,6 +164,9 @@
                                                     <!-- Dropping Domains list -->
                                                     <div style="font-size:1.1em;min-width:350px;display:block;"><br /><br />
                                                         {% if domains|tld_filter(tld)|length > 0 %}
+                                                        <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;">
+                                                            <input type="search" class="form-control search" id="search" name="search" autofocus onkeyup="FilterDomains(this)" placeholder="Search .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:24px;color:#606060;padding:10px;margin-bottom:30px;min-width:270px;width:50%;" />
+                                                        </div>
                                                         <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-full dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
                                                                 <tr>
@@ -331,6 +331,11 @@
                     else {
                         domain.style.display = '';
                     }
+                }
+
+                var search_boxes = document.getElementsByClassName('search');
+                for (var i = 0; i < search_boxes.length; i++) {
+                    search_boxes[i].value = e.value;
                 }
 
                 {#var remaining_table = document.getElementById(nav.id + '_body');
