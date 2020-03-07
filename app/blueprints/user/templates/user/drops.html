@@ -154,11 +154,11 @@
                                     {% endfor %}
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
-                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">
-                                    <input type="search" class="form-control" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
-                                </div>
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
+                                    <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;">
+                                        <input type="search" class="form-control" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:24px;color:#606060;padding:10px;margin-top:30px;min-width:270px;width:50%;" />
+                                    </div>
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
                                             <!-- Bootstrap Login -->
@@ -317,8 +317,8 @@
         </script>
         <script>
             function FilterDomains(e){
-                var element = document.querySelector('ul.nav > li.active');
-                var nav = element ? element : undefined;
+                {#var element = document.querySelector('ul.nav > li.active');
+                var nav = element ? element : undefined;#}
                 var input = '';
                 input += e.value;
 
@@ -327,15 +327,13 @@
                     var domain = domains[i];
                     if (domain.id.toLowerCase().includes(input.toLowerCase()) === false){
                         domain.style.display = 'none';
-                        return;
                     }
                     else {
                         domain.style.display = '';
-                        return;
                     }
                 }
 
-                var remaining_table = document.getElementById(nav.id + '_body');
+                {#var remaining_table = document.getElementById(nav.id + '_body');
                 var rows = remaining_table.rows;
                 var all_hidden = true;
                 for (var i = 0; i < rows.length; i++) {
@@ -359,11 +357,11 @@
 
                                 tab.className += ' active';
                                 document.getElementById(tab.id + '_nav').className += ' active';
-                                return;
+                                break;
                             }
                         }
                     }
-                }
+                }#}
             }
         </script>
 
