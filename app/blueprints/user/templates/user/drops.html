@@ -319,62 +319,51 @@
             function FilterDomains(e){
                 var element = document.querySelector('ul.nav > li.active');
                 var nav = element ? element : undefined;
-
                 var input = '';
                 input += e.value;
 
                 var domains = document.getElementsByClassName('domain-row');
-                var count = 0;
-
                 for (var i = 0; i < domains.length; i++) {
                     var domain = domains[i];
                     if (domain.id.toLowerCase().includes(input.toLowerCase()) === false){
                         domain.style.display = 'none';
+                        return;
                     }
                     else {
                         domain.style.display = '';
+                        return;
                     }
-                    count += 1;
-
                 }
 
                 var remaining_table = document.getElementById(nav.id + '_body');
                 var rows = remaining_table.rows;
-                var remaining_count = 0;
                 var all_hidden = true;
                 for (var i = 0; i < rows.length; i++) {
                     var remaining_domain = rows[i];
                     if (remaining_domain.style.display !== "none"){
                         all_hidden = false;
                     }
-                    remaining_count += 1;
                 }
 
                 if (all_hidden === true){
                     var tabs = document.querySelectorAll('div.tab-pane:not(.active)');
-                    var tab_count = 0;
                     for (var i = 0; i < tabs.length; i++) {
                         var tab = tabs[i];
 
                         var tab_rows = document.getElementById(tab.id + '_nav_body').rows;
-                        var row_count = 0;
                         for (var i = 0; i < tab_rows.length; i++) {
                             var tab_row = tab_rows[i];
                             if (tab_row.id.toLowerCase().includes(input.toLowerCase()) === true){
                                 document.getElementById(nav.id).classList.remove('active');
                                 document.getElementById(nav.id.replace('_nav', '')).classList.remove('active');
 
-                                alert(tab.id);
                                 tab.className += ' active';
                                 document.getElementById(tab.id + '_nav').className += ' active';
-                                break;
+                                return;
                             }
-                            row_count += 1;
                         }
-                        tab_count += 1;
                     }
                 }
-
             }
         </script>
 
