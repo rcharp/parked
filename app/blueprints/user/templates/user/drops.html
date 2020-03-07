@@ -154,9 +154,9 @@
                                     {% endfor %}
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
-{#                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">#}
-{#                                    <input type="search" class="form-control" id="search" name="search" aria-controls="domain-table" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />#}
-{#                                </div>#}
+                                <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto;float:none;">
+                                    <input type="search" class="form-control" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
+                                </div>
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
@@ -181,7 +181,7 @@
                                                             </thead>
                                                             <tbody>
                                                                 {% for domain in domains|tld_filter(tld) %}
-                                                                    <tr id="{{ domain }}-row" class="domain-row" style="max-height:10px;border:none">
+                                                                    <tr id="{{ domain['name'] }}" class="domain-row" style="max-height:10px;border:none">
                                                                         <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
                                                                             <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
                                                                             <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
@@ -309,44 +309,52 @@
             });
         </script>
 
-        <script>
-            function ConfirmDeleteReservation() {
-                return confirm("Are you sure you want to delete this reservation? This can't be undone.");
-            }
-        </script>
-
         <script type="text/javascript">
             function SetWidth() {
                 let x = document.getElementById('domain_name').offsetWidth;
-                alert(x);
                 document.getElementById('dropping-domain').style.width = x.toString() + 'px';
             }
         </script>
         <script>
-            function ScrollTable() {
-                var x = document.getElementsByClassName('col-sm-12')[0];
-                x.style.overflowX = 'auto';
-            }
-        </script>
-
-        <script>
             function FilterDomains(e){
+                var element = document.querySelector('ul.nav > li.active');
+                var nav = element ? element.id : undefined;
+
+                var tab = document.getElementsByClassName('tab pane active');
+
                 var input = '';
                 input += e.value;
+
                 var domains = document.getElementsByClassName('domain-row');
                 var count = 0;
 
                 for (var i = 0; i < domains.length; i++) {
                     var domain = domains[i];
                     if(domain.id.toLowerCase().includes(input.toLowerCase()) === false){
-                        domain.style.display = 'none';
+                        domain.hidden = true;
                     }
                     else {
-                        domain.style.display = 'block';
+                        domain.hidden = false;
                     }
                     count += 1;
+
                 }
 
+                var remaining = tab.getElementsByClassName('domain-row');
+                alert(remaining);
+                var remaining_count = 0;
+                var all_hidden = true;
+                for (var i = 0; i < domains.length; i++) {
+                    var remaining_domain = remaining[i];
+                    if (remaining_domain.hasAttribute('hidden') === false){
+                        all_hidden = false;
+                    }
+                    remaining_count += 1;
+                }
+
+                if (all_hidden === true){
+                    alert("All are hidden");
+                }
 
             }
         </script>
