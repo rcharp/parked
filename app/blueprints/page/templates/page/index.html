@@ -173,7 +173,8 @@
                                     Have a domain in mind that you want? Backorder it and we'll secure it for you as soon as it becomes available.<br />
                                     Only $99 per domain.<br /></p>
 
-                                {% if domain is defined and domain is not none %}
+                                <!-- Old code for searching for domains. Maybe one day? -->
+                                {#{% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;margin-bottom:50px;">
                                         <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
@@ -274,13 +275,13 @@
                                             </div>
                                         </div>
                                     </form><br />
-                                {% endif %}
+                                {% endif %}#}
 
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
-                                            <span class="text-muted" style="font-size:14px;float:left">Domains dropping soon:</span>
+                                            <span class="text-muted" style="font-size:14px;float:left">Some domains dropping soon:</span>
                                             <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
@@ -418,13 +419,13 @@
                                     </div>
                                     <div class="col-6 mt-3 mt-lg-0 mr-auto" style="min-width:250px;">
                                         <h3 class="base-plus-font-size font-weight__500">
-                                            Search for the domain that you want.
+                                            Browse the list of expiring domains to find one that you like.
                                         </h3>
                                         <!-- Empty Space -->
                                         <div class="sm-sapce"></div>
                                         <!--/ End Empty Space -->
                                         <p class="lead sm-font-size text-dark-gray mb-0">
-                                            Find the domain name that you want, and we'll tell you when it expires.
+                                            Search for the domain name that you want, and we'll tell you when it will become available.
                                         </p>
                                     </div>
                                 </div>

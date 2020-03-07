@@ -65,7 +65,7 @@ def availability():
         if domain is not None and 'available' in domain and domain['available'] is not None:
             # Save the search if it is a valid domain
             if domain['available'] is not None:
-                save_search(domain_name, domain['expires'], 3)  # '3' is the admin ID
+                save_search(domain_name, domain['expires'], domain['date_available'], 3)  # '3' is the admin ID
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()
@@ -82,9 +82,17 @@ def availability():
 @csrf.exempt
 def view():
     if request.method == 'POST':
+        from app.blueprints.api.api_functions import save_search
         if 'domain' in request.form and 'available' in request.form:
+
+            if current_user is not None and current_user.id is not None:
+                id = current_user.id
+            else:
+                id = 3
+                
             domain = request.form['domain']
             available = request.form['available']
+            save_search(domain, available, available, id)
             return render_template('page/view.html', domain=domain, available=available)
 
     return redirect(url_for('page.home'))
