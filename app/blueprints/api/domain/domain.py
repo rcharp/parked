@@ -153,7 +153,7 @@ def get_drop_count():
     with open('domains.json', 'r') as file:
         for i, l in enumerate(file):
             pass
-        return i + 1
+        return '{:,}'.format(i + 1)
 
 
 def delete_dropping_domains():

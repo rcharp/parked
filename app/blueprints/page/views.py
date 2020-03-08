@@ -108,14 +108,17 @@ def view(domain, available):
 @page.route('/drops', methods=['GET','POST'])
 @csrf.exempt
 def drops():
-    from app.blueprints.api.models.drops import Drop
     from app.blueprints.api.api_functions import active_tlds
+    from app.blueprints.api.domain.domain import get_drop_count
+
+    drop_count = get_drop_count()
     domains = list()
+
     with open('domains.json', 'r') as file:
         for line in file:
             domains.append(json.loads(line))
         domains.sort(key=lambda x: x['name'])
-        return render_template('user/drops.html', domains=domains, tlds=active_tlds())
+        return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count)
 
 
 @page.route('/terms')
