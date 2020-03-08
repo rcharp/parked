@@ -23,8 +23,6 @@ def home():
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
     dropping = get_dropping_domains()
-
-    from app.blueprints.api.models.drops import Drop
     drop_count = get_drop_count()
 
     from app.blueprints.api.api_functions import active_tlds

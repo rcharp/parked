@@ -264,11 +264,9 @@ def dashboard():
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
     tlds = active_tlds()
 
-    from app.blueprints.api.domain.domain import get_dropping_domains
+    from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
     dropping = get_dropping_domains()
-
-    from app.blueprints.api.models.drops import Drop
-    drop_count = db.session.query(Drop).count()
+    drop_count = get_drop_count()
 
     # Shuffle the domains to spice things up a little
     random.shuffle(dropping)
