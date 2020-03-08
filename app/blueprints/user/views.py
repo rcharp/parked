@@ -292,7 +292,6 @@ def dashboard():
 def check_availability():
     try:
         domain_name = ''
-
         if request.method == 'GET':
             if 'domain' not in request.args or 'available' not in request.args:
                 return redirect(url_for('user.dashboard'))
