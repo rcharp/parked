@@ -13,6 +13,8 @@ import random
 from app.extensions import db
 from sqlalchemy import exists, func, and_
 from app.blueprints.api.domain.dynadot import check_domain
+from os import path
+import os
 
 
 def get_domain(domain):
@@ -133,12 +135,25 @@ def get_domain_status(domain):
 
 def get_dropping_domains():
     domains = list()
-    from app.blueprints.api.models.drops import Drop
-    drops = Drop.query.order_by(func.random()).limit(40).all()
-    for drop in drops:
-        domains.append({'name': drop.name, 'date_available': drop.date_available})
+    counter = 0
+    with open('domains.json', 'r') as file:
+        lines = file.readlines()
+        while counter < 40:
+            domains.append(json.loads(random.choice(lines)))
+            counter += 1
 
+    # from app.blueprints.api.models.drops import Drop
+    # drops = Drop.query.order_by(func.random()).limit(40).all()
+    # for drop in drops:
+    #     domains.append({'name': drop.name, 'date_available': drop.date_available})
     return domains
+
+
+def get_drop_count():
+    with open('domains.json', 'r') as file:
+        for i, l in enumerate(file):
+            pass
+        return i + 1
 
 
 def delete_dropping_domains():
@@ -169,25 +184,29 @@ def generate_drops():
         limit = 1500
 
         # Do not generate more drops if there are too many in the db
-        from app.blueprints.api.models.drops import Drop
-        if db.session.query(Drop).count() > limit * tld_length():
-            return False
+        # from app.blueprints.api.models.drops import Drop
+        # if db.session.query(Drop).count() > limit * tld_length():
+        #     return False
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
+
+        if path.exists("domains.json"):
+            os.remove("domains.json")
 
         # Get the domains from the Pool list and the Park list
         pool = pool_domains(limit)  # .delay()
         park = park_domains(limit)  # .delay()
 
-        domains = pool + park
+        # domains = pool + park
 
         # We got at least one domain
-        if len(domains) > 0:
-            if delete_dropping_domains():
-                set_dropping_domains(domains, limit * tld_length())
-                return True
+        # if len(domains) > 0:
+        #     if delete_dropping_domains():
+        #         set_dropping_domains(domains, limit * tld_length())
+        #         return True
 
-        return False
+        if pool or park:
+            return True
     except Exception as e:
         print_traceback(e)
         return False

@@ -485,10 +485,6 @@ def reserve_domain():
 
         if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
 
-            # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
-            # d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
-            # d.delete()
-
             flash('You already have this domain reserved!', 'error')
             return redirect(url_for('user.dashboard'))
 

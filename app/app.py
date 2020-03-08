@@ -348,7 +348,7 @@ def site_color_filter(arg):
 
 
 def tld_filter(arg, k):
-    return [x for x in arg if x.name.endswith(k)]
+    return [x for x in arg if x['name'].endswith(k)]
 
 
 def shuffle_filter(arg):

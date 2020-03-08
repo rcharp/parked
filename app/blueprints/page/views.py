@@ -21,18 +21,17 @@ def home():
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
 
-    from app.blueprints.api.domain.domain import get_dropping_domains
+    from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
     dropping = get_dropping_domains()
 
     from app.blueprints.api.models.drops import Drop
-    drop_count = db.session.query(Drop).count()
+    drop_count = get_drop_count()
 
     from app.blueprints.api.api_functions import active_tlds
-
     test = not current_app.config.get('PRODUCTION')
 
     # Shuffle the domains to spice things up a little
-    random.shuffle(dropping)
+    # random.shuffle(dropping)
     return render_template('page/index.html',
                            plans=settings.STRIPE_PLANS,
                            dropping=dropping,
@@ -78,24 +77,34 @@ def availability():
     return render_template('page/index.html', plans=settings.STRIPE_PLANS)
 
 
-@page.route('/view', methods=['GET','POST'])
+@page.route('/view/<domain>/<available>', methods=['GET','POST'])
 @csrf.exempt
-def view():
-    if request.method == 'POST':
-        from app.blueprints.api.api_functions import save_search
-        if 'domain' in request.form and 'available' in request.form:
+def view(domain, available):
 
-            if current_user is not None and current_user.id is not None:
-                id = current_user.id
-            else:
-                id = 3
-                
-            domain = request.form['domain']
-            available = request.form['available']
-            save_search(domain, available, available, id)
-            return render_template('page/view.html', domain=domain, available=available)
+    if current_user.is_authenticated:
+        id = current_user.id
+    else:
+        id = 3
 
-    return redirect(url_for('page.home'))
+    available = available.replace('-', '/')
+    from app.blueprints.api.api_functions import save_search
+    save_search(domain, available, available, id)
+    return render_template('page/view.html', domain=domain, available=available)
+    # if request.method == 'POST':
+    #     from app.blueprints.api.api_functions import save_search
+    #     if 'domain' in request.form and 'available' in request.form:
+    #
+    #         if current_user is not None and current_user.id is not None:
+    #             id = current_user.id
+    #         else:
+    #             id = 3
+    #
+    #         domain = request.form['domain']
+    #         available = request.form['available']
+    #         save_search(domain, available, available, id)
+    #         return render_template('page/view.html', domain=domain, available=available)
+    #
+    # return redirect(url_for('page.home'))
 
 
 @page.route('/drops', methods=['GET','POST'])
@@ -103,9 +112,12 @@ def view():
 def drops():
     from app.blueprints.api.models.drops import Drop
     from app.blueprints.api.api_functions import active_tlds
-    domains = Drop.query.all()
-    domains.sort(key=lambda x: x.name)
-    return render_template('user/drops.html', domains=domains, tlds=active_tlds())
+    domains = list()
+    with open('domains.json', 'r') as file:
+        for line in file:
+            domains.append(json.loads(line))
+        domains.sort(key=lambda x: x['name'])
+        return render_template('user/drops.html', domains=domains, tlds=active_tlds())
 
 
 @page.route('/terms')

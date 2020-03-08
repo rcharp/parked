@@ -112,8 +112,8 @@ def order_domains():
             backorder.secured = True
 
             # Charge the customer's card. Leave uncommented until live.
-            # if charge_card(backorder.pi, backorder.pm) is not None:
-            #     backorder.paid = True
+            if charge_card(backorder.pi, backorder.pm) is not None:
+                backorder.paid = True
 
             backorder.save()
 
@@ -303,9 +303,9 @@ def is_pending_delete(domain):
     try:
 
         # If the domain is in the Drops table, then it's pending delete
-        from app.blueprints.api.models.drops import Drop
-        if db.session.query(exists().where(Drop.name == domain)).scalar():
-            return True
+        # from app.blueprints.api.models.drops import Drop
+        # if db.session.query(exists().where(Drop.name == domain)).scalar():
+        #     return True
 
         api_key = current_app.config.get('X_RAPID_API_KEY')
         url = "https://domainr.p.rapidapi.com/v2/status"
