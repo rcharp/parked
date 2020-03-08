@@ -485,7 +485,7 @@ def reserve_domain():
             flash('This domain can\'t be reserved.', 'error')
             return redirect(url_for('user.dashboard'))
 
-        if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
+        if db.session.query(exists().where(and_(Backorder.domain_name == domain, Backorder.user_id == current_user.id))).scalar():
 
             flash('You already have this domain reserved!', 'error')
             return redirect(url_for('user.dashboard'))
