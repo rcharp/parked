@@ -339,7 +339,7 @@
                                                                             {% set domain_name = domain['name'] %}
                                                                             {% set available = domain['date_available']|replace('/', '-') %}
                                                                             <tr style="max-height:10px;border:none; line-height:1 !important">
-                                                                                <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;">
+                                                                                <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;overflow:hidden;text-overflow:ellipsis;">
                                                                                     <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                                         <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                                     </a>
@@ -385,7 +385,7 @@
                                                                             {% set domain_name = domain['name'] %}
                                                                             {% set available = domain['date_available']|replace('/', '-') %}
                                                                             <tr style="max-height:10px;border:none; line-height:1 !important;">
-                                                                                <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;">
+                                                                                <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;overflow:hidden;text-overflow:ellipsis;">
                                                                                     <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                                         <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:16px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                                     </a>
@@ -442,7 +442,7 @@
                                                                         {% set domain_name = domain['name'] %}
                                                                         {% set available = domain['date_available']|replace('/', '-') %}
                                                                         <tr style="max-height:10px;border:none; line-height:1 !important">
-                                                                            <td id="searched-row" class="searched-row" style="min-width:240px;max-height:10px;padding:.75rem;border:none;">
+                                                                            <td id="searched-row" class="searched-row" style="min-width:240px;max-height:10px;padding:.75rem;border:none;overflow:hidden;text-overflow:ellipsis;">
                                                                                 <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                                     <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                                 </a>

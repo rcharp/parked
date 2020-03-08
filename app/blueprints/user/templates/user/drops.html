@@ -158,7 +158,7 @@
                                 {% for tld in tlds %}
                                     {% set tld_name = tld|replace('.', '') %}
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
-                                        <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;">
+                                        <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;padding:0;">
                                             <!-- Bootstrap Login -->
                                             <div class="block block-themed">
                                                 <div style="width:100%;">
@@ -172,7 +172,7 @@
                                                         <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
                                                                 <tr>
-                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;">
+                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;width:75%;">
                                                                         <span class="text-muted">Domain</span>
                                                                     </td>
                                                                     <td style="min-width:75px;">
@@ -185,7 +185,7 @@
                                                                 {% set domain_name = domain['name'] %}
                                                                 {% set available = domain['date_available']|replace('/', '-') %}
                                                                     <tr id="{{ domain['name'] }}" class="domain-row" style="max-height:10px;border:none">
-                                                                    <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;">
+                                                                    <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
                                                                         <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                             <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                         </a>
