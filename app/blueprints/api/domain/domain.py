@@ -46,11 +46,11 @@ def get_domain_availability(domain):
 
             details = pythonwhois.get_whois(domain)
 
-            # If this is a dropping domain, update the available date
-            from app.blueprints.api.models.drops import Drop
-            if db.session.query(exists().where(Drop.name == domain)).scalar():
-                drop = Drop.query.filter(Drop.name == domain).scalar()
-                availability.update({'date_available': drop.date_available})
+            # If this is a dropping domain, update the available date. Not using this anymore since no longer using Drops table
+            # from app.blueprints.api.models.drops import Drop
+            # if db.session.query(exists().where(Drop.name == domain)).scalar():
+            #     drop = Drop.query.filter(Drop.name == domain).scalar()
+            #     availability.update({'date_available': drop.date_available})
 
             if 'expiration_date' in details and len(details['expiration_date']) > 0 and details['expiration_date'][0] is not None:
                 expires = get_dt_string(details['expiration_date'][0])

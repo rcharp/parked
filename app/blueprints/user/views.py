@@ -432,7 +432,7 @@ def delete_domain():
 
 
 """
-After successfully purchasing/registering a domain, update the domain's info in the DB
+After successfully purchasing/registering a domain, update the domain's info in the DB. Currently unused
 """
 @user.route('/update_domain', methods=['GET','POST'])
 @login_required
@@ -479,6 +479,7 @@ Create a reservation/backorder for a domain
 def reserve_domain():
     if request.method == 'POST':
         domain = request.form['domain']
+        available = request.form['available']
 
         d = get_domain_availability(domain)
         if d == 500 or not (d is not None and 'available' in d and d['available'] is not None):
@@ -486,7 +487,6 @@ def reserve_domain():
             return redirect(url_for('user.dashboard'))
 
         if db.session.query(exists().where(and_(Backorder.domain_name == domain, Backorder.user_id == current_user.id))).scalar():
-
             flash('You already have this domain reserved!', 'error')
             return redirect(url_for('user.dashboard'))
 
@@ -497,7 +497,7 @@ def reserve_domain():
             # Redirect to the payment page
             if si is not None:
                 pm = get_payment_method(si)
-                return render_template('user/reserve.html', current_user=current_user, domain=domain, si=si, email=current_user.email, pm=pm)
+                return render_template('user/reserve.html', current_user=current_user, domain=domain, available=available, si=si, email=current_user.email, pm=pm)
             else:
                 flash("There was an error reserving this domain. Please try again.", 'error')
                 return redirect(url_for('user.dashboard'))
@@ -518,11 +518,12 @@ Saves the backorder after the user's card info has been entered
 def save_reservation():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'available' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
+            available = request.form['available']
             customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id, save_card):
@@ -537,11 +538,11 @@ def save_reservation():
                     # Save the domain
                     details = get_domain_availability(domain)
 
-                    d = save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()))
+                    d = save_domain(current_user.id, customer_id, domain, details['expires'], available, pytz.utc.localize(dt.utcnow()))
 
                     # Save the backorder to the db
                     c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                    create_backorder(d, pm, payment.id, c.id, current_user.id, r)
+                    create_backorder(d, available, pm, payment.id, c.id, current_user.id, r)
 
                     flash('Your domain was successfully reserved!', 'success')
                     return render_template('user/success.html', current_user=current_user)
@@ -559,10 +560,11 @@ Create a backorder with a card that is already on file
 def saved_card_intent():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'available' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             domain = request.form['domain']
+            available = request.form['available']
             customer_id = request.form['customer_id']
 
             # Create the payment intent with the existing payment method
@@ -574,11 +576,11 @@ def saved_card_intent():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, domain, details['expires'], available, pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, pm, payment.id, c.id, current_user.id, r)
+                create_backorder(d, available, pm, payment.id, c.id, current_user.id, r)
 
                 if send:
                     # Send a successful reservation email
