@@ -17,6 +17,7 @@ from flask_login import (
     logout_user)
 
 import time
+import random
 
 from lib.safe_next_url import safe_next_url
 from app.blueprints.user.decorators import anonymous_required
@@ -40,10 +41,9 @@ from importlib import import_module
 from sqlalchemy import or_, and_, exists
 from app.blueprints.billing.charge import (
     stripe_checkout,
-    confirm_intent,
     create_payment,
     delete_payment,
-    confirm_payment,
+    charge_card,
     get_payment_method,
     get_card
 )
@@ -51,10 +51,12 @@ from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
+from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
     valid_tlds,
+    active_tlds,
     update_customer,
     print_traceback,
     create_backorder
@@ -62,7 +64,7 @@ from app.blueprints.api.api_functions import (
 from app.blueprints.api.domain.domain import (
     get_domain_details,
     get_domain_availability,
-    get_domain_tld,
+    get_domain,
     get_domain_expiration as get_expiry
 )
 from app.blueprints.api.domain.dynadot import (
@@ -108,6 +110,8 @@ def login():
                 u.update_activity_tracking(request.remote_addr)
 
                 next_url = request.form.get('next')
+
+                next_url = url_for('user.dashboard') if next_url == url_for('user.login') else next_url
 
                 if next_url:
                     return redirect(safe_next_url(next_url), code=307)
@@ -258,9 +262,27 @@ def dashboard():
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
-    tlds = valid_tlds()
+    tlds = active_tlds()
 
-    return render_template('user/dashboard.html', current_user=current_user, domains=domains, test=test, searched=searched, tlds=tlds)
+    from app.blueprints.api.domain.domain import get_dropping_domains
+    dropping = get_dropping_domains()
+
+    from app.blueprints.api.models.drops import Drop
+    drop_count = db.session.query(Drop).count()
+
+    # Shuffle the domains to spice things up a little
+    random.shuffle(dropping)
+
+    # Sort the searches by date
+    searched.sort(key=lambda x: x.created_on, reverse=True)
+
+    return render_template('user/dashboard.html', current_user=current_user,
+                           domains=domains,
+                           test=test,
+                           searched=searched,
+                           tlds=tlds,
+                           dropping=dropping,
+                           drop_count=drop_count,)
 
 
 # Domain Functions -------------------------------------------------------------------
@@ -270,12 +292,11 @@ def dashboard():
 def check_availability():
     try:
         domain_name = ''
-
         if request.method == 'GET':
             if 'domain' not in request.args or 'available' not in request.args:
                 return redirect(url_for('user.dashboard'))
 
-            domain_name = request.args.get('domain')
+            domain_name = get_domain(request.args.get('domain'))
 
         if request.method == 'POST':
             if 'domain' not in request.args and 'domain' not in request.form:
@@ -283,16 +304,20 @@ def check_availability():
                 return redirect(url_for('user.dashboard'))
 
             if 'domain' in request.form:
-                domain_name = request.form['domain'].replace(' ', '').lower()
+                domain_name = get_domain(request.form['domain'])
             else:
-                domain_name = request.args.get('domain')
+                domain_name = get_domain(request.args.get('domain'))
 
             # Uncomment this when ready to check multiple domains at once
             # domains = [l for l in request.form['domains'].split('\n') if l]
 
+        if domain_name is None:
+            flash("This domain is invalid. Please try again.", "error")
+            return redirect(url_for('page.home'))
+
         domain = get_domain_availability(domain_name)
         if 'available' in request.args:
-            domain.update({'available_on': request.args.get('available')})
+            domain.update({'date_available': request.args.get('available')})
 
         # 500 is the error returned if the domain is valid but can't be backordered
         if domain == 500:
@@ -301,7 +326,7 @@ def check_availability():
 
         # Save the search if it is a valid domain
         if domain is not None and 'available' in domain and domain['available'] is not None:
-            save_search(domain_name, domain['expires'], current_user.id)
+            save_search(domain_name, domain['expires'], domain['date_available'], current_user.id)
 
             domains = Domain.query.filter(Domain.user_id == current_user.id).all()
             details = get_domain_details(domain_name)
@@ -313,8 +338,10 @@ def check_availability():
         flash("There was an error. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
 
+
 """
-Registers the domain after it has been reserved and successfully captured
+Registers the domain after it has been reserved and successfully captured.
+Currently unused.
 """
 @user.route('/register_domain', methods=['GET','POST'])
 @login_required
@@ -325,7 +352,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name, True):
+        if register(domain.name, True)['success']:
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
@@ -405,7 +432,7 @@ def delete_domain():
 
 
 """
-After successfully purchasing/registering a domain, update the domain's info in the DB
+After successfully purchasing/registering a domain, update the domain's info in the DB. Currently unused
 """
 @user.route('/update_domain', methods=['GET','POST'])
 @login_required
@@ -452,18 +479,14 @@ Create a reservation/backorder for a domain
 def reserve_domain():
     if request.method == 'POST':
         domain = request.form['domain']
+        available = request.form['available']
 
         d = get_domain_availability(domain)
         if d == 500 or not (d is not None and 'available' in d and d['available'] is not None):
             flash('This domain can\'t be reserved.', 'error')
             return redirect(url_for('user.dashboard'))
 
-        if db.session.query(exists().where(and_(Domain.name == domain, Domain.user_id == current_user.id))).scalar():
-
-            # Deletes the domain if it already exists. For testing purposes. Remove this when done testing.
-            # d = Domain.query.filter(and_(Domain.name == domain, Domain.user_id == current_user.id)).scalar()
-            # d.delete()
-
+        if db.session.query(exists().where(and_(Backorder.domain_name == domain, Backorder.user_id == current_user.id))).scalar():
             flash('You already have this domain reserved!', 'error')
             return redirect(url_for('user.dashboard'))
 
@@ -474,7 +497,7 @@ def reserve_domain():
             # Redirect to the payment page
             if si is not None:
                 pm = get_payment_method(si)
-                return render_template('user/reserve.html', current_user=current_user, domain=domain, si=si, email=current_user.email, pm=pm)
+                return render_template('user/reserve.html', current_user=current_user, domain=domain, available=available, si=si, email=current_user.email, pm=pm)
             else:
                 flash("There was an error reserving this domain. Please try again.", 'error')
                 return redirect(url_for('user.dashboard'))
@@ -495,11 +518,12 @@ Saves the backorder after the user's card info has been entered
 def save_reservation():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'save-card' in request.form and 'domain' in request.form and 'available' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             save_card = request.form['save-card']
             domain = request.form['domain']
+            available = request.form['available']
             customer_id = request.form['customer_id']
 
             if update_customer(pm, customer_id, save_card):
@@ -513,11 +537,12 @@ def save_reservation():
 
                     # Save the domain
                     details = get_domain_availability(domain)
-                    d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+
+                    d = save_domain(current_user.id, customer_id, domain, details['expires'], available, pytz.utc.localize(dt.utcnow()))
 
                     # Save the backorder to the db
                     c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                    create_backorder(d, pm, payment.id, c.id, current_user.id, r)
+                    create_backorder(d, available, pm, payment.id, c.id, current_user.id, r)
 
                     flash('Your domain was successfully reserved!', 'success')
                     return render_template('user/success.html', current_user=current_user)
@@ -535,10 +560,11 @@ Create a backorder with a card that is already on file
 def saved_card_intent():
     if request.method == 'POST':
         # Save the customer's info to db on successful charge if they don't already exist
-        if 'pm' in request.form and 'domain' in request.form and 'customer_id' in request.form:
+        if 'pm' in request.form and 'domain' in request.form and 'available' in request.form and 'customer_id' in request.form:
 
             pm = request.form['pm']
             domain = request.form['domain']
+            available = request.form['available']
             customer_id = request.form['customer_id']
 
             # Create the payment intent with the existing payment method
@@ -550,11 +576,11 @@ def saved_card_intent():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                d = save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()))
+                d = save_domain(current_user.id, customer_id, domain, details['expires'], available, pytz.utc.localize(dt.utcnow()))
 
                 # Save the backorder to the db
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
-                create_backorder(d, pm, payment.id, c.id, current_user.id, r)
+                create_backorder(d, available, pm, payment.id, c.id, current_user.id, r)
 
                 if send:
                     # Send a successful reservation email
@@ -585,7 +611,7 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain.
-            if register(domain):
+            if register(domain)['success']:
 
                 # Set the Whois info to GetParked.io
                 set_whois_info(domain)
@@ -610,7 +636,7 @@ def checkout():
 
 
 """
-Purchase a domain directly with a card that is on file
+Purchase a domain directly with a card that is on file. Not currently used.
 """
 @user.route('/saved_card_payment', methods=['GET','POST'])
 @login_required
@@ -624,7 +650,7 @@ def saved_card_payment():
             pm = request.form['pm']
 
             # Confirm the payment
-            if confirm_payment(si, pm) is not None:
+            if charge_card(si, pm) is not None:
 
                 domain = request.form['domain']
                 customer_id = request.form['customer_id']
@@ -634,7 +660,7 @@ def saved_card_payment():
 
                 # Save the domain after payment
                 details = get_domain_availability(domain)
-                save_domain(current_user.id, customer_id, domain, details['expires'], details['available_on'], pytz.utc.localize(dt.utcnow()), True)
+                save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
                 if send:

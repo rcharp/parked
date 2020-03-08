@@ -64,14 +64,14 @@ def print_traceback(e):
     print(e)
 
 
-def save_domain(user_id, customer_id, domain, expires, available_on, reserve_time, registered=False):
+def save_domain(user_id, customer_id, domain, expires, date_available, reserve_time, registered=False):
     from app.blueprints.api.models.domains import Domain
 
     d = Domain()
     d.user_id = user_id
     d.name = domain
     d.expires = expires
-    d.available_on = available_on
+    d.date_available = date_available
     d.created_on = get_dt_string(reserve_time)
     d.customer_id = customer_id
     d.registered = registered
@@ -80,20 +80,29 @@ def save_domain(user_id, customer_id, domain, expires, available_on, reserve_tim
     return d
 
 
-def save_search(domain, expires, user_id):
+def save_search(domain, expires, date_available, user_id):
     from app.blueprints.api.models.searched import SearchedDomain
 
     if not db.session.query(exists().where(and_(SearchedDomain.name == domain, SearchedDomain.user_id == user_id))).scalar():
         s = SearchedDomain()
         s.name = domain
         s.expires = expires
+        s.date_available = date_available
         s.user_id = user_id
 
         s.save()
     return
 
 
-def create_backorder(domain, pm, pi, customer_id, user_id, pending_delete):
+def format_domain_search(domain):
+    if domain is not None:
+        domain = domain.replace(' ', '').lower()
+        domain = domain.replace('https://www.', '').replace('https://', '').replace('http://', '').replace('www.','')
+        return domain
+    return None
+
+
+def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
 
     b = Backorder()
@@ -102,10 +111,13 @@ def create_backorder(domain, pm, pi, customer_id, user_id, pending_delete):
     b.pi = pi
     b.domain_name = domain.name
     b.expires = domain.expires
+    b.date_available = available
     b.user_id = user_id
     b.customer_id = customer_id
     b.active = True
     b.pending_delete = pending_delete
+    b.secured = False
+    b.paid = False
 
     b.save()
     return
@@ -135,7 +147,7 @@ def park_tlds():
     return ['.me', '.pro']
 
 
-def all_tlds():
+def active_tlds():
     return pool_tlds() + park_tlds()
 
 

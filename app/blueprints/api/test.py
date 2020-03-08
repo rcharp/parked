@@ -14,6 +14,7 @@ from app.blueprints.api.domain.dynadot import (
     list_contacts,
     set_whois_info,
     get_whois,
+    order_domains
 )
 
 from celery.result import AsyncResult
@@ -55,5 +56,14 @@ def test(domain):
     # results = is_pending_delete('digitalcard.io')
 
     # results = generate_drops()
-    results = park_domains(500)
+    # results = park_domains(500)
+
+    # TODO: This WILL order the domains. Be very careful.
+    # results = order_domains()
+    results = generate_drops()
     return results
+
+
+# def run_test(test_number):
+#     results = tests[test_number]
+#     return results

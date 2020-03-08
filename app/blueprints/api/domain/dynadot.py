@@ -1,15 +1,20 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback, active_backorders
-from app.blueprints.page.date import get_string_from_utc_datetime, convert_timestamp_to_datetime_utc
+from app.blueprints.page.date import (
+    get_string_from_utc_datetime,
+    convert_timestamp_to_datetime_utc,
+    get_dt_string,
+    get_utc_date,
+    get_utc_date_today_string
+)
 from flask import current_app, flash
-from app.blueprints.page.date import get_dt_string
 from app.extensions import db
 import pythonwhois
 import datetime
 import tldextract
 import pytz
 import time
-from sqlalchemy import exists
+from sqlalchemy import exists, and_
 import requests
 import json
 import re
@@ -32,8 +37,6 @@ def check_domain(domain):
     r = requests.get(url=dynadot_url)
     results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
-    # print(results)
-
     if 'Available' in results:
         if 'Price' in results:
             price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f')
@@ -48,38 +51,80 @@ def check_domain(domain):
         return details
     else:
         return None
-    # dyn = Dynadot(api_key=current_app.config.get('DYNADOT_API_KEY'))
-    # return dyn.search(domains=[domain])
 
 
+# Register's the domain. This will actually purchase the domain in Dynadot.
 def register_domain(domain, backordered=False):
+    try:
+        # Get the production level
+        production = True#current_app.config.get('PRODUCTION')
 
-    # Get the production level
-    production = current_app.config.get('PRODUCTION')
+        # Price limit for purchasing a domain
+        limit = 60 if backordered else 99
 
-    # Price limit for purchasing a domain
-    limit = 60 if backordered else 99
+        # Only send a request if it isn't already processing one
+        if is_processing():
+            register_domain(domain, backordered)
 
-    # Only send a request if it isn't already processing one
-    if is_processing():
-        register_domain(domain)
-    # Ensure that the domain can be registered
-    price = get_domain_price(domain)
+        # Get the price of the domain, since we will only purchase domains under a certain price
+        price = get_domain_price(domain)
 
-    # The real deal. The domain will be registered if the app is being used live
-    if price is not None:
-        # Only purchase the domain if it's less than $60
-        if Decimal(price) <= limit:
+        if price is None or Decimal(price) > limit:
+            pass
+            # return {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
 
-            # Otherwise return True in the dev environment
-            if not production:
-                return "Domain " + domain + " bought in test for " + price + "."
+        # The real deal. The domain will be registered if the app is being used live
+        # Otherwise return True in the dev environment
+        if not production:
+            return "Domain " + domain + " was purchased."
 
-            api_key = current_app.config.get('DYNADOT_API_KEY')
-            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain
-            r = requests.get(url=dynadot_url)
-            results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
-            return 'SuccessCode' in results and results['SuccessCode'] == '0'
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + '&duration=1'
+        r = requests.get(url=dynadot_url)
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
+
+        if 'SuccessCode' in results and results['SuccessCode'] == '0':
+            return {'domain': domain, 'success': True, 'code': 0}
+
+        return {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
+    except Exception as e:
+        print_traceback(e)
+        return {'domain': domain, 'success': False, 'code': 2, 'reason': 'An exception occurred.'}
+
+
+def order_domains():
+    from app.blueprints.api.models.backorder import Backorder
+    from app.blueprints.api.models.domains import Domain
+    from app.blueprints.billing.charge import charge_card
+
+    # Create a list of results
+    results = list()
+
+    # Get the backorders that are dropping today
+    today = get_utc_date_today_string()
+    backorders = Backorder.query.filter(and_(Backorder.date_available == today, Backorder.secured.is_(False))).all()
+
+    # Try to register the backorders
+    # If successful, change the 'success' attribute on the backorder in the db
+    for backorder in backorders:
+        result = register_domain(backorder.domain_name, True)
+        if result['success']:
+            backorder.secured = True
+
+            # Charge the customer's card. Leave uncommented until live.
+            if charge_card(backorder.pi, backorder.pm) is not None:
+                backorder.paid = True
+
+            backorder.save()
+
+            domain = Domain.query.filter(Domain.id == backorder.domain).scalar()
+            domain.registered = True
+            domain.save()
+
+        results.append(result)
+
+    # Return the successful backorders
+    return results
 
 
 def get_domain_expiration(domain):
@@ -150,6 +195,7 @@ def get_domain_price(domain):
     return price
 
 
+# Not Used.
 def backorder_request(domain):
     # Only send a request if it isn't already processing one
     if is_processing():
@@ -258,9 +304,9 @@ def is_pending_delete(domain):
     try:
 
         # If the domain is in the Drops table, then it's pending delete
-        from app.blueprints.api.models.drops import Drop
-        if db.session.query(exists().where(Drop.name == domain)).scalar():
-            return True
+        # from app.blueprints.api.models.drops import Drop
+        # if db.session.query(exists().where(Drop.name == domain)).scalar():
+        #     return True
 
         api_key = current_app.config.get('X_RAPID_API_KEY')
         url = "https://domainr.p.rapidapi.com/v2/status"

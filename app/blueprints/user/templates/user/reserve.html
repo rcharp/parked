@@ -378,7 +378,7 @@
                           $.ajax({
                               url: '{{ url_for("user.save_reservation") }}',
                               type: 'POST',
-                              data: {'pi': '{{ si.id }}', 'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                              data: {'pi': '{{ si.id }}', 'pm': result.setupIntent.payment_method, 'save-card':save_card, 'email': '{{ email }}', 'domain': '{{ domain }}', 'available': '{{ available }}', 'customer_id': '{{ si.customer }}'},
                               success: function (response) {
                                   var domain = '{{ domain }}';
                                   window.location.href='{{ url_for('user.success', domain=domain) }}';
@@ -407,7 +407,7 @@
                 $.ajax({
                   url: '{{ url_for("user.saved_card_intent") }}',
                   type: 'POST',
-                  data: {'pi': '{{ si.id }}', 'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'customer_id': '{{ si.customer }}'},
+                  data: {'pi': '{{ si.id }}', 'pm': '{{ pm.id }}', 'domain': '{{ domain }}', 'available': '{{ available }}', 'customer_id': '{{ si.customer }}'},
                   success: function (response) {
                       var domain = '{{ domain }}';
                       window.location.href='{{ url_for('user.success', domain=domain) }}';

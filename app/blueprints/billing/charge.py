@@ -157,25 +157,25 @@ def setup_intent(domain, customer_id):
 
 
 # Charge the user's card for the reservation, if the domain is secured.
-# TODO: Implement the functionality for calling this when the domain is secured
-def confirm_intent(si, pm):
+def charge_card(pi, pm):
     try:
         stripe.api_key = current_app.config.get('STRIPE_KEY')
-        return stripe.SetupIntent.confirm(
-            si,
-            payment_method=pm,
+        return stripe.PaymentIntent.confirm(
+            pi,
+            payment_method=pm
         )
     except Exception as e:
         print_traceback(e)
         return None
 
 
-def confirm_payment(pi, pm):
+# Confirms the setup intent? Not currently used.
+def confirm_intent(si, pm):
     try:
         stripe.api_key = current_app.config.get('STRIPE_KEY')
-        return stripe.PaymentIntent.confirm(
-            pi,
-            payment_method=pm
+        return stripe.SetupIntent.confirm(
+            si,
+            payment_method=pm,
         )
     except Exception as e:
         print_traceback(e)
@@ -215,7 +215,6 @@ def update_customer(pm, customer_id, save_card):
 
 
 # Delete the payment intent when the user cancels a reservation
-# TODO: Implement the functionality to delete the payment in Stripe
 def delete_payment(order_id):
     try:
         stripe.api_key = current_app.config.get('STRIPE_KEY')
@@ -258,7 +257,7 @@ def get_card(c):
 # Not used yet -----------------------------------------------------------------
 # Confirm an existing payment
 # Not currently used
-# def confirm_payment(domain):
+# def charge_card(domain):
 #     stripe.api_key = current_app.config.get('STRIPE_KEY')
 #     return stripe.PaymentIntent.create(
 #         amount=9900,

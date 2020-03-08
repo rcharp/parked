@@ -171,33 +171,35 @@
                                 <!--/ End Empty Space -->
                                 <p class="lead base-plus-font-size text-center">
                                     Have a domain in mind that you want? Backorder it and we'll secure it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.<br /><br />Includes the price of the domain, plus the first year of registration.</p>
+                                    Only $99 per domain.<br /></p>
 
-                                {% if domain is defined and domain is not none %}
+                                <!-- Old code for searching for domains. Maybe one day? -->
+                                {#{% if domain is defined and domain is not none %}
                                     <div class="block block-themed" style="height:450px;margin-bottom:50px;">
                                         <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
                                                     <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
-                                                    <span class="text-muted">Available:</span> {{ domain['available_on'] }} UTC.
+                                                    <span class="text-muted">Available:</span> {{ domain['date_available'] }}
 
                                                     {% set domain_name = domain['name'] %}
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.reserve_domain') }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                                         <div class="form-group">
                                                             <br />
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['date_available'] }}" />
                                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Reserve this domain</button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 {% else %}
                                                     <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
-                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
+                                                    <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
-                                                                <input class="form-control" id="price" name="price" type="hidden" value="{{ domain['price'] }}" />
                                                                 <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
+                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['date_available'] }}" />
                                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;"><i class="push-5-r"></i>Buy this domain - ${{ domain['price'] }}</button>
                                                             </div>
                                                         </div>
@@ -254,6 +256,7 @@
                                         <div class="form-group">
                                             <br />
                                             <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none;">
+                                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h5>
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
                                             </div>
                                             <div style="margin:0 auto;float:none;height:100%;margin-bottom:10px;max-width:500px;">
@@ -272,14 +275,14 @@
                                             </div>
                                         </div>
                                     </form><br />
-                                {% endif %}
+                                {% endif %}#}
 
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
-                                            <span class="text-muted" style="font-size:14px;float:left">Domains dropping soon:</span>
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <span class="text-muted" style="font-size:14px;float:left">Some domains dropping soon:</span>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ '{0:,}'.format(drop_count) }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
                                         <div style="float:left;width:50%;min-width:350px;">
@@ -299,13 +302,15 @@
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
                                                     <tbody style="line-height:1 !important;">
                                                         {% for domain in dropping|batch((dropping|length)/2)|first|sort(attribute='date_available', reverse=true) %}
+                                                        {% set domain_name = domain['name'] %}
+                                                        {% set available = domain['date_available']|replace('/', '-') %}
                                                         <tr style="max-height:10px;border:none; line-height:1 !important">
-                                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
-                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
-                                                            </form>
+                                                            <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;">
+                                                                <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
+                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                </a>
+                                                            </td>
+                                                            <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>
@@ -343,13 +348,15 @@
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table-2" style="table-layout:fixed;min-width:350px;">
                                                     <tbody style="line-height:1 !important;">
                                                         {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse|sort(attribute='date_available', reverse=true) %}
+                                                        {% set domain_name = domain['name'] %}
+                                                        {% set available = domain['date_available']|replace('/', '-') %}
                                                         <tr style="max-height:10px;border:none; line-height:1 !important;">
-                                                            <form class="form-horizontal push-5-t" action="{{ url_for('page.view' ) }}" method="post">
-                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain['name'] }}" />
-                                                                <input class="form-control" id="available" name="available" type="hidden" value="{{ domain['date_available']|dropping_date_filter }}" />
-                                                                <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;"><button class="domain-button-2" type="submit" style="text-align:left;background:none;border:none;margin:0;padding:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;">{{ domain['name'] }}</span></button></td>
-                                                                <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
-                                                            </form>
+                                                            <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;">
+                                                                <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
+                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                </a>
+                                                            </td>
+                                                            <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>
@@ -374,7 +381,7 @@
                                             </div>
                                         </div>
                                         <div style="font-size:16px;width:100%;text-align:left;float:right;margin-bottom:10px;">
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ '{0:,}'.format(drop_count) }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                     </div>
                                 {% endif %}
@@ -416,13 +423,13 @@
                                     </div>
                                     <div class="col-6 mt-3 mt-lg-0 mr-auto" style="min-width:250px;">
                                         <h3 class="base-plus-font-size font-weight__500">
-                                            Search for the domain that you want.
+                                            Browse the list of expiring domains to find one that you like.
                                         </h3>
                                         <!-- Empty Space -->
                                         <div class="sm-sapce"></div>
                                         <!--/ End Empty Space -->
                                         <p class="lead sm-font-size text-dark-gray mb-0">
-                                            Find the domain name that you want, and we'll tell you when it expires.
+                                            Search for the domain name that you want, and we'll tell you when it will become available.
                                         </p>
                                     </div>
                                 </div>
