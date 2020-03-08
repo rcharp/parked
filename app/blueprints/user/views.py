@@ -636,7 +636,7 @@ def checkout():
 
 
 """
-Purchase a domain directly with a card that is on file
+Purchase a domain directly with a card that is on file. Not currently used.
 """
 @user.route('/saved_card_payment', methods=['GET','POST'])
 @login_required
