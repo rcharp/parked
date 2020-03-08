@@ -310,7 +310,7 @@
                                                 <div style="width:100%;">
                                                 <h4 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
                                                 {% if dropping is not none and dropping|length > 0 %}
-                                                    <div style="{% if searched|length > 0 %}width:50%;float:left;margin-right:20px;{% else %}width:100%;{% endif %}min-width:350px;padding-top:10px;">
+                                                    <div id="dropping-list" style="{% if searched|length > 0 %}width:65%;float:left;margin-right:10px;{% else %}width:100%;{% endif %}min-width:350px;padding-top:10px;">
                                                         <!-- Dropping Domains -->
                                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
                                                             <span class="text-muted" style="font-size:16px;float:left">Domains dropping soon:</span>
@@ -416,18 +416,19 @@
                                                     </div>
                                                 {% endif %}
                                                 {% if searched|length > 0 %}
-                                                    <div class="block block-themed" style="width:47%;float:left;min-width:350px;">
+                                                    <div id="vert-divider" style="border-right:1px solid #d3d3d3;width:1%;height:760px;margin-top:50px;float:left;min-width:1px;margin-right:20px;"></div>
+                                                    <div class="block block-themed" style="width:30%;float:left;min-width:350px;">
                                                         <div style="font-size:24px;margin-bottom:10px;">
                                                             <span class="text-muted" style="font-size:18px;">Recently viewed</span>
                                                         </div>
                                                         <table class="table table-borderless table-condensed" style="position:sticky;margin-bottom:0;">
                                                             <thead>
                                                                 <tr>
-                                                                    <td id="domain-name" name="domain-name" style="min-width:240px;max-width:600px;">
+                                                                    <td id="searched-name" name="searched-name" style="min-width:240px;max-width:600px;">
                                                                         <span class="text-muted" style="font-size:16px;">Domain</span>
                                                                     </td>
                                                                     <td style="min-width:240px;">
-                                                                        <span class="text-muted" style="font-size:16px;">Available:</span>
+                                                                        <span class="text-muted" style="font-size:16px;">Available</span>
                                                                     </td>
                                                                 </tr>
                                                             </thead>
@@ -435,11 +436,11 @@
                                                         <div style="overflow-x: auto;max-height:100%;">
                                                             <table class="table table-borderless table-condensed">
                                                                 <tbody>
-                                                                    {% for domain in searched|reverse %}
+                                                                    {% for domain in searched %}
                                                                     {% set domain_name = domain['name'] %}
                                                                     {% set available = domain['date_available']|replace('/', '-') %}
                                                                     <tr style="max-height:10px;border:none; line-height:1 !important">
-                                                                        <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;">
+                                                                        <td id="searched-row" class="searched-row" style="min-width:240px;max-height:10px;padding:.75rem;border:none;">
                                                                             <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                                 <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                             </a>
@@ -450,8 +451,15 @@
                                                                 </tbody>
                                                             </table>
                                                             <script type="text/javascript">
-                                                                var x = document.getElementById('searched-domain').offsetWidth;
-                                                                document.getElementById('domain-name').style.width = x.toString() + 'px';
+                                                                var x = document.getElementById('searched-name').offsetWidth;
+                                                                var searched_rows = document.getElementsByClassName('searched-row');
+                                                                for (var i=0; i<searched_rows.length; i++){
+                                                                    searched_rows[i].style.width = x.toString() + 'px';
+                                                                }
+
+                                                                if (document.getElementById('dropping-list').offsetWidth < 400){
+                                                                    document.getElementById('vert-divider').style.display = 'none';
+                                                                }
                                                             </script>
                                                         </div>
                                                     </div>

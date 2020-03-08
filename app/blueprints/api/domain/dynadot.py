@@ -195,6 +195,7 @@ def get_domain_price(domain):
     return price
 
 
+# Not Used.
 def backorder_request(domain):
     # Only send a request if it isn't already processing one
     if is_processing():

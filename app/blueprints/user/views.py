@@ -273,6 +273,9 @@ def dashboard():
     # Shuffle the domains to spice things up a little
     random.shuffle(dropping)
 
+    # Sort the searches by date
+    searched.sort(key=lambda x: x.created_on, reverse=True)
+
     return render_template('user/dashboard.html', current_user=current_user,
                            domains=domains,
                            test=test,
