@@ -67,13 +67,14 @@ CELERYBEAT_SCHEDULE = {
         # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
 
-    'order_domains': {
-        'task': 'app.blueprints.api.tasks.order_domains',
-        'schedule': crontab(minute=0, hour="*/1") # every hour
-        # 'schedule': crontab(minute="*/1") # every minute
-    },
+    # Commented out until Live.
+    # 'order_domains': {
+    #     'task': 'app.blueprints.api.tasks.order_domains',
+    #     'schedule': crontab(minute=0, hour="*/1") # every hour
+    #     # 'schedule': crontab(minute="*/1") # every minute
+    # },
 
-    # Uncommented until Live.
+    # Commented out until Live.
     # 'retry_charges': {
     #     'task': 'app.blueprints.api.tasks.retry_charges',
     #     'schedule': crontab(minute=0, hour="*/1") # every hour
