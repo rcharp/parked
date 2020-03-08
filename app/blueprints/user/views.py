@@ -111,7 +111,8 @@ def login():
 
                 next_url = request.form.get('next')
 
-                next_url = url_for('user.dashboard') if next_url == url_for('user.login') else next_url
+                if next_url == url_for('user.login') or next_url == '' or next_url is None:
+                    next_url = url_for('user.dashboard')
 
                 if next_url:
                     return redirect(safe_next_url(next_url), code=307)
