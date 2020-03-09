@@ -245,3 +245,8 @@ def delete_backorders():
 
     except Exception as e:
         print_traceback(e)
+
+
+def get_backorder_count():
+    from app.blueprints.api.models.backorder import Backorder
+    return db.session.query(Backorder).count()
