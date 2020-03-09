@@ -351,16 +351,18 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name, True)['success']:
+        r = register(domain.name, True)
+        if r['success']:
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
 
             # Set the Whois info to GetParked.io
-            set_whois_info(domain.name)
+            # set_whois_info(domain.name)
 
             flash('This domain has been registered.', 'success')
         else:
+            print(r)
             flash('This domain has not been registered.', 'error')
     return redirect(url_for('user.dashboard'))
 
