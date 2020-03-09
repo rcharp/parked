@@ -7,7 +7,7 @@
     <div class="col-md-4">
       <div class="panel panel-default">
         <div class="panel-body">
-          <h4>Subscriptions</h4>
+          <h4>Customers</h4>
           {% for item in group_and_count_plans.query %}
             {% set percent = ((item[0] / group_and_count_plans.total) * 100) | round %}
             <h5>

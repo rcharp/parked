@@ -51,7 +51,6 @@ from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
-from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,

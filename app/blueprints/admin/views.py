@@ -6,7 +6,7 @@ from flask import (
     url_for,
     render_template)
 from flask_login import login_required, current_user
-
+from sqlalchemy import text
 from app.blueprints.admin.models import Dashboard
 from app.blueprints.user.decorators import role_required
 from app.blueprints.billing.models.subscription import Subscription
@@ -56,9 +56,9 @@ def users(page):
     order_values = '{0} {1}'.format(sort_by[0], sort_by[1])
 
     paginated_users = User.query \
-        .filter(User.search(request.args.get('q', ''))) \
-        .order_by(User.role.asc(), User.payment_id, User.created_on).paginate(page, 50, True)#text(order_values)) \
-        #.paginate(page, 50, True)
+        .filter(User.search(request.args.get('q', text('')))) \
+        .order_by(User.role.asc(), User.email, text(order_values)) \
+        .paginate(page, 50, True)
 
     return render_template('admin/user/index.html',
                            form=search_form, bulk_form=bulk_form,

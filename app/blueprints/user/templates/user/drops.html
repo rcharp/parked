@@ -156,6 +156,7 @@
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
 
                                 {% for tld in tlds %}
+                                    {#{% import 'macros/items.html' as items %}#}
                                     {% set tld_name = tld|replace('.', '') %}
                                     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tld_name }}" name="{{ tld_name }}" style="min-height:250px;overflow:hidden">
                                         <div class="col-lg-8" style="width:100%; margin:0 auto; float:none;padding:0;">
@@ -193,6 +194,7 @@
                                                                     <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                                 </tr>
                                                                 {% endfor %}
+                                                                {#{{ items.paginate(domains|tld_filter(tld)) }}#}
                                                             </tbody>
                                                         </table>
                                                         <script type="text/javascript">
