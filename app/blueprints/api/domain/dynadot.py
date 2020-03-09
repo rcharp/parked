@@ -39,7 +39,7 @@ def check_domain(domain):
 
     if 'Available' in results:
         if 'Price' in results:
-            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f')
+            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
         else:
             price = None
         available = True if results['Available'] == 'yes' else False
@@ -192,7 +192,7 @@ def get_domain_price(domain):
     price = None
     if 'Available' in results:
         if 'Price' in results:
-            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 49, '.2f')
+            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
 
     return price
 
