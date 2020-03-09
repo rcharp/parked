@@ -195,7 +195,7 @@
                             <!-- Old block with shadow -->
                             <!--bTorder-radius:12px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);-->
                             {% if domain is defined and domain is not none %}
-                                <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
+                                <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back</span></a></h4>
                             {% else %}
                                 <h4 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
                             {% endif %}
@@ -232,7 +232,7 @@
                                                                     </div>
                                                                 </form>
                                                             {% else %}
-                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
+                                                                <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available for purchase!</span></small><br />
                                                                 <form class="form-horizontal push-5-t" action="{{ url_for('user.checkout') }}" method="post">
                                                                     <div class="form-group">
                                                                         <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
@@ -704,6 +704,11 @@
                 var x = document.getElementsByClassName('col-sm-12')[0];
                 x.style.overflowX = 'auto';
             }
+        </script>
+        <script>
+        function GoBack() {
+            window.history.back();
+        }
         </script>
 
     </body>
