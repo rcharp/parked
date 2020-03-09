@@ -1,7 +1,6 @@
 from datetime import timedelta
 import os
 from celery.schedules import crontab
-from app.blueprints.api.domain.domain import get_backorder_count
 
 SITE_NAME = 'getparked.io'
 
@@ -59,7 +58,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_EXPIRES = 300
 CELERY_REDIS_MAX_CONNECTIONS = 20
 CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
-backorder_count = get_backorder_count()
 CELERYBEAT_SCHEDULE = {
     'dropping_domains': {
         'task': 'app.blueprints.api.tasks.generate_drops',
@@ -72,7 +70,7 @@ CELERYBEAT_SCHEDULE = {
     # Attempt to order the domains
     'order_domains': {
         'task': 'app.blueprints.api.tasks.order_domains',
-        'schedule': 5 * backorder_count  # every second after the previous one completes
+        'schedule': 10 # every 10 seconds after the previous one completes
     },
 
     # Delete successfully paid backorders
