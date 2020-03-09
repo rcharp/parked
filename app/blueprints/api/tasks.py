@@ -22,6 +22,12 @@ def retry_charges():
 
 
 @celery.task()
+def delete_backorders():
+    from app.blueprints.api.domain.domain import delete_backorders
+    delete_backorders()
+
+
+@celery.task()
 def pool_domains(limit):
     from app.blueprints.api.domain.download import pool_domains
     pool_domains(limit)

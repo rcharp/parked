@@ -71,11 +71,15 @@ CELERYBEAT_SCHEDULE = {
     'order_domains': {
         'task': 'app.blueprints.api.tasks.order_domains',
         'schedule': crontab(second="*/10")  # every 10 seconds
-        # 'schedule': crontab(minute="*/1") # every minute
-        # 'schedule': crontab(minute=0, hour="*/1") # every minute
     },
 
-    # Commented out until Live.
+    # Delete successfully paid backorders
+    # 'delete_backorders': {
+    #     'task': 'app.blueprints.api.tasks.delete_backorders',
+    #     'schedule': crontab(minute=0, hour=0) # every minute
+    # },
+
+    # Retry charges for secured domains that aren't paid.
     # 'retry_charges': {
     #     'task': 'app.blueprints.api.tasks.retry_charges',
     #     'schedule': crontab(minute=0, hour="*/1") # every hour

@@ -57,7 +57,7 @@ def check_domain(domain):
 def register_domain(domain, backordered=False):
     try:
         # Get the production level
-        production = True#current_app.config.get('PRODUCTION')
+        production = current_app.config.get('PRODUCTION')
 
         # Price limit for purchasing a domain
         limit = 60 if backordered else 99
@@ -70,8 +70,8 @@ def register_domain(domain, backordered=False):
         price = get_domain_price(domain)
 
         if price is None or Decimal(price) > limit:
-            pass
-            # return {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
+            # pass
+            return {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
 
         # The real deal. The domain will be registered if the app is being used live
         # Otherwise return True in the dev environment

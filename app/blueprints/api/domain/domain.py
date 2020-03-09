@@ -233,3 +233,15 @@ def retry_charges():
 
     except Exception as e:
         print_traceback(e)
+
+
+def delete_backorders():
+    try:
+        from app.blueprints.api.models.backorder import Backorder
+        backorders = Backorder.query.filter(and_(Backorder.paid.is_(True), Backorder.secured.is_(True))).all()
+
+        for backorder in backorders:
+            backorder.delete()
+
+    except Exception as e:
+        print_traceback(e)
