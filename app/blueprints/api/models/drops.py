@@ -38,7 +38,7 @@ class Drop(ResourceMixin, db.Model):
         :type query: str
         :return: SQLAlchemy filter
         """
-        if not query:
+        if query is None:
             return ''
 
         search_query = '%{0}%'.format(query)

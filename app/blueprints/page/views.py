@@ -8,7 +8,7 @@ import requests
 import ast
 import json
 import traceback
-from sqlalchemy import and_, exists
+from sqlalchemy import and_, exists, text
 from importlib import import_module
 import os
 import random
@@ -106,19 +106,27 @@ def view(domain, available):
 
 
 @page.route('/drops', methods=['GET','POST'])
+# @page.route('/drops', defaults={'pg': 1})
+# @page.route('/drops/pg/<int:pg>')
 @csrf.exempt
 def drops():
     from app.blueprints.api.api_functions import active_tlds
     from app.blueprints.api.domain.domain import get_drop_count
 
     drop_count = get_drop_count()
+
+    # Testing pagination
+    # from app.blueprints.api.models.drops import Drop
+    # domains = Drop.query.paginate(pg, 50, True)
+
     domains = list()
 
     with open('domains.json', 'r') as file:
         for line in file:
             domains.append(json.loads(line))
         domains.sort(key=lambda x: x['name'])
-        return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count)
+
+    return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count)
 
 
 @page.route('/terms')

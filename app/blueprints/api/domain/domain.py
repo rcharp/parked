@@ -247,3 +247,17 @@ def delete_backorders():
 
     except Exception as e:
         print_traceback(e)
+
+
+def write_drops_to_db(drops, limit):
+    from app.blueprints.api.models.drops import Drop
+
+    for drop in drops:
+        if db.session.query(Drop).count() > limit:
+            return
+
+        if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
+            d = Drop()
+            d.name = drop['name']
+            d.date_available = drop['date_available']
+            d.save()
