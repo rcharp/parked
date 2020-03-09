@@ -249,4 +249,8 @@ def delete_backorders():
 
 def get_backorder_count():
     from app.blueprints.api.models.backorder import Backorder
-    return db.session.query(Backorder).count()
+    from app.blueprints.page.date import get_utc_date_today_string
+
+    today = get_utc_date_today_string()
+    # return db.session.query(Backorder).count()
+    return db.session.query.filter(and_(Backorder.date_available == today, Backorder.secured.is_(False))).all().count()
