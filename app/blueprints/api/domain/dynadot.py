@@ -70,7 +70,9 @@ def register_domain(domain, backordered=False):
         price = get_domain_price(domain)
 
         if production and (price is None or Decimal(price) > limit):
-            return {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
+            result = {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
+            print(result)
+            return result
 
         # The real deal. The domain will be registered if the app is being used live
         # Otherwise return True in the dev environment
@@ -82,14 +84,19 @@ def register_domain(domain, backordered=False):
         r = requests.get(url=dynadot_url)
         results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
 
-        print(results)
         if 'SuccessCode' in results and results['SuccessCode'] == '0':
-            return {'domain': domain, 'success': True, 'code': 0}
+            result = {'domain': domain, 'success': True, 'code': 0}
+            print(result)
+            return result
 
-        return {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
+        result = {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
+        print(result)
+        return result
     except Exception as e:
         print_traceback(e)
-        return {'domain': domain, 'success': False, 'code': 2, 'reason': 'An exception occurred.'}
+        result = {'domain': domain, 'success': False, 'code': 2, 'reason': 'An exception occurred.'}
+        print(result)
+        return result
 
 
 def order_domains():
