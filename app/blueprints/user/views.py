@@ -297,7 +297,6 @@ def check_availability():
 
         if request.method == 'POST':
             if 'domain' not in request.args and 'domain' not in request.form:
-
                 flash("Something went wrong! Please try again.", "error")
                 return redirect(url_for('user.dashboard'))
 

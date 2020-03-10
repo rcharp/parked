@@ -27,30 +27,29 @@ from builtins import any
 def check_domain(domain):
 
     # Only send a request if it isn't already processing one
-    if is_processing():
-        check_domain(domain)
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=search&domain0=' + domain + "&show_price=1"
+    if not is_processing():
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=search&domain0=' + domain + "&show_price=1"
 
-    details = dict()
+        details = dict()
 
-    r = requests.get(url=dynadot_url)
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
+        r = requests.get(url=dynadot_url)
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
-    if 'Available' in results:
-        if 'Price' in results:
-            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
+        if 'Available' in results:
+            if 'Price' in results:
+                price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
+            else:
+                price = None
+            available = True if results['Available'] == 'yes' else False
+
+            # Testing purposes. Set Price to $1
+            # price = format(1.00, '.2f')
+
+            details.update({'name': domain, 'available': available, 'price': price})
+            return details
         else:
-            price = None
-        available = True if results['Available'] == 'yes' else False
-
-        # Testing purposes. Set Price to $1
-        # price = format(1.00, '.2f')
-
-        details.update({'name': domain, 'available': available, 'price': price})
-        return details
-    else:
-        return None
+            return None
 
 
 # Register's the domain. This will actually purchase the domain in Dynadot.
@@ -63,35 +62,34 @@ def register_domain(domain, backordered=False):
         limit = 60 if backordered else 99
 
         # Only send a request if it isn't already processing one
-        if is_processing():
-            register_domain(domain, backordered)
+        if not is_processing():
 
-        # Get the price of the domain, since we will only purchase domains under a certain price
-        price = get_domain_price(domain)
+            # Get the price of the domain, since we will only purchase domains under a certain price
+            price = get_domain_price(domain)
 
-        if production and (price is None or Decimal(price) > limit):
-            result = {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
+            if production and (price is None or Decimal(price) > limit):
+                result = {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
+                print(result)
+                return result
+
+            # The real deal. The domain will be registered if the app is being used live
+            # Otherwise return True in the dev environment
+            # if not production:
+            #     return "Domain " + domain + " was purchased."
+
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + '&duration=1'
+            r = requests.get(url=dynadot_url)
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
+
+            if 'SuccessCode' in results and results['SuccessCode'] == '0':
+                result = {'domain': domain, 'success': True, 'code': 0}
+                print(result)
+                return result
+
+            result = {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
             print(result)
             return result
-
-        # The real deal. The domain will be registered if the app is being used live
-        # Otherwise return True in the dev environment
-        # if not production:
-        #     return "Domain " + domain + " was purchased."
-
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=register&duration=1&domain=' + domain + '&duration=1'
-        r = requests.get(url=dynadot_url)
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
-
-        if 'SuccessCode' in results and results['SuccessCode'] == '0':
-            result = {'domain': domain, 'success': True, 'code': 0}
-            print(result)
-            return result
-
-        result = {'domain': domain, 'success': False, 'code': 1, 'reason': results['Status']}
-        print(result)
-        return result
     except Exception as e:
         print_traceback(e)
         result = {'domain': domain, 'success': False, 'code': 2, 'reason': 'An exception occurred.'}
@@ -139,161 +137,152 @@ def order_domains():
 
 def get_domain_expiration(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        get_domain_expiration(domain)
-    # Ensure that the domain can be registered
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
-    r = requests.get(url=dynadot_url)
+    if not is_processing():
+        # Ensure that the domain can be registered
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+        r = requests.get(url=dynadot_url)
 
-    if r.status_code == 200:
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
-        if 'DomainInfoResponse' in results and 'DomainInfoContent' in results['DomainInfoResponse'] and 'Domain' in results['DomainInfoResponse']['DomainInfoContent'] and 'Expiration' in results['DomainInfoResponse']['DomainInfoContent']['Domain']:
-            results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
+        if r.status_code == 200:
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            if 'DomainInfoResponse' in results and 'DomainInfoContent' in results['DomainInfoResponse'] and 'Domain' in results['DomainInfoResponse']['DomainInfoContent'] and 'Expiration' in results['DomainInfoResponse']['DomainInfoContent']['Domain']:
+                results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
 
-            expires = convert_timestamp_to_datetime_utc(float(results)/1000)
-            expires = get_dt_string(expires)
+                expires = convert_timestamp_to_datetime_utc(float(results)/1000)
+                expires = get_dt_string(expires)
 
-            return expires
-    return None
+                return expires
+        return None
 
 
 def get_domain_details(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        get_domain_details(domain)
-    # Ensure that the domain can be registered
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
-    r = requests.get(url=dynadot_url)
+    if not is_processing():
+        # Ensure that the domain can be registered
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+        r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))#  ['DomainInfoResponse']['DomainInfoContent']['Domain']
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))#  ['DomainInfoResponse']['DomainInfoContent']['Domain']
 
-    return results
+        return results
 
 
 def get_domain_contact_info(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        get_domain_contact_info(domain)
-    # Ensure that the domain can be registered
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
-    r = requests.get(url=dynadot_url)
+    if not is_processing():
+        # Ensure that the domain can be registered
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=domain_info&domain=' + domain
+        r = requests.get(url=dynadot_url)
 
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Whois']
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Whois']
 
-    return results
+        return results
 
 
 def get_domain_price(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        get_domain_price(domain)
+    if not is_processing():
 
-    api_key = current_app.config.get('DYNADOT_API_KEY')
-    dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=search&domain0=' + domain + "&show_price=1"
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=search&domain0=' + domain + "&show_price=1"
 
-    r = requests.get(url=dynadot_url)
-    results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
+        r = requests.get(url=dynadot_url)
+        results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
 
-    price = None
-    if 'Available' in results:
-        if 'Price' in results:
-            price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
+        price = None
+        if 'Available' in results:
+            if 'Price' in results:
+                price = format(Decimal(re.findall("\d*\.?\d+", results['Price'])[0]) + 29, '.2f')
 
-    return price
+        return price
 
 
 # Not Used.
 def backorder_request(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        backorder_request(domain)
-    try:
-        # "Pending Delete" is in the domain's status, so it can be backordered now
-        pending_delete = is_pending_delete(domain)
-        if pending_delete:
-            api_key = current_app.config.get('DYNADOT_API_KEY')
-            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
-            r = requests.get(url=dynadot_url)
+    if not is_processing():
+        try:
+            # "Pending Delete" is in the domain's status, so it can be backordered now
+            pending_delete = is_pending_delete(domain)
+            if pending_delete:
+                api_key = current_app.config.get('DYNADOT_API_KEY')
+                dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=add_backorder_request&domain=' + domain
+                r = requests.get(url=dynadot_url)
 
-            results = json.loads(json.dumps(xmltodict.parse(r.text)))
-            response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
-            # print(response)
+                results = json.loads(json.dumps(xmltodict.parse(r.text)))
+                response = results['AddBackorderRequestResponse']['AddBackorderRequestHeader']
+                # print(response)
 
-            return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
+                return response['SuccessCode'] == '0' or 'Error' in response and 'is already on your backorder request list' in response['Error']
 
-        # Still create the backorder in the db, but set backorder.pending_delete to False
+            # Still create the backorder in the db, but set backorder.pending_delete to False
+            return False
+        except Exception as e:
+            print_traceback(e)
+
         return False
-    except Exception as e:
-        print_traceback(e)
-
-    return False
 
 
 def delete_backorder_request(domain):
     # Only send a request if it isn't already processing one
-    if is_processing():
-        delete_backorder_request(domain)
-    if not active_backorders(domain):
-        try:
-            api_key = current_app.config.get('DYNADOT_API_KEY')
-            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
-            r = requests.get(url=dynadot_url)
-            return True
-        except Exception as e:
-            print_traceback(e)
-            return False
-    return False
+    if not is_processing():
+        if not active_backorders(domain):
+            try:
+                api_key = current_app.config.get('DYNADOT_API_KEY')
+                dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=delete_backorder_request&domain=' + domain
+                r = requests.get(url=dynadot_url)
+                return True
+            except Exception as e:
+                print_traceback(e)
+                return False
+        return False
 
 
 def set_whois_info(domain):
-    if is_processing():
-        set_whois_info(domain)
-    try:
-        contact = '602028'
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=set_whois&domain=' + domain + "&registrant_contact=" + contact + "&admin_contact=" + contact + "&technical_contact=" + contact + "&billing_contact=" + contact
-        r = requests.get(url=dynadot_url)
+    if not is_processing():
+        try:
+            contact = '602028'
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=set_whois&domain=' + domain + "&registrant_contact=" + contact + "&admin_contact=" + contact + "&technical_contact=" + contact + "&billing_contact=" + contact
+            r = requests.get(url=dynadot_url)
 
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
-        return results['SetWhoisResponse']['SetWhoisHeader']['SuccessCode'] == '0'
-    except Exception as e:
-        print_traceback(e)
-        return None
+            return results['SetWhoisResponse']['SetWhoisHeader']['SuccessCode'] == '0'
+        except Exception as e:
+            print_traceback(e)
+            return None
 
 
 def list_contacts():
-    if is_processing():
-        list_contacts()
-    try:
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=contact_list'
-        r = requests.get(url=dynadot_url)
+    if not is_processing():
+        try:
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=contact_list'
+            r = requests.get(url=dynadot_url)
 
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
-        return results
-    except Exception as e:
-        print_traceback(e)
-        return None
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            return results
+        except Exception as e:
+            print_traceback(e)
+            return None
 
 
 def list_backorder_requests():
-    if is_processing():
-        list_backorder_requests()
-    try:
-        api_key = current_app.config.get('DYNADOT_API_KEY')
-        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=backorder_request_list'
-        r = requests.get(url=dynadot_url)
+    if not is_processing():
+        try:
+            api_key = current_app.config.get('DYNADOT_API_KEY')
+            dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=backorder_request_list'
+            r = requests.get(url=dynadot_url)
 
-        results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
 
-        return results
-    except Exception as e:
-        print_traceback(e)
-        return None
+            return results
+        except Exception as e:
+            print_traceback(e)
+            return None
 
 
 def is_processing():
