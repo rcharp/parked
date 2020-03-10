@@ -53,7 +53,7 @@ def check_domain(domain):
 
 
 # Register's the domain. This will actually purchase the domain in Dynadot.
-def register_domain(domain, backordered=False):
+def register_domain(domain, available, backordered=False):
     try:
         # Get the production level
         production = current_app.config.get('PRODUCTION')
@@ -68,6 +68,15 @@ def register_domain(domain, backordered=False):
             price = get_domain_price(domain)
 
             if production and (price is None or Decimal(price) > limit):
+                from app.blueprints.api.domain.domain import get_registered_date, lost_backorders
+
+                if get_registered_date(domain) >= get_utc_date(available):
+                    result = {'domain': domain, 'success': False, 'code': 4, 'reason': 'Domain has been reregistered.'}
+                    print(result)
+
+                    # This backorder has been lost.
+                    lost_backorders(domain)
+                    return result
                 result = {'domain': domain, 'success': False, 'code': 3, 'reason': 'No price, or too expensive.'}
                 print(result)
                 return result
@@ -107,12 +116,12 @@ def order_domains():
 
     # Get the backorders that are dropping today
     today = get_utc_date_today_string()
-    backorders = Backorder.query.filter(and_(Backorder.date_available == today, Backorder.secured.is_(False))).all()
+    backorders = Backorder.query.filter(and_(Backorder.date_available == today, Backorder.secured.is_(False), Backorder.lost.is_(False))).all()
 
     # Try to register the backorders
     # If successful, change the 'success' attribute on the backorder in the db
     for backorder in backorders:
-        result = register_domain(backorder.domain_name, True)
+        result = register_domain(backorder.domain_name, backorder.date_available, True)
         if result['success']:
             backorder.secured = True
 
@@ -286,7 +295,6 @@ def list_backorder_requests():
 
 
 def is_processing():
-    time.sleep(5)
     api_key = current_app.config.get('DYNADOT_API_KEY')
     dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=is_processing'
     r = requests.get(url=dynadot_url)

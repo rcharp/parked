@@ -350,7 +350,7 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        r = register(domain.name, True)
+        r = register(domain.name, domain.date_available, True)
         if r['success']:
             domain.registered = True
             domain.expires = get_expiry(domain)
@@ -611,7 +611,7 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain.
-            if register(domain)['success']:
+            if register(domain, '1/1/2020')['success']:
 
                 # Set the Whois info to GetParked.io
                 set_whois_info(domain)

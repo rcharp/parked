@@ -83,11 +83,26 @@ def get_domain_details(domain):
 
         # Remove the raw data
         del details['raw']
+        print(details)
 
         return details
     except Exception as e:
         print_traceback(e)
         return None
+
+
+def get_registered_date(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+        details = pythonwhois.get_whois(domain)
+
+        return details['creation_date']
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
 
 
 # Get WhoIs domain availability
@@ -253,6 +268,19 @@ def delete_backorders():
 
         for backorder in backorders:
             backorder.delete()
+
+    except Exception as e:
+        print_traceback(e)
+
+
+def lost_backorders(domain):
+    try:
+        from app.blueprints.api.models.backorder import Backorder
+        backorders = Backorder.query.filter(and_(Backorder.domain_name == domain, Backorder.secured.is_(False))).all()
+
+        for backorder in backorders:
+            backorder.lost = True
+            backorder.save()
 
     except Exception as e:
         print_traceback(e)
