@@ -22,7 +22,7 @@ def home():
         return redirect(url_for('user.dashboard'))
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
-    dropping = get_dropping_domains()
+    dropping = get_dropping_domains(40)
     drop_count = get_drop_count()
 
     from app.blueprints.api.api_functions import active_tlds
@@ -112,21 +112,22 @@ def view(domain, available):
 def drops():
     from app.blueprints.api.api_functions import active_tlds
     from app.blueprints.api.domain.domain import get_drop_count
-
-    drop_count = get_drop_count()
+    from app.blueprints.api.domain.filestack import get_content
 
     # Testing pagination
     # from app.blueprints.api.models.drops import Drop
     # domains = Drop.query.paginate(pg, 50, True)
 
-    domains = list()
+    # domains = list()
+    #
+    # with open('domains.json', 'r') as file:
+    #     for line in file:
+    #         domains.append(json.loads(line))
+    #     domains.sort(key=lambda x: x['name'])
+    domains = get_content()
+    drop_count = '{:,}'.format(len(domains))
 
-    with open('domains.json', 'r') as file:
-        for line in file:
-            domains.append(json.loads(line))
-        domains.sort(key=lambda x: x['name'])
-
-    return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count)
+    return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count, current_user=current_user)
 
 
 @page.route('/terms')

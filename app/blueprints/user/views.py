@@ -265,11 +265,11 @@ def dashboard():
     tlds = active_tlds()
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
-    dropping = get_dropping_domains()
+    dropping = get_dropping_domains(40)
     drop_count = get_drop_count()
 
     # Shuffle the domains to spice things up a little
-    random.shuffle(dropping)
+    # random.shuffle(dropping)
 
     # Sort the searches by date
     searched.sort(key=lambda x: x.created_on, reverse=True)

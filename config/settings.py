@@ -70,7 +70,7 @@ CELERYBEAT_SCHEDULE = {
     # Attempt to order the domains
     'order_domains': {
         'task': 'app.blueprints.api.tasks.order_domains',
-        'schedule': timedelta(minutes=10) # every second after the previous one completes
+        'schedule': timedelta(seconds=10) # every second after the previous one completes
     },
 
     # Delete successfully paid backorders
@@ -121,6 +121,12 @@ DYNADOT_API_KEY = os.environ.get('DYNADOT_API_KEY', None)
 
 # JSONBIN
 JSONBIN_API_KEY = os.environ.get('JSONBIN_API_KEY', None)
+
+# JSONBIN
+FILESTACK_API_KEY = os.environ.get('FILESTACK_API_KEY', None)
+
+# PASTEBIN
+PASTEBIN_API_KEY = os.environ.get('PASTEBIN_API_KEY', None)
 
 # Godaddy
 GODADDY_TEST_API_KEY = os.environ.get('GODADDY_TEST_API_KEY', None)

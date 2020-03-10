@@ -60,6 +60,7 @@ def test(domain):
 
     # TODO: This WILL order the domains. Be very careful.
     # results = order_domains()
+
     results = generate_drops()
     return results
 

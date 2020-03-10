@@ -135,27 +135,28 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains():
-    domains = list()
-    counter = 0
-    with open('domains.json', 'r') as file:
-        lines = file.readlines()
-        while counter < 40:
-            domains.append(json.loads(random.choice(lines)))
-            counter += 1
+def get_dropping_domains(limit):
+    # domains = list()
+    # counter = 0
+    # with open('domains.json', 'r') as file:
+    #     lines = file.readlines()
+    #     while counter < 40:
+    #         domains.append(json.loads(random.choice(lines)))
+    #         counter += 1
 
-    # from app.blueprints.api.models.drops import Drop
-    # drops = Drop.query.order_by(func.random()).limit(40).all()
-    # for drop in drops:
-    #     domains.append({'name': drop.name, 'date_available': drop.date_available})
+    from app.blueprints.api.domain.filestack import get_content
+    domains = get_content(limit)
+    # return random.sample(domains, k=40)
     return domains
 
 
 def get_drop_count():
-    with open('domains.json', 'r') as file:
-        for i, l in enumerate(file):
-            pass
-        return '{:,}'.format(i + 1)
+    from app.blueprints.api.domain.filestack import get_content
+    return get_content(get_count=True)
+    # with open('domains.json', 'r') as file:
+    #     for i, l in enumerate(file):
+    #         pass
+    #     return '{:,}'.format(i + 1)
 
 
 def delete_dropping_domains():
@@ -208,7 +209,13 @@ def generate_drops():
         #         return True
 
         if pool or park:
-            return True
+            with open('domains.json', 'r') as output:
+
+                # upload to Filestack
+                from app.blueprints.api.domain.filestack import upload, get_content
+                count = count_lines(output)
+                upload(output, count)
+                return True
     except Exception as e:
         print_traceback(e)
         return False
@@ -261,3 +268,9 @@ def write_drops_to_db(drops, limit):
             d.name = drop['name']
             d.date_available = drop['date_available']
             d.save()
+
+
+def count_lines(file):
+    for i, l in enumerate(file):
+        pass
+    return i + 1

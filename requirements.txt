@@ -45,6 +45,7 @@ repos==0.0.1
 pprint==0.1
 
 # APIs
+filestack-python==3.0.1
 
 # Extensions.
 flask-debugtoolbar==0.10.1
