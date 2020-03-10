@@ -87,16 +87,18 @@ def view(domain, available):
     return render_template('page/view.html', domain=domain, available=available)
 
 
+# @page.route('/drops/<tld>/<pg>', methods=['GET','POST'])
 @page.route('/drops', methods=['GET','POST'])
 @csrf.exempt
+# def drops(tld, pg):
 def drops():
     from app.blueprints.api.api_functions import active_tlds
-    from app.blueprints.api.domain.domain import get_drop_count, get_dropping_domains
-    from app.blueprints.api.domain.filestack import get_content
+    from app.blueprints.api.domain.domain import get_dropping_domains
 
     domains, drop_count = get_dropping_domains()
+    # listing = PageResult(domains, tld, pg)
 
-    return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count, current_user=current_user)
+    return render_template('user/drops.html', listing=None, domains=domains, tlds=active_tlds(), drop_count=drop_count, current_user=current_user)
 
 
 @page.route('/terms')
@@ -134,3 +136,16 @@ def webhook(app):
         return call_webhook(request)
     except Exception:
         return json.dumps({'success': False}), 500, {'ContentType': 'application/json'}
+
+
+# Pagination for /drops route
+class PageResult:
+    def __init__(self, data, tld, page = 1, number = 20):
+        self.__dict__ = dict(zip(['data', 'tld', 'page', 'number'], [data, tld, page, number]))
+        self.full_listing = [self.data[i:i+number] for i in range(0, len(self.data), number)]
+    def __iter__(self):
+        for i in self.full_listing[self.page-1]:
+            yield i
+    def __repr__(self): #used for page linking
+        # return "/drops/{0}/{1}".format(self.tld, str(self.page+1)) #view the next page
+        return '/drops/' + str(self.tld) + '/' + str(int(self.page)+1)

@@ -217,6 +217,7 @@
                                                 <div style="width:100%;">
                                                     <!-- Dropping Domains list -->
                                                     <div style="font-size:1.1em;min-width:350px;display:block;"><br /><br />
+{#                                                        {% if listing.data|tld_filter(tld)|length > 0 %}#}
                                                         {% if domains|tld_filter(tld)|length > 0 %}
                                                         <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;padding-left:0;">
                                                             <input type="search" class="form-control search" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
@@ -234,6 +235,7 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="{{ tld_name }}_nav_body">
+                                                                {#{% for domain in listing.data|tld_filter(tld) %}#}
                                                                 {% for domain in domains|tld_filter(tld) %}
                                                                 {% set domain_name = domain['name'] %}
                                                                 {% set available = domain['date_available']|replace('/', '-') %}
@@ -246,7 +248,6 @@
                                                                     <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
                                                                 </tr>
                                                                 {% endfor %}
-                                                                {#{{ items.paginate(domains|tld_filter(tld)) }}#}
                                                             </tbody>
                                                         </table>
                                                         <script type="text/javascript">
@@ -264,6 +265,14 @@
                                                                 }
                                                             }
                                                         </script>
+{#                                                            <ul class="pagination">#}
+{#                                                              {%if listing.page == 1%}#}
+{#                                                              <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>#}
+{#                                                              {%else%}#}
+{#                                                                  <li class="page-item"><a class="page-link" href="/drops/{{ tld }}/{{listing.page|int - 1}}">Previous</a></li>#}
+{#                                                               {%endif%}#}
+{#                                                              <li class="page-item"><a class="page-link" href="{{listing}}">Next</a></li>#}
+{#                                                            </ul>#}
 
 
 
