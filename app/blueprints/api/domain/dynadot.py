@@ -294,9 +294,11 @@ def is_processing():
     r = requests.get(url=dynadot_url)
 
     results = json.loads(json.dumps(xmltodict.parse(r.text)))
-    response = results['Response']['ResponseHeader']['ResponseMsg']
+    if results is not None and 'Response' in results and 'ResponseHeader' in results['Response'] and 'ResponseMsg' in results['Response']['ResponseHeader']:
+        response = results['Response']['ResponseHeader']['ResponseMsg']
+        return response == 'yes'
 
-    return response == 'yes'
+    return True
 
 
 # Helper methods -------------------------------------------------------------------------------
