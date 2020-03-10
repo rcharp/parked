@@ -135,28 +135,38 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains(limit):
-    # domains = list()
-    # counter = 0
-    # with open('domains.json', 'r') as file:
-    #     lines = file.readlines()
-    #     while counter < 40:
-    #         domains.append(json.loads(random.choice(lines)))
-    #         counter += 1
+def get_dropping_domains(limit=None):
+    domains = list()
+    counter = 0
 
-    from app.blueprints.api.domain.filestack import get_content
-    domains = get_content(limit)
-    # return random.sample(domains, k=40)
-    return domains
+    # If the file exists, pull the drops from there
+    if path.exists("domains.json"):
+        with open('domains.json', 'r') as file:
+            lines = file.readlines()
+
+            # If using a limit for the homepage or dashboard
+            if limit:
+                while counter < limit:
+                    domains.append(json.loads(random.choice(lines)))
+                    counter += 1
+                return domains, '{:,}'.format(len(lines))
+
+            # Otherwise return all drops from the file
+            for line in lines:
+                domains.append(json.loads(line))
+            domains.sort(key=lambda x: x['name'])
+            return domains, '{:,}'.format(len(domains))
+
+    # If there is no file, then generate all drops
+    else:
+        from app.blueprints.api.domain.filestack import get_content
+        domains = get_content(limit)
+        return domains, '{:,}'.format(len(domains))
 
 
 def get_drop_count():
     from app.blueprints.api.domain.filestack import get_content
     return get_content(get_count=True)
-    # with open('domains.json', 'r') as file:
-    #     for i, l in enumerate(file):
-    #         pass
-    #     return '{:,}'.format(i + 1)
 
 
 def delete_dropping_domains():
@@ -199,14 +209,6 @@ def generate_drops():
         # Get the domains from the Pool list and the Park list
         pool = pool_domains(limit)  # .delay()
         park = park_domains(limit)  # .delay()
-
-        # domains = pool + park
-
-        # We got at least one domain
-        # if len(domains) > 0:
-        #     if delete_dropping_domains():
-        #         set_dropping_domains(domains, limit * tld_length())
-        #         return True
 
         if pool or park:
             with open('domains.json', 'r') as output:

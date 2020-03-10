@@ -261,12 +261,11 @@ def dashboard():
     test = not current_app.config.get('PRODUCTION')
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
-    searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
+    searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).order_by(SearchedDomain.id.desc()).limit(20).all()
     tlds = active_tlds()
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
-    dropping = get_dropping_domains(40)
-    drop_count = get_drop_count()
+    dropping, drop_count = get_dropping_domains(40)
 
     # Shuffle the domains to spice things up a little
     # random.shuffle(dropping)
@@ -280,7 +279,7 @@ def dashboard():
                            searched=searched,
                            tlds=tlds,
                            dropping=dropping,
-                           drop_count=drop_count,)
+                           drop_count=drop_count)
 
 
 # Domain Functions -------------------------------------------------------------------

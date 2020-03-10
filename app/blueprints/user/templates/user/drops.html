@@ -219,7 +219,7 @@
                                                     <div style="font-size:1.1em;min-width:350px;display:block;"><br /><br />
                                                         {% if domains|tld_filter(tld)|length > 0 %}
                                                         <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;padding-left:0;">
-                                                            <input type="search" class="form-control search" id="search" name="search" autofocus onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
+                                                            <input type="search" class="form-control search" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
                                                         </div>
                                                             <h4 class="font-w400" style="margin-bottom:30px;">Showing <span style="color:#009fff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#009fff">{{ drop_count }}</span> total domains</h4>
                                                         <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
@@ -468,6 +468,10 @@
             });
         }
     </script>
-
+    <script>
+        function GoBack() {
+            window.history.back();
+        }
+    </script>
     </body>
 </html>

@@ -18,18 +18,15 @@ page = Blueprint('page', __name__, template_folder='templates')
 
 @page.route('/')
 def home():
+    test = not current_app.config.get('PRODUCTION')
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
-    dropping = get_dropping_domains(40)
-    drop_count = get_drop_count()
-
     from app.blueprints.api.api_functions import active_tlds
-    test = not current_app.config.get('PRODUCTION')
 
-    # Shuffle the domains to spice things up a little
-    # random.shuffle(dropping)
+    dropping, drop_count = get_dropping_domains(40)
+
     return render_template('page/index.html',
                            plans=settings.STRIPE_PLANS,
                            dropping=dropping,
@@ -88,44 +85,16 @@ def view(domain, available):
     from app.blueprints.api.api_functions import save_search
     save_search(domain, available, available, id)
     return render_template('page/view.html', domain=domain, available=available)
-    # if request.method == 'POST':
-    #     from app.blueprints.api.api_functions import save_search
-    #     if 'domain' in request.form and 'available' in request.form:
-    #
-    #         if current_user is not None and current_user.id is not None:
-    #             id = current_user.id
-    #         else:
-    #             id = 3
-    #
-    #         domain = request.form['domain']
-    #         available = request.form['available']
-    #         save_search(domain, available, available, id)
-    #         return render_template('page/view.html', domain=domain, available=available)
-    #
-    # return redirect(url_for('page.home'))
 
 
 @page.route('/drops', methods=['GET','POST'])
-# @page.route('/drops', defaults={'pg': 1})
-# @page.route('/drops/pg/<int:pg>')
 @csrf.exempt
 def drops():
     from app.blueprints.api.api_functions import active_tlds
-    from app.blueprints.api.domain.domain import get_drop_count
+    from app.blueprints.api.domain.domain import get_drop_count, get_dropping_domains
     from app.blueprints.api.domain.filestack import get_content
 
-    # Testing pagination
-    # from app.blueprints.api.models.drops import Drop
-    # domains = Drop.query.paginate(pg, 50, True)
-
-    # domains = list()
-    #
-    # with open('domains.json', 'r') as file:
-    #     for line in file:
-    #         domains.append(json.loads(line))
-    #     domains.sort(key=lambda x: x['name'])
-    domains = get_content()
-    drop_count = '{:,}'.format(len(domains))
+    domains, drop_count = get_dropping_domains()
 
     return render_template('user/drops.html', domains=domains, tlds=active_tlds(), drop_count=drop_count, current_user=current_user)
 

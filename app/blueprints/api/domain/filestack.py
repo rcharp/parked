@@ -31,7 +31,7 @@ def get_content(limit=None, get_count=False):
     try:
         handle = f.handle
         filelink = Filelink(handle)
-        domains = list()#
+        domains = list()
 
         if get_count:
             return f.count
