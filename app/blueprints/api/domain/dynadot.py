@@ -190,7 +190,7 @@ def get_domain_price(domain):
 
         r = requests.get(url=dynadot_url)
         results = json.loads(json.dumps(xmltodict.parse(r.text)))['Results']['SearchResponse']['SearchHeader']
-
+        print(results)
         price = None
         if 'Available' in results:
             if 'Price' in results:
