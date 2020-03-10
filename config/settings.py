@@ -70,7 +70,7 @@ CELERYBEAT_SCHEDULE = {
     # Attempt to order the domains
     'order_domains': {
         'task': 'app.blueprints.api.tasks.order_domains',
-        'schedule': timedelta(seconds=10) # every second after the previous one completes
+        'schedule': timedelta(seconds=1) # every second after the previous one completes
     },
 
     # Delete successfully paid backorders
