@@ -82,6 +82,7 @@ def register_domain(domain, backordered=False):
         r = requests.get(url=dynadot_url)
         results = json.loads(json.dumps(xmltodict.parse(r.text)))['RegisterResponse']['RegisterHeader']
 
+        print(results)
         if 'SuccessCode' in results and results['SuccessCode'] == '0':
             return {'domain': domain, 'success': True, 'code': 0}
 
