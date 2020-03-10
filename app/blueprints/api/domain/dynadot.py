@@ -70,7 +70,7 @@ def register_domain(domain, available, backordered=False):
             if production and (price is None or Decimal(price) > limit):
                 from app.blueprints.api.domain.domain import get_registered_date, lost_backorders
 
-                if get_registered_date(domain) >= get_utc_date(available):
+                if get_registered_date(domain).date() >= get_utc_date(available):
                     result = {'domain': domain, 'success': False, 'code': 4, 'reason': 'Domain has been reregistered.'}
                     print(result)
 

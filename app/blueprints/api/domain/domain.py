@@ -97,7 +97,7 @@ def get_registered_date(domain):
         domain = ext.registered_domain
         details = pythonwhois.get_whois(domain)
 
-        return details['creation_date']
+        return details['creation_date'][0]
     except Exception as e:
         print_traceback(e)
         return None
