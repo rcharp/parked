@@ -83,7 +83,6 @@ def get_domain_details(domain):
 
         # Remove the raw data
         del details['raw']
-        print(details)
 
         return details
     except Exception as e:
@@ -101,8 +100,6 @@ def get_registered_date(domain):
     except Exception as e:
         print_traceback(e)
         return None
-
-
 
 
 # Get WhoIs domain availability
