@@ -222,7 +222,8 @@
                                                         <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;padding-left:0;">
                                                             <input type="search" class="form-control search" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
                                                         </div>
-                                                            <h4 class="font-w400" style="margin-bottom:30px;">Showing <span style="color:#009fff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#009fff">{{ drop_count }}</span> total domains</h4>
+                                                            <h4 class="font-w400" style="margin-bottom:50px;">Showing <span style="color:#009fff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#009fff">{{ drop_count }}</span> total domains</h4>
+                                                            <small class="font-w400"><i>Last updated: {{ last_updated|pretty_date_filter }}</i></small>
                                                         <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
                                                                 <tr>
