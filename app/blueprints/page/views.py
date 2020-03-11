@@ -35,6 +35,14 @@ def home():
                            tlds=active_tlds())
 
 
+@page.route('/<domain>/', methods=['GET'])
+@csrf.exempt
+def parked(domain):
+    if domain is not None:
+        domain = domain.replace('-','.')
+        return render_template('page/domain.html', domain=domain)
+
+
 @page.route('/availability', methods=['GET','POST'])
 @csrf.exempt
 def availability():
@@ -42,7 +50,6 @@ def availability():
 
         from app.blueprints.api.api_functions import save_search
         from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain
-        from app.blueprints.api.models.drops import Drop
 
         domain_name = get_domain(request.form['domain'])
         if domain_name is None:
