@@ -39,8 +39,11 @@ def home():
 @csrf.exempt
 def parked(domain):
     if domain is not None:
-        domain = domain.replace('-','.')
-        return render_template('page/domain.html', domain=domain)
+        from app.blueprints.api.models.domains import Domain
+        if db.session.query(exists().where(and_(Domain.name == domain, Domain.registered.is_(True)))).scalar():
+            return render_template('page/domain.html', domain=domain)
+
+    return redirect(url_for('page.home'))
 
 
 @page.route('/availability', methods=['GET','POST'])
