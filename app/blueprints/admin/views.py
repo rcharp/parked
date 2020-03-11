@@ -7,6 +7,7 @@ from flask import (
     render_template)
 from flask_login import login_required, current_user
 from sqlalchemy import text
+from app.extensions import csrf
 from app.blueprints.admin.models import Dashboard
 from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.user.decorators import role_required
@@ -47,6 +48,7 @@ def dashboard():
 
 @admin.route('/update_domains', methods=['GET','POST'])
 @login_required
+@csrf.exempt
 def update_domains():
     if request.method == 'POST':
         try:
