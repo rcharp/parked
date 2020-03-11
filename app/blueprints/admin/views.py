@@ -8,6 +8,7 @@ from flask import (
 from flask_login import login_required, current_user
 from sqlalchemy import text
 from app.blueprints.admin.models import Dashboard
+from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.user.decorators import role_required
 from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.invoice import Invoice
@@ -42,6 +43,30 @@ def dashboard():
                            group_and_count_plans=group_and_count_plans,
                            # group_and_count_coupons=group_and_count_coupons,
                            group_and_count_users=group_and_count_users)
+
+
+@admin.route('/update_domains', methods=['GET','POST'])
+@login_required
+def update_domains():
+    if request.method == 'POST':
+        try:
+            from app.blueprints.api.domain.domain import generate_drops
+            results = generate_drops()
+
+            if results is not None:
+                flash("Drops generatetd succesfully.", 'success')
+            else:
+                flash("Drops not generatetd succesfully.", 'error')
+
+            return redirect(url_for('user.dashboard'))
+        except Exception as e:
+            print_traceback(e)
+            flash("There was an error.", 'error')
+            flash(e, 'error')
+            return redirect(url_for('user.dashboard'))
+    else:
+        flash("Test wasn't run.", 'error')
+        return redirect(url_for('user.dashboard'))
 
 
 # Users -----------------------------------------------------------------------
