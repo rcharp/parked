@@ -282,6 +282,8 @@
                                     </form><br />
                                 {% endif %}#}
 
+                                <br /><br />
+                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->

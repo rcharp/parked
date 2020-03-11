@@ -41,6 +41,9 @@ def pool_domains(limit):
                     for line in lines:
                         if tld in line:
                             d = line.split(',')
+                            # Ignore domains with double hyphens
+                            if '--' in d[0]:
+                                continue
                             # domain_list.append({'name': d[0], 'date_available': d[1].replace(' 12:00:00 AM', '')})
                             json.dump({'name': d[0], 'date_available': d[1].replace(' 12:00:00 AM', '')}, output)
                             output.write(os.linesep)
@@ -50,10 +53,6 @@ def pool_domains(limit):
                         # Add a max of (limit) domains per TLD to the list
                         if counter == limit:
                             break
-
-                # upload to Filestack
-                # from app.blueprints.api.domain.filestack import upload
-                # upload(output)
             return True
     except Exception as e:
         print_traceback(e)
@@ -74,8 +73,6 @@ def park_domains(limit):
 
         for tld in tlds:
             domains = [x for x in d if x['name'].endswith(tld)]
-            # domains = [{'name': x['name'], 'date_available': convert_string_dates(x['date_available'])} for x in d if x['name'].endswith(tld)]
-            # create(domains)
 
             with open('domains.json', 'a') as output:
                 counter = 0
