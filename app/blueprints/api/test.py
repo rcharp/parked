@@ -14,7 +14,8 @@ from app.blueprints.api.domain.dynadot import (
     list_contacts,
     set_whois_info,
     get_whois,
-    order_domains
+    order_domains,
+    forward_domain
 )
 
 from celery.result import AsyncResult
@@ -47,7 +48,7 @@ def test(domain):
     # results = is_pending_delete('digitalcard.io')
     # results = backorder_request('digitalcard.io')
     # results = register_domain('rickycharpentier3.io')
-    results = get_domain_details('upload.io')
+    # results = get_domain_details('upload.io')
     # results = list_backorder_requests()
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
@@ -62,6 +63,8 @@ def test(domain):
     # results = order_domains()
 
     # results = generate_drops()
+
+    results = forward_domain('photocamp.io')
     return results
 
 

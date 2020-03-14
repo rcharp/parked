@@ -132,6 +132,7 @@ def order_domains():
                     backorder.paid = True
             else:
                 backorder.paid = True
+                forward_domain(backorder.domain_name)
 
             backorder.save()
 
@@ -143,6 +144,26 @@ def order_domains():
 
     # Return the successful backorders
     return results
+
+
+def forward_domain(domain):
+    # Only send a request if it isn't already processing one
+    if not is_processing():
+        api_key = current_app.config.get('DYNADOT_API_KEY')
+        forward_url = requests.utils.quote('https://www.getparked.io/' + domain)
+        dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=set_forwarding&domain=' + domain + '&forward_url=' + forward_url
+        r = requests.get(url=dynadot_url)
+
+        if r.status_code == 200:
+            results = json.loads(json.dumps(xmltodict.parse(r.text)))
+            if 'DomainInfoResponse' in results and 'DomainInfoContent' in results['DomainInfoResponse'] and 'Domain' in results['DomainInfoResponse']['DomainInfoContent'] and 'Expiration' in results['DomainInfoResponse']['DomainInfoContent']['Domain']:
+                results = json.loads(json.dumps(xmltodict.parse(r.text)))['DomainInfoResponse']['DomainInfoContent']['Domain']['Expiration']
+
+                expires = convert_timestamp_to_datetime_utc(float(results)/1000)
+                expires = get_dt_string(expires)
+
+                return expires
+        return None
 
 
 def get_domain_expiration(domain):
