@@ -124,15 +124,15 @@
                                     </a>
                                 </li>
                                 <li>
-    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-        <i class="si si-grid pull-right"></i>My Dashboard
-    </a>
-</li>
-<li>
-    <a tabindex="-1" href="{{ url_for('page.drops') }}">
-        <i class="si si-globe pull-right"></i>All Domains
-    </a>
-</li>
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-grid pull-right"></i>My Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+                                        <i class="si si-globe pull-right"></i>All Domains
+                                    </a>
+                                </li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
@@ -153,6 +153,16 @@
                     </li>
                 </ul>
                 <!-- END Header Navigation Right -->
+                {% else %}
+                    <div class="nav-header pull-right">
+                        <a href="{{ url_for('user.signup') }}">
+                          <span style="font-weight:200;font-size:20px;color:#009fff;">Sign up</span>
+                        </a>
+                        &nbsp;<span style="font-size:20px;">/</span>&nbsp;
+                        <a href="{{ url_for('user.login') }}">
+                          <span style="font-weight:200;font-size:20px;color:#009fff;">Login</span>
+                        </a>
+                    </div>
                 {% endif %}
 
                 <!-- Header Navigation Left -->
