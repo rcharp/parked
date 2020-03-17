@@ -13,7 +13,7 @@ from app.blueprints.user.models import User
 
 celery = create_celery_app()
 
-send = False
+send = True
 
 
 @celery.task()
