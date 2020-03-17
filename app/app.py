@@ -348,6 +348,11 @@ def site_color_filter(arg):
 
 
 def tld_filter(arg, k):
+
+    # Testing pagination
+    # items = [x for x in arg.items if x.name.endswith(k)]
+    # arg.items = items
+    # return arg
     return [x for x in arg if x['name'].endswith(k)]
 
 

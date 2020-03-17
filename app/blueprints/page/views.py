@@ -8,7 +8,7 @@ import requests
 import ast
 import json
 import traceback
-from sqlalchemy import and_, exists
+from sqlalchemy import and_, exists, text
 from importlib import import_module
 import os
 import random
@@ -18,26 +18,32 @@ page = Blueprint('page', __name__, template_folder='templates')
 
 @page.route('/')
 def home():
+    test = not current_app.config.get('PRODUCTION')
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
 
     from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
-    dropping = get_dropping_domains()
-
-    from app.blueprints.api.models.drops import Drop
-    drop_count = get_drop_count()
-
     from app.blueprints.api.api_functions import active_tlds
-    test = not current_app.config.get('PRODUCTION')
 
-    # Shuffle the domains to spice things up a little
-    # random.shuffle(dropping)
+    dropping, drop_count = get_dropping_domains(40)
+
     return render_template('page/index.html',
                            plans=settings.STRIPE_PLANS,
                            dropping=dropping,
                            test=test,
                            drop_count=drop_count,
                            tlds=active_tlds())
+
+
+@page.route('/<domain>/', methods=['GET'])
+@csrf.exempt
+def parked(domain):
+    if domain is not None:
+        from app.blueprints.api.models.domains import Domain
+        if db.session.query(exists().where(and_(Domain.name == domain, Domain.registered.is_(True)))).scalar():
+            return render_template('page/domain.html', domain=domain)
+
+    return redirect(url_for('page.home'))
 
 
 @page.route('/availability', methods=['GET','POST'])
@@ -47,7 +53,6 @@ def availability():
 
         from app.blueprints.api.api_functions import save_search
         from app.blueprints.api.domain.domain import get_domain_availability, get_domain_details, get_dropping_domains, get_domain
-        from app.blueprints.api.models.drops import Drop
 
         domain_name = get_domain(request.form['domain'])
         if domain_name is None:
@@ -90,34 +95,30 @@ def view(domain, available):
     from app.blueprints.api.api_functions import save_search
     save_search(domain, available, available, id)
     return render_template('page/view.html', domain=domain, available=available)
-    # if request.method == 'POST':
-    #     from app.blueprints.api.api_functions import save_search
-    #     if 'domain' in request.form and 'available' in request.form:
-    #
-    #         if current_user is not None and current_user.id is not None:
-    #             id = current_user.id
-    #         else:
-    #             id = 3
-    #
-    #         domain = request.form['domain']
-    #         available = request.form['available']
-    #         save_search(domain, available, available, id)
-    #         return render_template('page/view.html', domain=domain, available=available)
-    #
-    # return redirect(url_for('page.home'))
 
 
+# @page.route('/drops/<tld>/<pg>', methods=['GET','POST'])
 @page.route('/drops', methods=['GET','POST'])
 @csrf.exempt
+# def drops(tld, pg):
 def drops():
-    from app.blueprints.api.models.drops import Drop
     from app.blueprints.api.api_functions import active_tlds
-    domains = list()
-    with open('domains.json', 'r') as file:
-        for line in file:
-            domains.append(json.loads(line))
-        domains.sort(key=lambda x: x['name'])
-        return render_template('user/drops.html', domains=domains, tlds=active_tlds())
+    from app.blueprints.api.domain.domain import get_dropping_domains
+    from app.blueprints.api.domain.s3 import get_last_modified
+    # from app.blueprints.api.models.filestack import Filestack
+
+    domains, drop_count = get_dropping_domains()
+    # f = db.session.query(Filestack).order_by(Filestack.id.desc()).first()
+    last_updated = get_last_modified()
+    # listing = PageResult(domains, tld, pg)
+
+    return render_template('user/drops.html',
+                           listing=None,
+                           domains=domains,
+                           tlds=active_tlds(),
+                           drop_count=drop_count,
+                           current_user=current_user,
+                           last_updated=last_updated)
 
 
 @page.route('/terms')
@@ -155,3 +156,16 @@ def webhook(app):
         return call_webhook(request)
     except Exception:
         return json.dumps({'success': False}), 500, {'ContentType': 'application/json'}
+
+
+# Pagination for /drops route
+class PageResult:
+    def __init__(self, data, tld, page = 1, number = 20):
+        self.__dict__ = dict(zip(['data', 'tld', 'page', 'number'], [data, tld, page, number]))
+        self.full_listing = [self.data[i:i+number] for i in range(0, len(self.data), number)]
+    def __iter__(self):
+        for i in self.full_listing[self.page-1]:
+            yield i
+    def __repr__(self): #used for page linking
+        # return "/drops/{0}/{1}".format(self.tld, str(self.page+1)) #view the next page
+        return '/drops/' + str(self.tld) + '/' + str(int(self.page)+1)

@@ -61,20 +61,25 @@ CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
 CELERYBEAT_SCHEDULE = {
     'dropping_domains': {
         'task': 'app.blueprints.api.tasks.generate_drops',
-        'schedule': crontab(minute=0, hour="*/1") # every hour
+        'schedule': crontab(minute=0, hour="*/12") # every 12 hours
         # 'schedule': crontab(minute="*/1") # every minute
         # 'schedule': crontab(minute="*/5") # every 5 minutes
         # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
 
-    # Commented out until Live.
-    # 'order_domains': {
-    #     'task': 'app.blueprints.api.tasks.order_domains',
-    #     'schedule': crontab(minute=0, hour="*/1") # every hour
-    #     # 'schedule': crontab(minute="*/1") # every minute
+    # Attempt to order the domains
+    'order_domains': {
+        'task': 'app.blueprints.api.tasks.order_domains',
+        'schedule': timedelta(seconds=5) # every 5 seconds after the previous one completes
+    },
+
+    # Delete successfully paid backorders
+    # 'delete_backorders': {
+    #     'task': 'app.blueprints.api.tasks.delete_backorders',
+    #     'schedule': crontab(minute=0, hour=0) # every minute
     # },
 
-    # Commented out until Live.
+    # Retry charges for secured domains that aren't paid.
     # 'retry_charges': {
     #     'task': 'app.blueprints.api.tasks.retry_charges',
     #     'schedule': crontab(minute=0, hour="*/1") # every hour
@@ -113,6 +118,19 @@ REMEMBER_COOKIE_DURATION = timedelta(days=90)
 
 # Dynadot
 DYNADOT_API_KEY = os.environ.get('DYNADOT_API_KEY', None)
+
+# AWS
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', None)
+AWS_ACCESS_KEY_SECRET = os.environ.get('AWS_ACCESS_KEY_SECRET', None)
+
+# JSONBIN
+JSONBIN_API_KEY = os.environ.get('JSONBIN_API_KEY', None)
+
+# JSONBIN
+FILESTACK_API_KEY = os.environ.get('FILESTACK_API_KEY', None)
+
+# PASTEBIN
+PASTEBIN_API_KEY = os.environ.get('PASTEBIN_API_KEY', None)
 
 # Godaddy
 GODADDY_TEST_API_KEY = os.environ.get('GODADDY_TEST_API_KEY', None)

@@ -51,7 +51,6 @@ from app.blueprints.api.models.domains import Domain
 from app.blueprints.billing.models.customer import Customer
 from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
-from app.blueprints.api.models.drops import Drop
 from app.blueprints.api.api_functions import (
     save_domain,
     save_search,
@@ -111,7 +110,8 @@ def login():
 
                 next_url = request.form.get('next')
 
-                next_url = url_for('user.dashboard') if next_url == url_for('user.login') else next_url
+                if next_url == url_for('user.login') or next_url == '' or next_url is None:
+                    next_url = url_for('user.dashboard')
 
                 if next_url:
                     return redirect(safe_next_url(next_url), code=307)
@@ -261,17 +261,14 @@ def dashboard():
     test = not current_app.config.get('PRODUCTION')
 
     domains = Domain.query.filter(Domain.user_id == current_user.id).all()
-    searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).limit(20).all()
+    searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).order_by(SearchedDomain.id.desc()).limit(20).all()
     tlds = active_tlds()
 
-    from app.blueprints.api.domain.domain import get_dropping_domains
-    dropping = get_dropping_domains()
-
-    from app.blueprints.api.models.drops import Drop
-    drop_count = db.session.query(Drop).count()
+    from app.blueprints.api.domain.domain import get_dropping_domains, get_drop_count
+    dropping, drop_count = get_dropping_domains(40)
 
     # Shuffle the domains to spice things up a little
-    random.shuffle(dropping)
+    # random.shuffle(dropping)
 
     # Sort the searches by date
     searched.sort(key=lambda x: x.created_on, reverse=True)
@@ -282,7 +279,7 @@ def dashboard():
                            searched=searched,
                            tlds=tlds,
                            dropping=dropping,
-                           drop_count=drop_count,)
+                           drop_count=drop_count)
 
 
 # Domain Functions -------------------------------------------------------------------
@@ -300,7 +297,7 @@ def check_availability():
 
         if request.method == 'POST':
             if 'domain' not in request.args and 'domain' not in request.form:
-                flash("There was an error. Please try again.", "error")
+                flash("Something went wrong! Please try again.", "error")
                 return redirect(url_for('user.dashboard'))
 
             if 'domain' in request.form:
@@ -335,6 +332,7 @@ def check_availability():
         flash("This domain is invalid. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
     except Exception as e:
+        print_traceback(e)
         flash("There was an error. Please try again.", "error")
         return redirect(url_for('user.dashboard'))
 
@@ -352,16 +350,18 @@ def register_domain():
         domain_id = request.form['domain']
         domain = Domain.query.filter(and_(Domain.user_id == current_user.id), Domain.id == domain_id).scalar()
 
-        if register(domain.name, True)['success']:
+        r = register(domain.name, domain.date_available, True)
+        if r['success']:
             domain.registered = True
             domain.expires = get_expiry(domain)
             domain.save()
 
             # Set the Whois info to GetParked.io
-            set_whois_info(domain.name)
+            # set_whois_info(domain.name)
 
             flash('This domain has been registered.', 'success')
         else:
+            print(r)
             flash('This domain has not been registered.', 'error')
     return redirect(url_for('user.dashboard'))
 
@@ -611,7 +611,7 @@ def checkout():
             return redirect(url_for('user.dashboard'))
         try:
             # Secure the domain.
-            if register(domain)['success']:
+            if register(domain, '1/1/2020')['success']:
 
                 # Set the Whois info to GetParked.io
                 set_whois_info(domain)

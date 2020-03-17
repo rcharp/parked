@@ -19,6 +19,7 @@ class Backorder(ResourceMixin, db.Model):
     pending_delete = db.Column('pending_delete', db.Boolean(), nullable=False, server_default='0')
     secured = db.Column('secured', db.Boolean(), nullable=False, server_default='0')
     paid = db.Column('paid', db.Boolean(), nullable=False, server_default='0')
+    lost = db.Column('lost', db.Boolean(), nullable=False, server_default='0')
 
     # Relationships.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),

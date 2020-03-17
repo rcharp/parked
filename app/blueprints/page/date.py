@@ -140,6 +140,11 @@ def get_utc_date(time_string):
     return dt.astimezone(pytz.UTC).date()
 
 
+def get_utc_date_from_datetime(dt):
+    date = dt.astimezone(pytz.UTC)
+    return '{0}/{1}/{2:02}'.format(date.month, date.day, date.year)
+
+
 def get_utc_date_today():
     return dtime.now(pytz.UTC).date
 

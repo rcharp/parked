@@ -6,6 +6,8 @@ from app.blueprints.page.date import get_dt_string, convert_datetime_to_availabl
 import pythonwhois
 import datetime
 import tldextract
+from flask import abort, request
+from math import ceil
 import pytz
 import requests
 import json
@@ -88,6 +90,20 @@ def get_domain_details(domain):
         return None
 
 
+def get_registered_date(domain):
+    try:
+        ext = tldextract.extract(domain)
+        domain = ext.registered_domain
+        details = pythonwhois.get_whois(domain)
+
+        if 'creation_date' in details:
+            return details['creation_date'][0]
+        return None
+    except Exception as e:
+        print_traceback(e)
+        return None
+
+
 # Get WhoIs domain availability
 def get_domain_expiration(domain):
     try:
@@ -133,27 +149,63 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains():
+def get_dropping_domains(limit=None):
     domains = list()
     counter = 0
-    with open('domains.json', 'r') as file:
-        lines = file.readlines()
-        while counter < 40:
-            domains.append(json.loads(random.choice(lines)))
-            counter += 1
 
-    # from app.blueprints.api.models.drops import Drop
-    # drops = Drop.query.order_by(func.random()).limit(40).all()
-    # for drop in drops:
-    #     domains.append({'name': drop.name, 'date_available': drop.date_available})
-    return domains
+    # If the file exists, pull the drops from there
+    if path.exists("domains.json"):
+        with open('domains.json', 'r') as file:
+            lines = file.readlines()
+
+            # If using a limit for the homepage or dashboard
+            if limit:
+                while counter < limit:
+                    domains.append(json.loads(random.choice(lines)))
+                    counter += 1
+                return domains, '{:,}'.format(len(lines))
+
+            # Otherwise return all drops from the file
+            for line in lines:
+                domains.append(json.loads(line))
+            domains.sort(key=lambda x: x['name'])
+            return domains, '{:,}'.format(len(domains))
+
+    # If there is no file, then generate all drops
+    else:
+        from app.blueprints.api.domain.s3 import get_content
+        domains = get_content(limit)
+        return domains, '{:,}'.format(get_drop_count())
+
+
+def generate_drops():
+    try:
+        # The max number of domains to get, per TLD
+        limit = 1500
+
+        from app.blueprints.api.domain.download import pool_domains, park_domains
+
+        if path.exists("domains.json"):
+            os.remove("domains.json")
+
+        # Get the domains from the Pool list and the Park list
+        pool = pool_domains(limit)
+        park = park_domains(limit)
+
+        if pool or park:
+            with open('domains.json', 'r') as output:
+
+                # Upload to AWS
+                from app.blueprints.api.domain.s3 import upload_to_aws
+                return upload_to_aws(output.name, 'getparkedio', output.name)
+    except Exception as e:
+        print_traceback(e)
+        return False
 
 
 def get_drop_count():
-    with open('domains.json', 'r') as file:
-        for i, l in enumerate(file):
-            pass
-        return i + 1
+    from app.blueprints.api.domain.s3 import get_content
+    return get_content(get_count=True)
 
 
 def delete_dropping_domains():
@@ -178,40 +230,6 @@ def set_dropping_domains(drops, limit):
             d.save()
 
 
-def generate_drops():
-    try:
-        # The max number of domains to get, per TLD
-        limit = 1500
-
-        # Do not generate more drops if there are too many in the db
-        # from app.blueprints.api.models.drops import Drop
-        # if db.session.query(Drop).count() > limit * tld_length():
-        #     return False
-
-        from app.blueprints.api.domain.download import pool_domains, park_domains
-
-        if path.exists("domains.json"):
-            os.remove("domains.json")
-
-        # Get the domains from the Pool list and the Park list
-        pool = pool_domains(limit)  # .delay()
-        park = park_domains(limit)  # .delay()
-
-        # domains = pool + park
-
-        # We got at least one domain
-        # if len(domains) > 0:
-        #     if delete_dropping_domains():
-        #         set_dropping_domains(domains, limit * tld_length())
-        #         return True
-
-        if pool or park:
-            return True
-    except Exception as e:
-        print_traceback(e)
-        return False
-
-
 def retry_charges():
     try:
         from app.blueprints.api.models.backorder import Backorder
@@ -233,3 +251,48 @@ def retry_charges():
 
     except Exception as e:
         print_traceback(e)
+
+
+def delete_backorders():
+    try:
+        from app.blueprints.api.models.backorder import Backorder
+        backorders = Backorder.query.filter(and_(Backorder.paid.is_(True), Backorder.secured.is_(True))).all()
+
+        for backorder in backorders:
+            backorder.delete()
+
+    except Exception as e:
+        print_traceback(e)
+
+
+def lost_backorders(domain):
+    try:
+        from app.blueprints.api.models.backorder import Backorder
+        backorders = Backorder.query.filter(and_(Backorder.domain_name == domain, Backorder.secured.is_(False))).all()
+
+        for backorder in backorders:
+            backorder.lost = True
+            backorder.save()
+
+    except Exception as e:
+        print_traceback(e)
+
+
+def write_drops_to_db(drops, limit):
+    from app.blueprints.api.models.drops import Drop
+
+    for drop in drops:
+        if db.session.query(Drop).count() > limit:
+            return
+
+        if not db.session.query(exists().where(Drop.name == drop['name'])).scalar():
+            d = Drop()
+            d.name = drop['name']
+            d.date_available = drop['date_available']
+            d.save()
+
+
+def count_lines(file):
+    for i, l in enumerate(file):
+        pass
+    return i + 1

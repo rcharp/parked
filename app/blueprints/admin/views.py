@@ -6,8 +6,10 @@ from flask import (
     url_for,
     render_template)
 from flask_login import login_required, current_user
-
+from sqlalchemy import text
+from app.extensions import csrf
 from app.blueprints.admin.models import Dashboard
+from app.blueprints.api.api_functions import print_traceback
 from app.blueprints.user.decorators import role_required
 from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.invoice import Invoice
@@ -44,6 +46,31 @@ def dashboard():
                            group_and_count_users=group_and_count_users)
 
 
+@admin.route('/update_domains', methods=['GET','POST'])
+@login_required
+@csrf.exempt
+def update_domains():
+    if request.method == 'POST':
+        try:
+            from app.blueprints.api.domain.domain import generate_drops
+            results = generate_drops()
+
+            if results is not None:
+                flash("Drops generatetd succesfully.", 'success')
+            else:
+                flash("Drops not generatetd succesfully.", 'error')
+
+            return redirect(url_for('user.dashboard'))
+        except Exception as e:
+            print_traceback(e)
+            flash("There was an error.", 'error')
+            flash(e, 'error')
+            return redirect(url_for('user.dashboard'))
+    else:
+        flash("Test wasn't run.", 'error')
+        return redirect(url_for('user.dashboard'))
+
+
 # Users -----------------------------------------------------------------------
 @admin.route('/users', defaults={'page': 1})
 @admin.route('/users/page/<int:page>')
@@ -56,9 +83,9 @@ def users(page):
     order_values = '{0} {1}'.format(sort_by[0], sort_by[1])
 
     paginated_users = User.query \
-        .filter(User.search(request.args.get('q', ''))) \
-        .order_by(User.role.asc(), User.payment_id, User.created_on).paginate(page, 50, True)#text(order_values)) \
-        #.paginate(page, 50, True)
+        .filter(User.search(request.args.get('q', text('')))) \
+        .order_by(User.role.asc(), User.email, text(order_values)) \
+        .paginate(page, 50, True)
 
     return render_template('admin/user/index.html',
                            form=search_form, bulk_form=bulk_form,

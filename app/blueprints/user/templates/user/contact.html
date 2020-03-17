@@ -109,10 +109,15 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-                                        <i class="si si-grid pull-right"></i>My Dashboard
-                                    </a>
-                                </li>
+    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+        <i class="si si-grid pull-right"></i>My Dashboard
+    </a>
+</li>
+<li>
+    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+        <i class="si si-globe pull-right"></i>All Domains
+    </a>
+</li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
@@ -178,7 +183,7 @@
                     <div class="row" style="margin-top:50px;">
                         <div class="col-lg-12" style="width:50%; margin:0 auto; min-width:400px; float:none;">
                             {% if current_user.is_authenticated %}
-                                <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
+                                <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Dashboard</span></a></h4>
                             {% else %}
                                 <h4 class="font-w400" style="margin-bottom:10px;"><a href="{{ url_for('page.home') }}"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Back to Homepage</span></a></h4>
                             {% endif %}
@@ -290,7 +295,11 @@
                 App.initHelpers('slick');
             });
         </script>
-
+        <script>
+        function GoBack() {
+            window.history.back();
+        }
+        </script>
     </body>
     <div id="page-loader"></div>
 </html>

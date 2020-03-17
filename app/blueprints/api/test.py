@@ -9,13 +9,15 @@ from app.blueprints.api.domain.dynadot import (
     get_domain_expiration,
     backorder_request,
     delete_backorder_request,
-    get_domain_details,
+    # get_domain_details,
     list_backorder_requests,
     list_contacts,
     set_whois_info,
     get_whois,
-    order_domains
+    order_domains,
+    forward_domain
 )
+from app.blueprints.api.domain.s3 import download_from_aws
 
 from celery.result import AsyncResult
 
@@ -47,7 +49,7 @@ def test(domain):
     # results = is_pending_delete('digitalcard.io')
     # results = backorder_request('digitalcard.io')
     # results = register_domain('rickycharpentier3.io')
-    # results = get_domain_details('rickycharpentier.xyz')
+    # results = get_domain_details('upload.io')
     # results = list_backorder_requests()
     # results = list_contacts()
     # results = set_whois_info('rickycharpentier.xyz')
@@ -60,7 +62,11 @@ def test(domain):
 
     # TODO: This WILL order the domains. Be very careful.
     # results = order_domains()
-    results = generate_drops()
+
+    # results = generate_drops()
+
+    # results = forward_domain('photocamp.io')
+    results = download_from_aws('domains.json')
     return results
 
 

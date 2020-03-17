@@ -118,6 +118,11 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ url_for('page.drops') }}" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
+                                            Domains Expiring Soon
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url_for('user.contact') }}" class="nav-link text-white font-family-secondary font-weight__700 mx-lg-4">
                                             Contact Us
                                         </a>
@@ -277,12 +282,14 @@
                                     </form><br />
                                 {% endif %}#}
 
+                                <br /><br />
+                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
                                             <span class="text-muted" style="font-size:14px;float:left">Some domains dropping soon:</span>
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ '{0:,}'.format(drop_count) }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
                                         <div style="float:left;width:50%;min-width:350px;">
@@ -305,7 +312,7 @@
                                                         {% set domain_name = domain['name'] %}
                                                         {% set available = domain['date_available']|replace('/', '-') %}
                                                         <tr style="max-height:10px;border:none; line-height:1 !important">
-                                                            <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;">
+                                                            <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;overflow:hidden;text-overflow:ellipsis;">
                                                                 <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
                                                                     <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
                                                                 </a>
@@ -381,7 +388,7 @@
                                             </div>
                                         </div>
                                         <div style="font-size:16px;width:100%;text-align:left;float:right;margin-bottom:10px;">
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ '{0:,}'.format(drop_count) }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                     </div>
                                 {% endif %}
