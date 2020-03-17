@@ -173,13 +173,38 @@ def get_dropping_domains(limit=None):
 
     # If there is no file, then generate all drops
     else:
-        from app.blueprints.api.domain.filestack import get_content
+        from app.blueprints.api.domain.s3 import get_content
         domains = get_content(limit)
-        return domains, '{:,}'.format(len(domains))
+        return domains, '{:,}'.format(get_drop_count())
+
+
+def generate_drops():
+    try:
+        # The max number of domains to get, per TLD
+        limit = 1500
+
+        from app.blueprints.api.domain.download import pool_domains, park_domains
+
+        if path.exists("domains.json"):
+            os.remove("domains.json")
+
+        # Get the domains from the Pool list and the Park list
+        pool = pool_domains(limit)
+        park = park_domains(limit)
+
+        if pool or park:
+            with open('domains.json', 'r') as output:
+
+                # Upload to AWS
+                from app.blueprints.api.domain.s3 import upload_to_aws
+                return upload_to_aws(output.name, 'getparkedio', output.name)
+    except Exception as e:
+        print_traceback(e)
+        return False
 
 
 def get_drop_count():
-    from app.blueprints.api.domain.filestack import get_content
+    from app.blueprints.api.domain.s3 import get_content
     return get_content(get_count=True)
 
 
@@ -203,38 +228,6 @@ def set_dropping_domains(drops, limit):
             d.name = drop['name']
             d.date_available = drop['date_available']
             d.save()
-
-
-def generate_drops():
-    try:
-        # The max number of domains to get, per TLD
-        limit = 1500
-
-        # Do not generate more drops if there are too many in the db
-        # from app.blueprints.api.models.drops import Drop
-        # if db.session.query(Drop).count() > limit * tld_length():
-        #     return False
-
-        from app.blueprints.api.domain.download import pool_domains, park_domains
-
-        if path.exists("domains.json"):
-            os.remove("domains.json")
-
-        # Get the domains from the Pool list and the Park list
-        pool = pool_domains(limit)  # .delay()
-        park = park_domains(limit)  # .delay()
-
-        if pool or park:
-            with open('domains.json', 'r') as output:
-
-                # upload to Filestack
-                from app.blueprints.api.domain.filestack import upload, get_content
-                count = count_lines(output)
-                upload(output, count)
-                return True
-    except Exception as e:
-        print_traceback(e)
-        return False
 
 
 def retry_charges():

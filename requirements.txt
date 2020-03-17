@@ -46,6 +46,10 @@ pprint==0.1
 
 # APIs
 filestack-python==3.0.1
+boto3==1.12.22
+botocore==1.15.22
+jmespath==0.9.5
+s3transfer==0.3.3
 
 # Extensions.
 flask-debugtoolbar==0.10.1

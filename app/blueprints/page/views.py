@@ -104,11 +104,12 @@ def view(domain, available):
 def drops():
     from app.blueprints.api.api_functions import active_tlds
     from app.blueprints.api.domain.domain import get_dropping_domains
-    from app.blueprints.api.models.filestack import Filestack
+    from app.blueprints.api.domain.s3 import get_last_modified
+    # from app.blueprints.api.models.filestack import Filestack
 
     domains, drop_count = get_dropping_domains()
-    f = db.session.query(Filestack).order_by(Filestack.id.desc()).first()
-    last_updated = f.created_on
+    # f = db.session.query(Filestack).order_by(Filestack.id.desc()).first()
+    last_updated = get_last_modified()
     # listing = PageResult(domains, tld, pg)
 
     return render_template('user/drops.html',

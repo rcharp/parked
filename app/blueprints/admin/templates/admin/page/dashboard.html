@@ -50,11 +50,20 @@
             </div>
           {% endfor %}
         </div>
-          <form class="form-horizontal push-5-t" action="{{ url_for('admin.update_domains') }}" method="post">
+            <form class="form-horizontal push-5-t" action="{{ url_for('admin.update_domains') }}" method="post">
                 <div class="form-group">
                     <br />
-                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;">
+                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;">
                         <button class="btn btn-sm btn-success" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Update Domains</button>
+                    </div>
+                </div>
+            </form>
+            <form class="form-horizontal push-5-t" action="{{ url_for('api.test') }}" method="post">
+                <div class="form-group">
+                    <br />
+                    <div class="col-xs-12" style="width:40%;min-width:350px;margin:0 auto;float:none;">
+                        <input class="form-control" id="domain" name="domain" type="hidden" value="{{ 'site_name'|site_name_filter }}" /><br />
+                        <button class="btn btn-sm btn-primary" id="submit-button" type="submit" style="width:60%;min-width:220px;min-height:60px; margin:0 auto;font-size:18px;padding:10px;white-space:normal;"><i class="push-5-r"></i>Run Tests</button>
                     </div>
                 </div>
             </form>

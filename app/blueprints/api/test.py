@@ -17,6 +17,7 @@ from app.blueprints.api.domain.dynadot import (
     order_domains,
     forward_domain
 )
+from app.blueprints.api.domain.s3 import download_from_aws
 
 from celery.result import AsyncResult
 
@@ -64,7 +65,8 @@ def test(domain):
 
     # results = generate_drops()
 
-    results = forward_domain('photocamp.io')
+    # results = forward_domain('photocamp.io')
+    results = download_from_aws('domains.json')
     return results
 
 
