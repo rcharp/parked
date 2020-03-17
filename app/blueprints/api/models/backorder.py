@@ -15,6 +15,7 @@ class Backorder(ResourceMixin, db.Model):
     pi = db.Column(db.String(255), unique=True, index=True, nullable=True, server_default='')
     expires = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     date_available = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
+    email = db.Column(db.String(255), unique=False, index=True, nullable=True, server_default='')
     active = db.Column('active', db.Boolean(), nullable=False, server_default='0')
     pending_delete = db.Column('pending_delete', db.Boolean(), nullable=False, server_default='0')
     secured = db.Column('secured', db.Boolean(), nullable=False, server_default='0')
@@ -54,11 +55,11 @@ class Backorder(ResourceMixin, db.Model):
         :type query: str
         :return: SQLAlchemy filter
         """
-        if not query:
+        if query is None:
             return ''
 
         search_query = '%{0}%'.format(query)
-        search_chain = (Backorder.id.ilike(search_query))
+        search_chain = (Backorder.domain_name.ilike(search_query))
 
         return or_(*search_chain)
 

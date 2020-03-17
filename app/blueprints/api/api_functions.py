@@ -104,6 +104,9 @@ def format_domain_search(domain):
 
 def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
+    from app.blueprints.user.models import User
+
+    u = User.query.filter(User.id == user_id).scalar()
 
     b = Backorder()
     b.domain = domain.id
@@ -118,6 +121,9 @@ def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_de
     b.pending_delete = pending_delete
     b.secured = False
     b.paid = False
+
+    if u is not None:
+        b.email = u.email
 
     b.save()
     return
