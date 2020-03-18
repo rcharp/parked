@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Welcome to {{ 'site_name'|site_name_filter|capitalize }}</title>
+<title>Welcome to {{ 'site_name'|site_name_filter }}</title>
 <style>
 /* -------------------------------------
 		GLOBAL
@@ -192,7 +192,7 @@ ul li, ol li {
 						<p>You've successfully purchased {{ domain }}!</p>
 						<p>Head on over to <a href="https://www.namecatcher.io/dashboard">your dashboard</a> to see it and start using it immediately.</p>
 						<p>Sincerely,</p>
-						<p>The {{ 'site_name'|site_name_filter|capitalize }} Team</p>
+						<p>The {{ 'site_name'|site_name_filter }} Team</p>
 					</td>
 				</tr>
 			</table>

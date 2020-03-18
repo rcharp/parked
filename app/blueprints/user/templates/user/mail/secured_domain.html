@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Welcome to {{ 'site_name'|site_name_filter|capitalize }}</title>
+<title>Welcome to {{ 'site_name'|site_name_filter }}</title>
 <style>
 /* -------------------------------------
 		GLOBAL
@@ -193,7 +193,7 @@ ul li, ol li {
 						<p>Your card will be charged will be charged $99. This includes the price of the domain, as well as registration for the first year.<br>
 						You can see it in <a href="{{ url_for('user.dashboard') }}">your dashboard</a>.</p>
 						<p>Sincerely,</p>
-						<p>The {{ 'site_name'|site_name_filter|capitalize }} Team</p>
+						<p>The {{ 'site_name'|site_name_filter }} Team</p>
 					</td>
 				</tr>
 			</table>
