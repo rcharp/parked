@@ -10,9 +10,9 @@
         <legend>Delete your account</legend>
         <p class="sm-margin-bottom" style="font-size:16px">
           {% if current_user.name %}
-            <strong>Hi {{ current_user.name }}</strong>,<br/>
+            <span class="font-w500">Hi {{ current_user.name }}</span>,<br/>
           {% else %}
-            <strong>Hi {{ current_user.email }}</strong>,<br/>
+            <span class="font-w500">Hi {{ current_user.email }}</span>,<br/>
           {% endif %}
           Before you cancel your account, please read the following:
         </p>
@@ -23,10 +23,10 @@
               (there's no way to undo this)
           </li>
           <li>You will no longer be billed</li>
-          <li>Your account <strong>will</strong> be deleted immediately</li>
+          <li>Your account <span class="font-w500">will</span> be deleted immediately</li>
           <li>You can sign up again in the future</li>
             <br />
-            <li style="list-style-type:none"><b>Are you sure you want to cancel?</b></li>
+            <li style="list-style-type:none"><span class="font-w500">Are you sure you want to cancel?</span></li>
         </ul>
         <div class="row">
           <div class="col-md-6">
