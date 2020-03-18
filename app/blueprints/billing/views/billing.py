@@ -228,11 +228,14 @@ def cancel():
                 return
 
             # u.delete()
-            from app.blueprints.billing.tasks import delete_users
+            from app.blueprints.billing.tasks import delete_users, delete_domains
             ids = [current_user.id]
 
             # Delete the user
-            delete_users.delay(ids)
+            delete_domains(ids)
+            delete_users(ids)
+            # delete_users.delay(ids)
+            # delete_domains.delay(ids)
 
             # Send a cancellation email.
             from app.blueprints.user.tasks import send_cancel_email

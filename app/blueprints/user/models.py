@@ -208,8 +208,6 @@ class User(UserMixin, ResourceMixin, db.Model):
         s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
         c = Customer.query.filter(Customer.user_id == id).all()
 
-        print(c)#
-
         for backorder in b:
             if backorder is None:
                 continue
