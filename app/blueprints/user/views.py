@@ -76,7 +76,6 @@ from app.blueprints.api.domain.dynadot import (
 )
 
 user = Blueprint('user', __name__, template_folder='templates')
-send = True
 
 # Login and Credentials -------------------------------------------------------------------
 @user.route('/login', methods=['GET', 'POST'])
@@ -201,8 +200,7 @@ def signup():
             from app.blueprints.user.tasks import send_welcome_email
             from app.blueprints.contact.mailerlite import create_subscriber
 
-            if send:
-                send_welcome_email.delay(current_user.email)
+            send_welcome_email.delay(current_user.email)
             create_subscriber(current_user.email)
 
             flash("You've successfully signed up!", 'success')
@@ -448,10 +446,9 @@ def update_domain():
             # Update the customer's payment info
             update_customer(pm, customer_id, save_card)
 
-            if send:
-                # Send a successful purchase email
-                from app.blueprints.user.tasks import send_purchase_email
-                send_purchase_email.delay(current_user.email, domain)
+            # Send a successful purchase email
+            from app.blueprints.user.tasks import send_purchase_email
+            send_purchase_email.delay(current_user.email, domain)
 
             # Now that the domain has been registered, get the expiry to update the db
             expires = get_domain_expiration(domain)
@@ -582,11 +579,6 @@ def saved_card_intent():
                 c = Customer.query.filter(Customer.customer_id == customer_id).scalar()
                 create_backorder(d, available, pm, payment.id, c.id, current_user.id, r)
 
-                if send:
-                    # Send a successful reservation email
-                    from app.blueprints.user.tasks import send_reservation_email
-                    send_reservation_email.delay(current_user.email, domain)
-
                 flash('Your domain was successfully reserved!', 'success')
                 return render_template('user/success.html', current_user=current_user)
 
@@ -663,9 +655,8 @@ def saved_card_payment():
                 save_domain(current_user.id, customer_id, domain, details['expires'], details['date_available'], pytz.utc.localize(dt.utcnow()), True)
 
                 # Send a purchase receipt email
-                if send:
-                    from app.blueprints.user.tasks import send_purchase_email
-                    send_purchase_email.delay(current_user.email, domain)
+                from app.blueprints.user.tasks import send_purchase_email
+                send_purchase_email.delay(current_user.email, domain)
 
                 flash('Your domain was successfully purchased!', 'success')
                 return render_template('user/purchase_success.html', current_user=current_user)
@@ -714,9 +705,8 @@ def settings():
 @csrf.exempt
 def contact():
     if request.method == 'POST':
-        if send:
-            from app.blueprints.user.tasks import send_contact_us_email
-            send_contact_us_email.delay(request.form['email'], request.form['message'])
+        from app.blueprints.user.tasks import send_contact_us_email
+        send_contact_us_email.delay(request.form['email'], request.form['message'])
 
         flash('Thanks for your email! You can expect a response shortly.', 'success')
         return redirect(url_for('user.contact'))
