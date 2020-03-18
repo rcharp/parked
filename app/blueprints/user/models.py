@@ -195,7 +195,7 @@ class User(UserMixin, ResourceMixin, db.Model):
             b = Backorder.query.filter(Backorder.user_id == id).all()
             d = Domain.query.filter(Domain.user_id == id).all()
             s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
-            c = Customer.query.filter(Customer.user_id == id).scalar()
+            c = Customer.query.filter(Customer.user_id == id).all()
 
             for backorder in b:
                 if backorder is None:
@@ -212,10 +212,10 @@ class User(UserMixin, ResourceMixin, db.Model):
                     continue
                 searched.delete()
 
-            if c is None:
-                continue
-            else:
-                c.delete()
+            for customer in c:
+                if customer is None:
+                    continue
+                customer.delete()
 
             # Delete the user
             user.delete()
