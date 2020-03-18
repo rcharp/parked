@@ -13,6 +13,7 @@ from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
 from app.blueprints.page.date import get_dt_string
+from flask_login import current_user
 
 
 # Create a distinct integration id for the integration.
