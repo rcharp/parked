@@ -191,35 +191,31 @@ class User(UserMixin, ResourceMixin, db.Model):
             if user is None:
                 continue
 
-            # try:
-            #     # Delete backorders and domains
-            #     b = Backorder.query.filter(Backorder.user_id == id).all()
-            #     d = Domain.query.filter(Domain.user_id == id).all()
-            #     s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
-            #     c = Customer.query.filter(Customer.user_id == id).scalar()
-            #
-            #     for backorder in b:
-            #         if backorder is None:
-            #             continue
-            #         backorder.delete()
-            #
-            #     for domain in d:
-            #         if domain is None:
-            #             continue
-            #         domain.delete()
-            #
-            #     for searched in s:
-            #         if searched is None:
-            #             continue
-            #         searched.delete()
-            #
-            #     if c is None:
-            #         continue
-            #     else:
-            #         c.delete()
-            # except Exception as e:
-            #     print_traceback(e)
-            #     pass
+            # Delete backorders and domains
+            b = Backorder.query.filter(Backorder.user_id == id).all()
+            d = Domain.query.filter(Domain.user_id == id).all()
+            s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
+            c = Customer.query.filter(Customer.user_id == id).scalar()
+
+            for backorder in b:
+                if backorder is None:
+                    continue
+                backorder.delete()
+
+            for domain in d:
+                if domain is None:
+                    continue
+                domain.delete()
+
+            for searched in s:
+                if searched is None:
+                    continue
+                searched.delete()
+
+            if c is None:
+                continue
+            else:
+                c.delete()
 
             # Delete the user
             user.delete()

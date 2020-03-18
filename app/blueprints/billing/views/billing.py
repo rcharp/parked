@@ -212,6 +212,8 @@ def cancel():
         # else:
         #     # If there is no subscription, then delete the user
         #     canceled = True
+
+        # Change this after implementing delete Stripe customer
         canceled = True
 
         if canceled:
@@ -219,6 +221,13 @@ def cancel():
             email = current_user.email
 
             # Delete the user.
+            from app.blueprints.user.models import User
+            u = User.query.filter(User.id == current_user.id).scalar()
+
+            if u is None:
+                return
+
+            # u.delete()
             from app.blueprints.billing.tasks import delete_users
             ids = [current_user.id]
 
