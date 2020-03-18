@@ -38,7 +38,7 @@ def download_from_aws(filename):
                       aws_secret_access_key=SECRET_KEY)
 
     try:
-        s3.download_file('getparkedio', filename, filename)
+        s3.download_file('namecatcherio', filename, filename)
         return True
     except Exception as e:
         print_traceback(e)
@@ -52,7 +52,7 @@ def get_last_modified():
     s3 = boto3.resource('s3', aws_access_key_id=ACCESS_KEY,
                         aws_secret_access_key=SECRET_KEY)
 
-    bucket = s3.Bucket('getparkedio')
+    bucket = s3.Bucket('namecatcherio')
 
     for file in bucket.objects.all():
         if file.key == 'domains.json':

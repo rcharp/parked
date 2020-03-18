@@ -103,7 +103,7 @@ def purchase_domain(domain, test=True):
                 'nameFirst': registration['FirstName'],
                 'nameLast': registration['LastName'],
                 'nameMiddle': '',
-                'organization': 'getparked.io',
+                'organization': 'namecatcher.io',
                 'phone': registration['Phone'],
             }
 

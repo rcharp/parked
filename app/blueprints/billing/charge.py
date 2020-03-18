@@ -9,7 +9,7 @@ from decimal import Decimal
 import time
 
 
-site_name = "GetParked.io"
+site_name = "NameCatcher.io"
 
 
 # The main checkout function for charging a user's card. Used for both reserving and purchasing a domain.

@@ -13,10 +13,10 @@ webhook: celery -A app.blueprints.billing.webhooks worker -B -l info --loglevel=
 Heroku Backup Database
 =====================
 # Manual database backup
-heroku pg:backups:capture --app getparked
+heroku pg:backups:capture --app namecatcher
 
 # Get database backup URL
-heroku pg:backups:url b001 --app getparked
+heroku pg:backups:url b001 --app namecatcher
 
 Ngrok
 ==============

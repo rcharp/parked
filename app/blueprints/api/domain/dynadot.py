@@ -151,7 +151,7 @@ def forward_domain(domain):
     # Only send a request if it isn't already processing one
     if not is_processing():
         api_key = current_app.config.get('DYNADOT_API_KEY')
-        forward_url = requests.utils.quote('https://www.getparked.io/' + domain)
+        forward_url = requests.utils.quote('https://www.namecatcher.io/' + domain)
         dynadot_url = "https://api.dynadot.com/api3.xml?key=" + api_key + '&command=set_forwarding&domain=' + domain + '&forward_url=' + forward_url
         r = requests.get(url=dynadot_url)
 

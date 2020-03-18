@@ -13,7 +13,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.getparked.io">
+    <link rel="canonical" href="https://www.namecatcher.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -34,8 +34,8 @@
 
     <!-- Facebook Open Graph -->
     <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.getparked.io" />
-    <meta property="og:image" content="https://www.getparked.io/static/logo256x256.png" />
+    <meta property="og:url" content="https://www.namecatcher.io" />
+    <meta property="og:image" content="https://www.namecatcher.io/static/logo256x256.png" />
     <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
     <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
 
@@ -165,7 +165,7 @@
                                 </h1>
                                 <div class="md-space"></div>
                                 <div class="block block-themed" style="height:450px;margin:0 auto;float:none;width:70%;min-width:350px;">
-                                    This expired domain was secured using <a href="{{ url_for('page.home') }}"><span style="color:#009fff">GetParked.io</span></a>, a service to backorder expiring domains.<br /><br />
+                                    This expired domain was secured using <a href="{{ url_for('page.home') }}"><span style="color:#009fff">{{ 'site_name'|site_name_filter }}</span></a>, a service to backorder expiring domains.<br /><br />
                                     Please <a href="{{ url_for('user.contact') }}"><span style="color:#009fff">contact us</span></a> to purchase {{ domain }} or <a href="{{ url_for('page.drops') }}"><span style="color:#009fff">view other domains that are expiring soon</span></a>.
                                 </div>
                                     <!-- Empty Space -->

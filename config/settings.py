@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 from celery.schedules import crontab
 
-SITE_NAME = 'getparked.io'
+SITE_NAME = 'namecatcher.io'
 
 PRODUCTION = True
 
@@ -170,10 +170,10 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://getparked.io'
+SITE_URL = 'https://namecatcher.io'
 
 # Webhook
-WEBHOOK_URL = 'https://www.getparked.io/webhook'
+WEBHOOK_URL = 'https://www.namecatcher.io/webhook'
 
 # Mailerlite
 # MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)

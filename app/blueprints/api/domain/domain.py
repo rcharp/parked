@@ -197,7 +197,7 @@ def generate_drops():
 
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
-                return upload_to_aws(output.name, 'getparkedio', output.name)
+                return upload_to_aws(output.name, 'namecatcherio', output.name)
     except Exception as e:
         print_traceback(e)
         return False

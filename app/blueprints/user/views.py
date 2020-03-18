@@ -354,7 +354,7 @@ def register_domain():
             domain.expires = get_expiry(domain)
             domain.save()
 
-            # Set the Whois info to GetParked.io
+            # Set the Whois info to NameCatcher.io
             # set_whois_info(domain.name)
 
             flash('This domain has been registered.', 'success')
@@ -605,7 +605,7 @@ def checkout():
             # Secure the domain.
             if register(domain, '1/1/2020')['success']:
 
-                # Set the Whois info to GetParked.io
+                # Set the Whois info to NameCatcher.io
                 set_whois_info(domain)
 
                 # Setup the customer's payment method
