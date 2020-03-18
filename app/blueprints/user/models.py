@@ -191,31 +191,8 @@ class User(UserMixin, ResourceMixin, db.Model):
             if user is None:
                 continue
 
-            # Delete backorders and domains
-            b = Backorder.query.filter(Backorder.user_id == id).all()
-            d = Domain.query.filter(Domain.user_id == id).all()
-            s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
-            c = Customer.query.filter(Customer.user_id == id).all()
-
-            for backorder in b:
-                if backorder is None:
-                    continue
-                backorder.delete()
-
-            for domain in d:
-                if domain is None:
-                    continue
-                domain.delete()
-
-            for searched in s:
-                if searched is None:
-                    continue
-                searched.delete()
-
-            for customer in c:
-                if customer is None:
-                    continue
-                customer.delete()
+            # Delete all domains and backorders and the customer
+            # delete_domains(id)
 
             # Delete the user
             user.delete()
@@ -223,6 +200,35 @@ class User(UserMixin, ResourceMixin, db.Model):
             delete_count += 1
 
         return delete_count
+
+    def delete_domains(self, id):
+        # Delete backorders and domains
+        b = Backorder.query.filter(Backorder.user_id == id).all()
+        d = Domain.query.filter(Domain.user_id == id).all()
+        s = SearchedDomain.query.filter(SearchedDomain.user_id == id).all()
+        c = Customer.query.filter(Customer.user_id == id).all()
+
+        print(c)#
+
+        for backorder in b:
+            if backorder is None:
+                continue
+            backorder.delete()
+
+        for domain in d:
+            if domain is None:
+                continue
+            domain.delete()
+
+        for searched in s:
+            if searched is None:
+                continue
+            searched.delete()
+
+        for customer in c:
+            if customer is None:
+                continue
+            customer.delete()
 
     def is_active(self):
         """
