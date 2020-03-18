@@ -126,9 +126,6 @@ AWS_ACCESS_KEY_SECRET = os.environ.get('AWS_ACCESS_KEY_SECRET', None)
 # JSONBIN
 JSONBIN_API_KEY = os.environ.get('JSONBIN_API_KEY', None)
 
-# JSONBIN
-FILESTACK_API_KEY = os.environ.get('FILESTACK_API_KEY', None)
-
 # PASTEBIN
 PASTEBIN_API_KEY = os.environ.get('PASTEBIN_API_KEY', None)
 

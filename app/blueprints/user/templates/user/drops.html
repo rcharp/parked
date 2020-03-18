@@ -156,11 +156,11 @@
                 {% else %}
                     <div class="nav-header pull-right">
                         <a href="{{ url_for('user.signup') }}">
-                          <span style="font-weight:200;font-size:20px;color:#009fff;">Sign up</span>
+                          <span style="font-weight:200;font-size:20px;color:#0073ff;">Sign up</span>
                         </a>
                         &nbsp;<span style="font-size:20px;">/</span>&nbsp;
                         <a href="{{ url_for('user.login') }}">
-                          <span style="font-weight:200;font-size:20px;color:#009fff;">Login</span>
+                          <span style="font-weight:200;font-size:20px;color:#0073ff;">Login</span>
                         </a>
                     </div>
                 {% endif %}
@@ -175,7 +175,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#0073ff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -185,7 +185,7 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#0073ff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w400 text-white">
@@ -210,7 +210,7 @@
                     <div class="row" style="margin-bottom:150px;">
                         <div class="col-md-4" style="width:80%; margin:0 auto; margin-top:100px; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Go back</span></a></h4>
+                            <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#0073ff"><i class="fa fa-angle-left"></i> Go back</span></a></h4>
                             <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" style="padding:1px;">
                                     {% for tld in tlds %}
@@ -237,7 +237,7 @@
                                                         <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;padding-left:0;">
                                                             <input type="search" class="form-control search" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
                                                         </div>
-                                                            <h4 class="font-w400" style="margin-bottom:50px;">Showing <span style="color:#009fff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#009fff">{{ drop_count }}</span> total domains</h4>
+                                                            <h4 class="font-w400" style="margin-bottom:50px;">Showing <span style="color:#0073ff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#0073ff">{{ drop_count }}</span> total domains</h4>
                                                             <small class="font-w400"><i>Last updated: {{ last_updated|pretty_date_filter }}</i></small>
                                                         <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
                                                             <thead>
@@ -258,7 +258,7 @@
                                                                     <tr id="{{ domain['name'] }}" class="domain-row" style="max-height:10px;border:none">
                                                                     <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
                                                                         <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
                                                                         </a>
                                                                     </td>
                                                                     <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -313,7 +313,7 @@
                                                             <tr>
                                                                 <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;">
                                                                     <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
                                                                     </a>
                                                                 </td>
                                                                 <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -349,7 +349,7 @@
             <!-- END Main Container -->
 
             <!-- Footer -->
-            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#009fff">
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#0073ff">
                 <div class="pull-right">
                     <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>

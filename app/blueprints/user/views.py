@@ -680,7 +680,7 @@ def success():
 @csrf.exempt
 def purchase_success():
 
-    flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#009fff'>your dashboard</span></a>."),
+    flash(Markup("Your domain was successfully purchased! You can see it in <a href='/dashboard'><span style='color:#0073ff'>your dashboard</span></a>."),
           category='success')
     return render_template('user/purchase_success.html', current_user=current_user)
 
