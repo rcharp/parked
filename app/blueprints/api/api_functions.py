@@ -130,7 +130,7 @@ def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_de
 
     # Send a successful reservation email
     from app.blueprints.user.tasks import send_reservation_email
-    send_reservation_email.delay(current_user.email, domain.name)
+    send_reservation_email.delay(current_user.email, domain.name, available)
 
     return
 

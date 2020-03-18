@@ -19,23 +19,35 @@ def send_welcome_email(email):
     mail.send(msg)
 
 
-def send_reservation_email(email, domain):
+def send_reservation_email(email, domain, available):
     app = Flask(__name__)
     mail = Mail()
     mail.init_app(app)
     msg = Message("You've successfully reserved " + domain + "!",
                   sender="getparkedio@gmail.com",
                   recipients=[email])
-    msg.html = render_template('user/mail/reservation_email.html', domain=domain)
+    msg.html = render_template('user/mail/reservation_email.html', domain=domain, available=available)
 
-    response = Message("User" + email + " reserved " + domain + " .",
+    response = Message("User " + email + " reserved " + domain + " .",
                        recipients=["getparkedio@gmail.com"],
                        sender="getparkedio@gmail.com")
 
-    response.body = email + " reserved the following domain:\n\n" + domain
+    response.body = email + " reserved the following domain:\n\n" + domain + ". It's available on " + available + "."
 
     mail.send(msg)
     mail.send(response)
+
+
+def send_secured_email(email, domain):
+    app = Flask(__name__)
+    mail = Mail()
+    mail.init_app(app)
+    msg = Message("We successfully secured " + domain + " for you!",
+                  sender="getparkedio@gmail.com",
+                  recipients=[email])
+    msg.html = render_template('user/mail/secured_domain.html', domain=domain)
+
+    mail.send(msg)
 
 
 def send_purchase_email(email, domain):
