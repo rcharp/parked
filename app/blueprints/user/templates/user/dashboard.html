@@ -117,20 +117,15 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
                                 <li>
-                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Find a Domain
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-grid pull-right"></i>My Dashboard
                                     </a>
                                 </li>
                                 <li>
-    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-        <i class="si si-grid pull-right"></i>My Dashboard
-    </a>
-</li>
-<li>
-    <a tabindex="-1" href="{{ url_for('page.drops') }}">
-        <i class="si si-globe pull-right"></i>Expiring Domains
-    </a>
-</li>
+                                    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+                                        <i class="si si-clock pull-right"></i>Expiring Domains
+                                    </a>
+                                </li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
@@ -207,10 +202,10 @@
                             <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt text-center" data-toggle="tabs" style="padding:1px;">
                                     <li id="check_nav" class="active" style="padding-top:5px;min-width:140px;width:50%;display:block;text-align:center">
-                                        <a href="#check"><h3 class="font-w300">Find a Domain</h3></a>
+                                        <a href="#check" id="check_label"><h3 class="font-w300">Domains Expiring Soon</h3></a>
                                     </li>
                                     <li id="domains_nav" style="padding-top:5px;min-width:140px;width:50%;display:block">
-                                        <a href="#domains"><h3 class="font-w300">My Domains</h3></a>
+                                        <a href="#domains" id="domains_label"><h3 class="font-w300">My Domains</h3></a>
                                     </li>
                                 </ul>
                                 <div class="block-content tab-content" id="tab_content" style="padding-right:10px;overflow:visible !important; min-height:500px;">
@@ -298,7 +293,7 @@
                                                     {% if test %}
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('api.test' ) }}" method="post">
                                                         <input class="form-control" id="domain" name="domain" type="hidden" value="{{ 'site_name'|site_name_filter }}" /><br />
-                                                        <button class="btn btn-sm btn-success" id="test-button" type="submit" style="width:20%;min-height:40px;min-width:100px; margin:0 auto;float:none;font-size:18px;padding:10px;white-space:normal;">
+                                                        <button class="btn btn-sm btn-success" id="test-button" type="submit" style="width:20%;min-height:40px;min-width:200px; margin:0 auto;float:none;font-size:18px;padding:10px;white-space:normal;">
                                                             <i class="si si-ghost pull-right"></i>Run Tests</button>
                                                     </form><br />
                                                     {% endif %}
@@ -360,6 +355,9 @@
                                                                         for (var i=0; i<domain_buttons.length; i++){
                                                                             domain_buttons[i].style.width = x.toString() + 'px';
                                                                         }
+
+                                                                        var y = document.getElementById('check_label').offsetHeight;
+                                                                        document.getElementById('domains_label').style.height = y.toString() + 'px';
 
                                                                         var domain_rows = document.getElementsByClassName('domain-row');
                                                                         for (var i=0; i<domain_rows.length; i++){

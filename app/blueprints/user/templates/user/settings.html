@@ -116,21 +116,15 @@
                                 </li>
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
-                                <li>
-                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Find a Domain
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-grid pull-right"></i>My Dashboard
                                     </a>
                                 </li>
                                 <li>
-    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-        <i class="si si-grid pull-right"></i>My Dashboard
-    </a>
-</li>
-<li>
-    <a tabindex="-1" href="{{ url_for('page.drops') }}">
-        <i class="si si-globe pull-right"></i>Expiring Domains
-    </a>
-</li>
+                                    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+                                        <i class="si si-clock pull-right"></i>Expiring Domains
+                                    </a>
+                                </li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
