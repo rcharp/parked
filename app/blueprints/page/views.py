@@ -97,10 +97,9 @@ def view(domain, available):
     return render_template('page/view.html', domain=domain, available=available)
 
 
-# @page.route('/drops/<tld>/<pg>', methods=['GET','POST'])
+# @page.route('/drops/<tld>', methods=['GET','POST'])
 @page.route('/drops', methods=['GET','POST'])
 @csrf.exempt
-# def drops(tld, pg):
 def drops():
     from app.blueprints.api.api_functions import active_tlds
     from app.blueprints.api.domain.domain import get_dropping_domains
