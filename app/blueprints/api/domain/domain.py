@@ -1,5 +1,5 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
-from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length
+from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length, active_tlds
 from app.blueprints.page.date import get_string_from_utc_datetime
 from flask import current_app, flash
 from app.blueprints.page.date import get_dt_string, convert_datetime_to_available
@@ -17,6 +17,7 @@ from sqlalchemy import exists, func, and_
 from app.blueprints.api.domain.dynadot import check_domain
 from os import path
 import os
+import numpy as np
 
 
 def get_domain(domain):
@@ -152,6 +153,7 @@ def get_domain_status(domain):
 def get_dropping_domains(limit=None):
     domains = list()
     counter = 0
+    tlds = active_tlds()
 
     words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
 
@@ -160,17 +162,20 @@ def get_dropping_domains(limit=None):
         with open('domains.json', 'r') as file:
             lines = file.readlines()
 
-            # if any(tld in x for tld in tlds) and '--' not in x and x.count('-') <= 2
-
             # If using a limit for the homepage or dashboard
             if limit:
-                while counter < limit:
-                    line = json.loads(random.choice(lines))
-
+                # lines = [x for x in lines if json.loads(x)['tld'] == tld]
+                for line in lines:
+                    line = json.loads(line)
+                    # if line['tld'] == tld:
                     if has_word(words, line):
                         domains.append(line)
                         counter += 1
 
+                    if counter == limit: break
+
+                # Shuffle the limited selection
+                random.shuffle(domains)
                 return domains, '{:,}'.format(len(lines))
 
             # Otherwise return all drops from the file

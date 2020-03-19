@@ -35,7 +35,7 @@ stripe==2.42.0
 
 # Utils.
 tzlocal==1.5.1
-# numpy==1.8.0
+numpy==1.8.0
 flask-compress==1.4.0
 # cryptography==2.5
 # simple-crypt==4.1.7
