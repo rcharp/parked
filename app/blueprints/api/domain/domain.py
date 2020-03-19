@@ -153,16 +153,24 @@ def get_dropping_domains(limit=None):
     domains = list()
     counter = 0
 
+    words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+
     # If the file exists, pull the drops from there
     if path.exists("domains.json"):
         with open('domains.json', 'r') as file:
             lines = file.readlines()
 
+            # if any(tld in x for tld in tlds) and '--' not in x and x.count('-') <= 2
+
             # If using a limit for the homepage or dashboard
             if limit:
                 while counter < limit:
-                    domains.append(json.loads(random.choice(lines)))
-                    counter += 1
+                    line = json.loads(random.choice(lines))
+
+                    if has_word(words, line):
+                        domains.append(line)
+                        counter += 1
+
                 return domains, '{:,}'.format(len(lines))
 
             # Otherwise return all drops from the file
@@ -296,3 +304,10 @@ def count_lines(file):
     for i, l in enumerate(file):
         pass
     return i + 1
+
+
+def has_word(words, line):
+    domain = line['name'].split('.')[0]
+    if any(x in domain and (len(domain) <= 10) and (5 <= len(x) <= 7) and '-' not in domain for x in words):
+        return True
+    return False
