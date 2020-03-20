@@ -286,12 +286,12 @@
                                 {% endif %}#}
 
                                 <br /><br />
-                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#0073ff">{{ tlds|join(', ')}}</span></h4>
+                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#0073ff">{{ tlds|join(', ')}}</span></h5>
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
-                                            <span class="text-muted" style="font-size:14px;float:left">Some domains dropping soon:</span>
+                                            <span class="text-muted" style="font-size:14px;float:left">Some cool domains dropping soon:</span>
                                             <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#0073ff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
@@ -311,7 +311,7 @@
                                             <div style="width:100%;">
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
                                                     <tbody style="line-height:1 !important;">
-                                                        {% for domain in dropping|batch((dropping|length)/2)|first|sort(attribute='date_available', reverse=true) %}
+                                                        {% for domain in dropping|batch((dropping|length)/2)|first %}
                                                         {% set domain_name = domain['name'] %}
                                                         {% set available = domain['date_available']|replace('/', '-') %}
                                                         <tr style="max-height:10px;border:none; line-height:1 !important">
@@ -357,7 +357,7 @@
                                             <div style="width:100%;">
                                                 <table class="table table-borderless table-condensed table-sm" id="domain-table-2" style="table-layout:fixed;min-width:350px;">
                                                     <tbody style="line-height:1 !important;">
-                                                        {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse|sort(attribute='date_available', reverse=true) %}
+                                                        {% for domain in dropping|batch((dropping|length)/2)|list|last|reverse %}
                                                         {% set domain_name = domain['name'] %}
                                                         {% set available = domain['date_available']|replace('/', '-') %}
                                                         <tr style="max-height:10px;border:none; line-height:1 !important;">

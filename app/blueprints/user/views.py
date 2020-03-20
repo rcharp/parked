@@ -266,7 +266,7 @@ def dashboard():
     dropping, drop_count = get_dropping_domains(40)
 
     # Shuffle the domains to spice things up a little
-    # random.shuffle(dropping)
+    random.shuffle(dropping)
 
     # Sort the searches by date
     searched.sort(key=lambda x: x.created_on, reverse=True)

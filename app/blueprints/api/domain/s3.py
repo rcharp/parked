@@ -90,6 +90,7 @@ def get_content(limit=None, get_count=False):
                     if counter == limit: break
 
                 # Shuffle the limited selection
+                random.seed(random.randrange(1000))
                 random.shuffle(domains)
                 return domains
             else:

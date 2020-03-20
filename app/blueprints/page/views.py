@@ -26,6 +26,7 @@ def home():
     from app.blueprints.api.api_functions import active_tlds
 
     dropping, drop_count = get_dropping_domains(40)
+    random.shuffle(dropping)
 
     return render_template('page/index.html',
                            plans=settings.STRIPE_PLANS,

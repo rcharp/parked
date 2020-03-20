@@ -162,6 +162,7 @@ def get_dropping_domains(limit=None):
                 for line in lines:
                     selection.append(json.loads(line))
 
+                random.seed(random.randrange(1000))
                 random.shuffle(selection)
                 return selection, num_domains
 
@@ -218,6 +219,7 @@ def create_selection(limit):
                 output.write(os.linesep)
 
         # Shuffle the limited selection
+        random.seed(random.randrange(1000))
         random.shuffle(domains)
         return domains, num_domains
 
