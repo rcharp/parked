@@ -276,9 +276,9 @@
                                                                             {% set domain_name = domain['name'] %}
                                                                             {% set available = domain['date_available']|replace('/', '-') %}
                                                                             <tr id="{{ domain['name'] }}" class="domain-row" style="max-height: 10px; border: none;">
-                                                                                <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
+                                                                                <td id="dropping-domain" class="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
                                                                                     <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
+                                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name']|replace('-', '\u2011') }}</u></span>
                                                                                     </a>
                                                                                 </td>
                                                                                 <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -288,7 +288,7 @@
                                                                     </table>
                                                                     <script type="text/javascript">
                                                                         var x = document.getElementById('domain-header').offsetWidth;
-                                                                        var domain_rows = document.getElementsByClassName('domain-row');
+                                                                        var domain_rows = document.getElementsByClassName('dropping-domain');
                                                                         for (var i=0; i<domain_rows.length; i++){
                                                                             domain_rows[i].style.width = x.toString() + 'px';
                                                                         }
