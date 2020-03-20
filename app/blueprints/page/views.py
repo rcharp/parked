@@ -68,8 +68,8 @@ def availability():
 
         if domain is not None and 'available' in domain and domain['available'] is not None:
             # Save the search if it is a valid domain
-            if domain['available'] is not None:
-                save_search(domain_name, domain['expires'], domain['date_available'], 3)  # '3' is the admin ID
+            # if domain['available'] is not None:
+            #     save_search(domain_name, domain['expires'], domain['date_available'], 3)  # '3' is the admin ID
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()
