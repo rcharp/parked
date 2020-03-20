@@ -75,9 +75,22 @@ def get_content(limit=None, get_count=False):
             domains = list()
             lines = output.read().splitlines()
             if limit is not None:
-                for x in range(limit):
-                    line = random.choice(lines)
-                    domains.append(json.loads(line))
+                counter = 0
+                words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+
+                selection = [x for x in lines if json.loads(x)['date_available'] != today]
+                selection = random.sample(selection, k=int(len(selection) / 2))
+                for line in selection:
+                    line = json.loads(line)
+
+                    if has_word(words, line):
+                        domains.append(line)
+                        counter += 1
+
+                    if counter == limit: break
+
+                # Shuffle the limited selection
+                random.shuffle(domains)
                 return domains
             else:
                 for line in lines:

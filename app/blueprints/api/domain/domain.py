@@ -150,37 +150,27 @@ def get_domain_status(domain):
 
 
 def get_dropping_domains(limit=None):
-    domains = list()
-    counter = 0
-    # tlds = active_tlds()
-    today = get_utc_date_today_string()
 
-    words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+    if limit is not None:
+        if not path.exists("selection.json") or os.path.exists("selection.json") and os.stat("selection.json").st_size == 0:
+            return create_selection(limit)
+        else:
+            selection = list()
+            num_domains = '{:,}'.format(count_lines(open("domains.json")))
+            with open("selection.json", "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    selection.append(json.loads(line))
+
+                random.shuffle(selection)
+                return selection, num_domains
 
     # If the file exists, pull the drops from there
     if path.exists("domains.json"):
         with open('domains.json', 'r') as file:
+            domains = list()
             lines = file.readlines()
 
-            # If using a limit for the homepage or dashboard
-            if limit:
-                selection = [x for x in lines if json.loads(x)['date_available'] != today]
-                selection = random.sample(selection, k=int(len(selection)/2))
-                # random.shuffle(selection)
-                for line in selection:
-                    line = json.loads(line)
-
-                    if has_word(words, line):
-                        domains.append(line)
-                        counter += 1
-
-                    if counter == limit: break
-
-                # Shuffle the limited selection
-                random.shuffle(domains)
-                return domains, '{:,}'.format(len(lines))
-
-            # Otherwise return all drops from the file
             for line in lines:
                 domains.append(json.loads(line))
             domains.sort(key=lambda x: x['name'])
@@ -191,6 +181,45 @@ def get_dropping_domains(limit=None):
         from app.blueprints.api.domain.s3 import get_content
         domains = get_content(limit)
         return domains, '{:,}'.format(get_drop_count())
+
+
+def create_selection(limit):
+    num_domains = '{:,}'.format(count_lines(open("domains.json")))
+    today = get_utc_date_today_string()
+    domains = list()
+    counter = 0
+
+    if not path.exists("domains.json"):
+        from app.blueprints.api.domain.s3 import get_content
+        return get_content(limit), num_domains
+
+    with open("domains.json", "r") as file:
+        words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+        lines = file.readlines()
+
+        selection = [x for x in lines if json.loads(x)['date_available'] != today]
+        selection = random.sample(selection, k=int(len(selection) / 2))
+        for line in selection:
+            line = json.loads(line)
+
+            if has_word(words, line):
+                domains.append(line)
+                counter += 1
+
+            if counter == limit: break
+
+        # Delete the selection file if it exists
+        if path.exists("selection.json"):
+            os.remove("selection.json")
+
+        with open('selection.json', 'a') as output:
+            for domain in domains:
+                json.dump(domain, output)
+                output.write(os.linesep)
+
+        # Shuffle the limited selection
+        random.shuffle(domains)
+        return domains, num_domains
 
 
 def generate_drops():
