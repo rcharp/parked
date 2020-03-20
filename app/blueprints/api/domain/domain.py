@@ -1,8 +1,7 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length, active_tlds
-from app.blueprints.page.date import get_string_from_utc_datetime
+from app.blueprints.page.date import get_string_from_utc_datetime, get_utc_date_today_string, get_dt_string, convert_datetime_to_available
 from flask import current_app, flash
-from app.blueprints.page.date import get_dt_string, convert_datetime_to_available
 import pythonwhois
 import datetime
 import tldextract
@@ -153,7 +152,8 @@ def get_domain_status(domain):
 def get_dropping_domains(limit=None):
     domains = list()
     counter = 0
-    tlds = active_tlds()
+    # tlds = active_tlds()
+    today = get_utc_date_today_string()
 
     words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
 
@@ -164,10 +164,12 @@ def get_dropping_domains(limit=None):
 
             # If using a limit for the homepage or dashboard
             if limit:
-                # lines = [x for x in lines if json.loads(x)['tld'] == tld]
-                for line in lines:
+                selection = [x for x in lines if json.loads(x)['date_available'] != today]
+                selection = random.sample(selection, k=int(len(selection)/2))
+                # random.shuffle(selection)
+                for line in selection:
                     line = json.loads(line)
-                    # if line['tld'] == tld:
+
                     if has_word(words, line):
                         domains.append(line)
                         counter += 1
