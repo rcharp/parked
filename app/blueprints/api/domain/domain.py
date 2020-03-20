@@ -17,7 +17,7 @@ from sqlalchemy import exists, func, and_
 from app.blueprints.api.domain.dynadot import check_domain
 from os import path
 import os
-import numpy as np
+# import numpy as np
 
 
 def get_domain(domain):
