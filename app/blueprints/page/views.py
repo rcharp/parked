@@ -68,8 +68,8 @@ def availability():
 
         if domain is not None and 'available' in domain and domain['available'] is not None:
             # Save the search if it is a valid domain
-            if domain['available'] is not None:
-                save_search(domain_name, domain['expires'], domain['date_available'], 3)  # '3' is the admin ID
+            # if domain['available'] is not None:
+            #     save_search(domain_name, domain['expires'], domain['date_available'], 3)  # '3' is the admin ID
 
             details = get_domain_details(domain_name)
             dropping = get_dropping_domains()
@@ -89,7 +89,7 @@ def view(domain, available):
     if current_user.is_authenticated:
         id = current_user.id
     else:
-        id = 3
+        id = 0
 
     available = available.replace('-', '/')
     from app.blueprints.api.api_functions import save_search
@@ -97,20 +97,16 @@ def view(domain, available):
     return render_template('page/view.html', domain=domain, available=available)
 
 
-# @page.route('/drops/<tld>/<pg>', methods=['GET','POST'])
+# @page.route('/drops/<tld>', methods=['GET','POST'])
 @page.route('/drops', methods=['GET','POST'])
 @csrf.exempt
-# def drops(tld, pg):
 def drops():
     from app.blueprints.api.api_functions import active_tlds
     from app.blueprints.api.domain.domain import get_dropping_domains
     from app.blueprints.api.domain.s3 import get_last_modified
-    # from app.blueprints.api.models.filestack import Filestack
 
     domains, drop_count = get_dropping_domains()
-    # f = db.session.query(Filestack).order_by(Filestack.id.desc()).first()
     last_updated = get_last_modified()
-    # listing = PageResult(domains, tld, pg)
 
     return render_template('user/drops.html',
                            listing=None,

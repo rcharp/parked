@@ -9,7 +9,7 @@ from decimal import Decimal
 import time
 
 
-site_name = "GetParked.io"
+site_name = "NameCatcher.io"
 
 
 # The main checkout function for charging a user's card. Used for both reserving and purchasing a domain.
@@ -242,8 +242,9 @@ def get_payment_method(si):
 # Get's the customer's card info from Stripe. Used to display the last 4 digits on the settings/checkout pages
 def get_card(c):
     stripe.api_key = current_app.config.get('STRIPE_KEY')
+    production = current_app.config.get('PRODUCTION')
 
-    if c is None:
+    if c is None or not production:
         return None
 
     pm = None

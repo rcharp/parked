@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
-    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
-    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
+    <title>{{ 'site_name'|site_name_filter }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,7 +13,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.getparked.io">
+    <link rel="canonical" href="https://www.namecatcher.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,17 +33,17 @@
     </script>
 
     <!-- Facebook Open Graph 2 -->
-    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.getparked.io" />
-    <meta property="og:image" content="https://www.getparked.io/static/logo256x256.png" />
-    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
-    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter }}: Domain backordering made simple" />
+    <meta property="og:url" content="https://www.namecatcher.io" />
+    <meta property="og:image" content="https://www.namecatcher.io/static/logo256x256.png" />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
-    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
@@ -95,7 +95,7 @@
 
         <div class="cover">
             <!-- Header -->
-            <header class="header border-bottom border-color-light-gray" style="background-color:#009fff">
+            <header class="header border-bottom border-color-light-gray" style="background-color:#0073ff">
                 <div class="header-inner">
                     <nav class="navbar navbar-expand-lg py-1">
                         <div class="container-fluid">
@@ -130,7 +130,7 @@
                                 </ul>
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item d-none d-lg-block m-1">
-                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-primary font-family-secondary sm-font-size px-3 font-weight__500">
+                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-success font-family-secondary sm-font-size px-3 font-weight__500">
                                             Sign up
                                         </a>
                                     </li>
@@ -175,8 +175,11 @@
                                 <!--/ End Empty Space -->
                                 <!--/ End Empty Space -->
                                 <p class="lead base-plus-font-size text-center">
-                                    Have a domain in mind that you want? Backorder it and we'll secure it for you as soon as it becomes available.<br />
-                                    Only $99 per domain.<br /></p>
+                                    Want a domain name that's currently registered?<br />
+                                    Backorder it through us and we'll catch it for you as soon as it becomes available.<br />
+                                    Only $99 per domain.<br /><br />
+                                    <span style="font-size:16px;">Includes the price of the domain, and a year of registration.</span>
+                                </p>
 
                                 <!-- Old code for searching for domains. Maybe one day? -->
                                 {#{% if domain is defined and domain is not none %}
@@ -184,7 +187,7 @@
                                         <div style="font-size:24px;min-width:350px;display:block;{% if not domain['available'] %}width:50%;margin-top:40px;float:left;{% endif %}"><br /><br />
                                             {% if domain['available'] is not none %}
                                                 {% if not domain['available'] %}
-                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
+                                                    <span style="font-size:42px;color:#0073ff;">{{ domain['name'] }}</span><small> - <span style="color: red;">Registered</span></small><br />
                                                     <span class="text-muted">Available:</span> {{ domain['date_available'] }}
 
                                                     {% set domain_name = domain['name'] %}
@@ -199,7 +202,7 @@
                                                         </div>
                                                     </form>
                                                 {% else %}
-                                                    <span style="font-size:42px;color:#009fff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
+                                                    <span style="font-size:42px;color:#0073ff;">{{ domain['name'] }}</span><small> - <span style="color:green;">Available!</span></small><br />
                                                     <form class="form-horizontal push-5-t" action="{{ url_for('user.check_availability') }}" method="get">
                                                         <div class="form-group">
                                                             <div class="col-xs-12" style="width:40%;min-width:350px;">
@@ -261,7 +264,7 @@
                                         <div class="form-group">
                                             <br />
                                             <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;margin:0 auto; float:none;">
-                                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h5>
+                                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#0073ff">{{ tlds|join(', ')}}</span></h5>
                                                 <input required class="form-control" id="domain" name="domain" placeholder="Search for a domain" style="text-align:center;min-height:10px;font-size:16px;color:#606060; padding:5px;" />
                                             </div>
                                             <div style="margin:0 auto;float:none;height:100%;margin-bottom:10px;max-width:500px;">
@@ -283,13 +286,13 @@
                                 {% endif %}#}
 
                                 <br /><br />
-                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#009fff">{{ tlds|join(', ')}}</span></h4>
+                                <h5 class="font-w400" style="margin-bottom:10px;">Available domain extensions: <span style="color:#0073ff">{{ tlds|join(', ')}}</span></h4>
                                 {% if dropping is not none and dropping|length > 0 %}
                                     <div style="width:100%;">
                                         <!-- Dropping Domains -->
                                         <div style="font-size:14px;width:100%;text-align:left;float:left;margin-bottom:10px;">
                                             <span class="text-muted" style="font-size:14px;float:left">Some domains dropping soon:</span>
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#0073ff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                         <!-- First half of list -->
                                         <div style="float:left;width:50%;min-width:350px;">
@@ -314,7 +317,7 @@
                                                         <tr style="max-height:10px;border:none; line-height:1 !important">
                                                             <td id="domain-row" class="domain-row" style="min-width:265px;max-height:10px;padding:.75rem;border:none;overflow:hidden;text-overflow:ellipsis;">
                                                                 <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
                                                                 </a>
                                                             </td>
                                                             <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -360,7 +363,7 @@
                                                         <tr style="max-height:10px;border:none; line-height:1 !important;">
                                                             <td id="domain-row-2" class="domain-row-2" style="min-width:265px;max-width:300px;max-height:10px;padding:.75rem;border:none;">
                                                                 <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                    <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:14px;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
                                                                 </a>
                                                             </td>
                                                             <td style="min-width:75px;padding:.75rem;border:none;text-align:left;"><span class="text-muted font-w300" style="font-size:14px;">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -388,7 +391,7 @@
                                             </div>
                                         </div>
                                         <div style="font-size:16px;width:100%;text-align:left;float:right;margin-bottom:10px;">
-                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#009fff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
+                                            <a href="{{ url_for('page.drops') }}"><span style="font-size:16px;float:right;color:#0073ff">See all {{ drop_count }} domains <i class="fa fa-angle-right"></i></span></a>
                                         </div>
                                     </div>
                                 {% endif %}
@@ -424,7 +427,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle si fas fa-search" style="color:#009fff"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle si fas fa-search" style="color:#0073ff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -446,7 +449,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-check" style="color:#009fff"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-check" style="color:#0073ff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -468,7 +471,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-credit-card" style="color:#009fff"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-credit-card" style="color:#0073ff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -490,7 +493,7 @@
                                 <div class="row align-items-center">
                                     <div class="text-right col-3 px-0">
                                         <div class="icon-wrap">
-                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-edit" style="color:#009fff"></i>
+                                            <i class="icon p-4 xl-font-size rounded-circle fas fa-edit" style="color:#0073ff"></i>
                                             <img class="icon__img icon__img-right" src="../../../../static/landing/assets/images/organic-shape/organic-shape-8.svg" alt="organic shape">
                                         </div>
                                     </div>
@@ -502,7 +505,7 @@
                                         <div class="sm-sapce"></div>
                                         <!--/ End Empty Space -->
                                         <p class="lead sm-font-size text-dark-gray mb-0">
-                                            After we secure the domain for you, you'll be able to change the domain's nameservers to point to your site, so you can start using it immediately.
+                                            After we catch the domain for you, you'll be able to change the domain's nameservers to point to your site, so you can start using it immediately.
                                         </p>
                                     </div>
                                 </div>
@@ -563,7 +566,7 @@
                                         Stay in the loop
                                     </h2>
                                     <p class="lead sm-font-size">
-                                        We'll be launching {{ 'site_name'|site_name_filter|capitalize }} soon. Enter your email address and we'll let you know when we launch!
+                                        We'll be launching {{ 'site_name'|site_name_filter }} soon. Enter your email address and we'll let you know when we launch!
                                     </p>
                                 </div>
                             </div>
@@ -633,7 +636,7 @@
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

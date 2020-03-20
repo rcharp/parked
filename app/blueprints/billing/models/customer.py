@@ -15,10 +15,8 @@ class Customer(ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Relationships.
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id',
-                                                  onupdate='CASCADE',
-                                                  ondelete='CASCADE'),
-                        index=True, unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),
+                        index=True, nullable=True, primary_key=False, unique=False)
 
     # Customer details.
     customer_id = db.Column(db.String(128))

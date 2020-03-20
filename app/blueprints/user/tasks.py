@@ -13,7 +13,7 @@ from app.blueprints.user.models import User
 
 celery = create_celery_app()
 
-send = False
+send = True
 
 
 @celery.task()
@@ -52,10 +52,18 @@ def send_welcome_email(email):
 
 
 @celery.task()
-def send_reservation_email(email, domain):
+def send_reservation_email(email, domain, available):
     from app.blueprints.user.emails import send_reservation_email
     if send:
-        send_reservation_email(email, domain)
+        send_reservation_email(email, domain, available)
+    return
+
+
+@celery.task()
+def send_secured_email(email, domain):
+    from app.blueprints.user.emails import send_secured_email
+    if send:
+        send_secured_email(email, domain)
     return
 
 

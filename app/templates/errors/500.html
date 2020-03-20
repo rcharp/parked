@@ -115,20 +115,15 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
                                 <li>
-                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Find a Domain
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-grid pull-right"></i>My Dashboard
                                     </a>
                                 </li>
                                 <li>
-    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-        <i class="si si-grid pull-right"></i>My Dashboard
-    </a>
-</li>
-<li>
-    <a tabindex="-1" href="{{ url_for('page.drops') }}">
-        <i class="si si-globe pull-right"></i>All Domains
-    </a>
-</li>
+                                    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+                                        <i class="si si-clock pull-right"></i>All Expiring Domains
+                                    </a>
+                                </li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
@@ -160,7 +155,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#0073ff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -170,7 +165,7 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#0073ff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w300 text-white">
@@ -205,7 +200,7 @@
                                                 <div style="text-align:center; font-size:24px;"><br /><br />
                                                     Whoops, looks like an error occured.<br /><br />
 
-                                                    Please click <a href="{{ url_for('user.dashboard') }}"><span style="color:#009fff">here</span></a> to return to your dashboard.
+                                                    Please click <a href="{{ url_for('user.dashboard') }}"><span style="color:#0073ff">here</span></a> to return to your dashboard.
                                                 </div>
                                             </div>
                                             <!-- END Bootstrap Login -->
@@ -223,7 +218,7 @@
             <!-- END Main Container -->
 
             <!-- Footer -->
-            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#009fff">
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#0073ff">
                 <div class="pull-right">
                     <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>

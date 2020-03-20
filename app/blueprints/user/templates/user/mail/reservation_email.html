@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Welcome to {{ 'site_name'|site_name_filter|capitalize }}</title>
+<title>Welcome to {{ 'site_name'|site_name_filter }}</title>
 <style>
 /* -------------------------------------
 		GLOBAL
@@ -189,12 +189,12 @@ ul li, ol li {
 				<tr>
 					<td>
 						<p>Hi,</p>
-						<p>You've successfully reserved {{ domain }}!<br>
-						We look forward to helping you secure {{ domain }}.</p>
+						<p>You've successfully reserved {{ domain }}! It becomes available on {{ available }}.<br>
+						We look forward to helping you catch {{ domain }}.</p>
 						<p>Remember, your card won't be charged unless we're actually able to get the domain for you.<br>
-						So just sit back and relax, and we'll take care of it!</p>
+						So just sit back and relax, and we'll try to get {{ domain }} for you!</p>
 						<p>Sincerely,</p>
-						<p>The {{ 'site_name'|site_name_filter|capitalize }} Team</p>
+						<p>The {{ 'site_name'|site_name_filter }} Team</p>
 					</td>
 				</tr>
 			</table>

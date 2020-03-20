@@ -1,0 +1,73 @@
+{% extends 'layouts/app.html' %}
+{% import 'macros/items.html' as items %}
+{% import 'macros/form.html' as f with context %}
+
+{% block title %}Admin - Backorders / List{% endblock %}
+
+{% block body %}
+  {{ f.search('admin.backorders') }}
+
+  {% if backorders.total == 0 %}
+    <h3>No results found</h3>
+  {% else %}
+    {% call f.form_tag('admin.backorders_bulk_delete') %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              <label for="select_all"></label>
+              <input id="select_all" name="select_all" type="checkbox">
+            </th>
+            <th class="col-header">
+              {{ items.sort('created_on', 'Created') }}
+            </th>
+            <th class="col-header">
+              {{ items.sort('domain_name', 'Domain') }}
+            </th>
+            <th class="col-header">
+              {{ items.sort('email', 'User') }}
+            </th>
+            <th class="col-header">
+              {{ items.sort('secured', 'Secured') }}
+            </th>
+            <th id="bulk_actions" colspan="4">
+              <div class="form-inline">
+                {{ f.field(bulk_form.scope, inline=True) }}
+                  <button type="submit"
+                          class="btn btn-danger btn-sm">
+                    Delete items
+                  </button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for backorder in backorders.items %}
+          <tr>
+            <td>
+              <label for="bulk_ids"></label>
+              <input class="checkbox-item" id="bulk_ids" name="bulk_ids"
+                     type="checkbox" value="{{ backorder.id }}">
+            </td>
+            <td>
+              <time class="from-now"
+                    data-datetime="{{ backorder.created_on }}">
+                {{ backorder.created_on }}
+              </time>
+            </td>
+            <td>
+              <h4 class="media-heading">{{ backorder.domain_name }}</h4>
+            </td>
+             <td>
+              <h4 class="media-heading">{{ backorder.email }}</h4>
+            </td>
+            <td>{{ backorder.secured }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endcall %}
+
+    {{ items.paginate(backorders) }}
+  {% endif %}
+{% endblock %}

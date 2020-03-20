@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
-    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
-    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
+    <title>{{ 'site_name'|site_name_filter }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,7 +13,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.getparked.io">
+    <link rel="canonical" href="https://www.namecatcher.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,17 +33,17 @@
     </script>
 
     <!-- Facebook Open Graph -->
-    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.getparked.io" />
-    <meta property="og:image" content="https://www.getparked.io/static/logo256x256.png" />
-    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
-    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter }}: Domain backordering made simple" />
+    <meta property="og:url" content="https://www.namecatcher.io" />
+    <meta property="og:image" content="https://www.namecatcher.io/static/logo256x256.png" />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
-    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
@@ -95,7 +95,7 @@
 
         <div class="cover">
             <!-- Header -->
-            <header class="header border-bottom border-color-light-gray" style="background-color:#009fff">
+            <header class="header border-bottom border-color-light-gray" style="background-color:#0073ff">
                 <div class="header-inner">
                     <nav class="navbar navbar-expand-lg py-1">
                         <div class="container-fluid">
@@ -130,7 +130,7 @@
                                 </ul>
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item d-none d-lg-block m-1">
-                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-primary font-family-secondary sm-font-size px-3 font-weight__500">
+                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-success font-family-secondary sm-font-size px-3 font-weight__500">
                                             Sign up
                                         </a>
                                     </li>
@@ -160,13 +160,13 @@
                     <div class="row align-items-center">
                         <div class="col-12 col-lg-12 mx-lg-auto">
                             <div class="text-center" style="overflow-wrap:break-word;">
-                                <h1 class="xxxl-font-size font-weight__700 text-center" style="color:#009fff">
+                                <h1 class="xxxl-font-size font-weight__700 text-center" style="color:#0073ff">
                                     {{ domain }}
                                 </h1>
                                 <div class="md-space"></div>
                                 <div class="block block-themed" style="height:450px;margin:0 auto;float:none;width:70%;min-width:350px;">
-                                    This expired domain was secured using <a href="{{ url_for('page.home') }}"><span style="color:#009fff">GetParked.io</span></a>, a service to backorder expiring domains.<br /><br />
-                                    Please <a href="{{ url_for('user.contact') }}"><span style="color:#009fff">contact us</span></a> to purchase {{ domain }} or <a href="{{ url_for('page.drops') }}"><span style="color:#009fff">view other domains that are expiring soon</span></a>.
+                                    This expired domain was secured using <a href="{{ url_for('page.home') }}"><span style="color:#0073ff">{{ 'site_name'|site_name_filter }}</span></a>, a service to backorder expiring domains.<br /><br />
+                                    Please <a href="{{ url_for('user.contact') }}"><span style="color:#0073ff">contact us</span></a> to purchase {{ domain }} or <a href="{{ url_for('page.drops') }}"><span style="color:#0073ff">view other domains that are expiring soon</span></a>.
                                 </div>
                                     <!-- Empty Space -->
                                 <div class="md-space"></div>
@@ -233,7 +233,7 @@
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

@@ -119,20 +119,15 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Actions</li>
                                 <li>
-                                    <a tabindex="-1" href="{{ url_for('user.check_availability') }}">
-                                        <i class="si si-check pull-right"></i>Find a Domain
+                                    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
+                                        <i class="si si-grid pull-right"></i>My Dashboard
                                     </a>
                                 </li>
                                 <li>
-    <a tabindex="-1" href="{{ url_for('user.dashboard') }}">
-        <i class="si si-grid pull-right"></i>My Dashboard
-    </a>
-</li>
-<li>
-    <a tabindex="-1" href="{{ url_for('page.drops') }}">
-        <i class="si si-globe pull-right"></i>All Domains
-    </a>
-</li>
+                                    <a tabindex="-1" href="{{ url_for('page.drops') }}">
+                                        <i class="si si-clock pull-right"></i>All Expiring Domains
+                                    </a>
+                                </li>
                                 <li>
                                     <a tabindex="-1" href="{{ url_for('user.settings') }}">
                                         <i class="si si-settings pull-right"></i>Settings
@@ -153,6 +148,16 @@
                     </li>
                 </ul>
                 <!-- END Header Navigation Right -->
+                {% else %}
+                    <div class="nav-header pull-right">
+                        <a href="{{ url_for('user.signup') }}">
+                          <span style="font-weight:200;font-size:20px;color:#0073ff;">Sign up</span>
+                        </a>
+                        &nbsp;<span style="font-size:20px;">/</span>&nbsp;
+                        <a href="{{ url_for('user.login') }}">
+                          <span style="font-weight:200;font-size:20px;color:#0073ff;">Login</span>
+                        </a>
+                    </div>
                 {% endif %}
 
                 <!-- Header Navigation Left -->
@@ -165,7 +170,7 @@
                     </li>
                     <li>
                         <a href="{{ url_for('page.home') }}">
-                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#009fff;">{{ 'site_name'|site_name_filter }}</span>
+                          <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;font-size:36px;color:#0073ff;">{{ 'site_name'|site_name_filter }}</span>
                         </a>
                     </li>
                 </ul>
@@ -175,7 +180,7 @@
 
             <!-- Main Container -->
             <main id="main-container">
-                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#009fff">
+                <div class="content hidden-print ribbon ribbon-right" style="min-height:80px;padding:20px;background-color:#0073ff">
                     <div class="row items-push">
                         <div class="col-sm-7" style="margin-bottom:0;">
                             <h1 class="font-w400 text-white">
@@ -200,7 +205,7 @@
                     <div class="row" style="margin-bottom:150px;">
                         <div class="col-md-4" style="width:80%; margin:0 auto; margin-top:100px; min-width:450px; float:none;">
                             <!-- Block Tabs Alternative Style -->
-                            <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#009fff"><i class="fa fa-angle-left"></i> Go back</span></a></h4>
+                            <h4 class="font-w400" style="margin-bottom:10px;"><a href="javascript:GoBack();"><span style="color:#0073ff"><i class="fa fa-angle-left"></i> Go back</span></a></h4>
                             <div class="block" style="border-radius:4px;border:1px solid #c5c5c5;min-width:350px;">
                                 <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" style="padding:1px;">
                                     {% for tld in tlds %}
@@ -227,96 +232,125 @@
                                                         <div class="col-md-12" style="width:80%;min-width:350px;max-width:90%;float:none;padding-left:0;">
                                                             <input type="search" class="form-control search" id="search" name="search" onkeyup="FilterDomains(this)" placeholder="Search available .{{ tld_name }} domains" style="text-align:center;min-height:50px;font-size:18px;color:#606060;padding:10px;margin-bottom:10px;min-width:320px;width:50%;" />
                                                         </div>
-                                                            <h4 class="font-w400" style="margin-bottom:50px;">Showing <span style="color:#009fff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#009fff">{{ drop_count }}</span> total domains</h4>
-                                                            <small class="font-w400"><i>Last updated: {{ last_updated|pretty_date_filter }}</i></small>
-                                                        <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">
-                                                            <thead>
-                                                                <tr>
-                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;width:70%;">
-                                                                        <span class="text-muted">Domain</span>
-                                                                    </td>
-                                                                    <td style="min-width:75px;">
-                                                                        <span class="text-muted">Available</span>
-                                                                    </td>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="{{ tld_name }}_nav_body">
-                                                                {#{% for domain in listing.data|tld_filter(tld) %}#}
-                                                                {% for domain in domains|tld_filter(tld) %}
-                                                                {% set domain_name = domain['name'] %}
-                                                                {% set available = domain['date_available']|replace('/', '-') %}
-                                                                    <tr id="{{ domain['name'] }}" class="domain-row" style="max-height:10px;border:none">
-                                                                    <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
-                                                                        <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
-                                                                </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                        <script type="text/javascript">
-                                                            var domain_table = document.getElementsByClassName('table')[0];
-                                                            if (domain_table.offsetWidth < 360){
-                                                                document.getElementById('reserve-header').style.display = 'none';
-                                                                var domain_names = document.getElementsByClassName('domain-name');
-                                                                for (var i=0; i<domain_names.length; i++){
-                                                                    domain_names[i].style.width = '75%';
-                                                                }
+{#                                                        <div class="form-group">#}
+{#                                                            <label class="col-xs-12"><span style="font-size:18px;">Number of letters</span></label>#}
+{#                                                            <div class="col-xs-12">#}
+{#                                                                <label class="checkbox-inline" for="4-letter-checkbox">#}
+{#                                                                    <input type="checkbox" id="4-letter-checkbox" name="4-letter-checkbox" value="4" onchange="FilterDomainLength(this, '{{ tld }}');">#}
+{#                                                                    <span style="font-size:18px;">4 letters</span>#}
+{#                                                                </label>#}
+{#                                                                <label class="checkbox-inline" for="5-letter-checkbox">#}
+{#                                                                    <input type="checkbox" id="5-letter-checkbox" name="5-letter-checkbox" value="5" onchange="FilterDomainLength(this, '{{ tld }}');">#}
+{#                                                                    <span style="font-size:18px;">5 letters</span>#}
+{#                                                                </label>#}
+{#                                                                <label class="checkbox-inline" for="6-letter-checkbox">#}
+{#                                                                    <input type="checkbox" id="6-letter-checkbox" name="6-letter-checkbox" value="6" onchange="FilterDomainLength(this, '{{ tld }}');">#}
+{#                                                                    <span style="font-size:18px;">6 letters</span>#}
+{#                                                                </label>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <br /><br /><br />#}
+                                                        <h4 class="font-w400">Showing <span style="color:#0073ff">{{ '{:,}'.format(domains|tld_filter(tld)|length)  }}</span> of <span style="color:#0073ff">{{ drop_count }}</span> total domains</h4>
+                                                        <small class="font-w400" style="margin-bottom:50px;"><i>Last updated: {{ last_updated|pretty_date_filter }}</i></small>
+                                                        <br /><br />
 
-                                                                var reserve_buttons = document.getElementsByClassName('reserve-button');
-                                                                for (var i=0; i<reserve_buttons.length; i++){
-                                                                    reserve_buttons[i].style.display = 'none';
-                                                                }
-                                                            }
-                                                        </script>
-{#                                                            <ul class="pagination">#}
-{#                                                              {%if listing.page == 1%}#}
-{#                                                              <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>#}
-{#                                                              {%else%}#}
-{#                                                                  <li class="page-item"><a class="page-link" href="/drops/{{ tld }}/{{listing.page|int - 1}}">Previous</a></li>#}
-{#                                                               {%endif%}#}
-{#                                                              <li class="page-item"><a class="page-link" href="{{listing}}">Next</a></li>#}
-{#                                                            </ul>#}
+                                                            <!-- First half of list -->
+                                                            {% for column in domains|tld_filter(tld) | slice(4) -%}
+                                                            <div style="float:left;width:25%;min-width:350px;">
+                                                                <table class="table table-borderless table-condensed header-table" id="header-table" style="position:sticky;margin-bottom:0;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td id="domain-header" style="min-width:265px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Domain</span>
+                                                                            </td>
+                                                                            <td style="min-width:75px;">
+                                                                                <span class="text-muted" style="font-size:16px;">Available</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                                <div style="width:100%;">
+                                                                    <table class="table table-borderless table-condensed table-sm" id="domain-table" style="table-layout:fixed;min-width:350px;">
+                                                                        <tbody style="line-height:1 !important;">
+                                                                            {% for domain in column %}
+                                                                            {% set domain_name = domain['name'] %}
+                                                                            {% set available = domain['date_available']|replace('/', '-') %}
+                                                                            <tr id="{{ domain['name'] }}" class="domain-row" style="max-height: 10px; border: none;">
+                                                                                <td id="dropping-domain" class="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">
+                                                                                    <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
+                                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name']|replace('-', '\u2011') }}</u></span>
+                                                                                    </a>
+                                                                                </td>
+                                                                                <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
+                                                                            </tr>
+                                                                            {% endfor %}
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <script type="text/javascript">
+                                                                        var x = document.getElementById('domain-header').offsetWidth;
+                                                                        var domain_rows = document.getElementsByClassName('dropping-domain');
+                                                                        for (var i=0; i<domain_rows.length; i++){
+                                                                            domain_rows[i].style.width = x.toString() + 'px';
+                                                                        }
 
+                                                                        var domain_tables = document.getElementsByClassName('table');
+                                                                        if (domain_tables[0].offsetWidth < 351){
+                                                                            var header_tables = document.getElementsByClassName('header-table');
+                                                                            for (var i=1; i<header_tables.length; i++){
+                                                                                header_tables[i].style.display = 'none';
+                                                                            }
 
-
-
-
-                                                        {#<table class="table table-responsive pagination-lg table-condensed js-dataTable-simple dataTable no-footer" id="{{ tld_name }}_nav_table" role="grid" aria-describedby="{{ tld_name }}_nav_table_info" style="width:100%;min-width:500px;overflow-x:scroll;">
-                                                            <thead style="border-bottom:1px solid #d3d3d3">
-                                                                <tr>
-                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;">
-                                                                        <span class="text-muted">Domain</span>
-                                                                    </td>
-                                                                    <td style="min-width:75px;">
-                                                                        <span class="text-muted">Available</span>
-                                                                    </td>
-                                                                    <td id="reserve-header" style="min-width:60px;"></td>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for domain in domains|tld_filter(tld) %}
-                                                            {% set domain_name = domain['name'] %}
-                                                            {% set available = domain['date_available']|replace('/', '-') %}
-                                                            <tr>
-                                                                <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;">
-                                                                    <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                        <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
-                                                                    </a>
-                                                                </td>
-                                                                <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
-                                                            </tr>
+                                                                            for (var i=0; i<domain_tables.length; i++){
+                                                                                domain_tables[i].style.marginBottom = '0';
+                                                                            }
+                                                                        }
+                                                                    </script>
+                                                                </div>
+                                                            </div>
                                                             {% endfor %}
-                                                            </tbody>
-                                                        </table>#}
 
-
-
-
-
-
+                                                            <!-- Old code for displaying all drops in one row -->
+{#                                                        <table id="{{ tld_name }}_nav_table" class="table table-borderless table-condensed js-dataTable-simple dataTable" style="position:sticky;margin-bottom:0;table-layout:fixed;min-width:350px">#}
+{#                                                            <thead>#}
+{#                                                                <tr>#}
+{#                                                                    <td id="domain-name" class="domain-name" style="min-width:275px !important;width:70%;">#}
+{#                                                                        <span class="text-muted">Domain</span>#}
+{#                                                                    </td>#}
+{#                                                                    <td style="min-width:75px;">#}
+{#                                                                        <span class="text-muted">Available</span>#}
+{#                                                                    </td>#}
+{#                                                                </tr>#}
+{#                                                            </thead>#}
+{#                                                            <tbody id="{{ tld_name }}_nav_body">#}
+{#                                                                {% for domain in domains|tld_filter(tld) %}#}
+{#                                                                {% set domain_name = domain['name'] %}#}
+{#                                                                {% set available = domain['date_available']|replace('/', '-') %}#}
+{#                                                                    <tr id="{{ domain['name'] }}" class="domain-row" style="max-height: 10px; border: none;">#}
+{#                                                                    <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem;border-top:0;overflow:hidden;text-overflow:ellipsis;">#}
+{#                                                                        <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">#}
+{#                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name'] }}</u></span>#}
+{#                                                                        </a>#}
+{#                                                                    </td>#}
+{#                                                                    <td style="min-width:75px;padding:.75rem;border-top:0;"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>#}
+{#                                                                </tr>#}
+{#                                                                {% endfor %}#}
+{#                                                            </tbody>#}
+{#                                                        </table>#}
+{#                                                        <script type="text/javascript">#}
+{#                                                            var domain_table = document.getElementsByClassName('table')[0];#}
+{#                                                            if (domain_table.offsetWidth < 360){#}
+{#                                                                document.getElementById('reserve-header').style.display = 'none';#}
+{#                                                                var domain_names = document.getElementsByClassName('domain-name');#}
+{#                                                                for (var i=0; i<domain_names.length; i++){#}
+{#                                                                    domain_names[i].style.width = '75%';#}
+{#                                                                }#}
+{##}
+{#                                                                var reserve_buttons = document.getElementsByClassName('reserve-button');#}
+{#                                                                for (var i=0; i<reserve_buttons.length; i++){#}
+{#                                                                    reserve_buttons[i].style.display = 'none';#}
+{#                                                                }#}
+{#                                                            }#}
+{#                                                        </script>#}
                                                         {% else %}
                                                             There are no domains with this extension dropping in the next few days.
                                                         {% endif %}
@@ -339,7 +373,7 @@
             <!-- END Main Container -->
 
             <!-- Footer -->
-            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#009fff">
+            <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix" style="background-color:#0073ff">
                 <div class="pull-right">
                     <a href="{{ url_for('user.contact') }}">Contact Us</a> | <a href="{{ url_for('page.privacy') }}">Privacy Policy</a> | <a href="{{ url_for('page.terms') }}">Terms of Service</a>
                 </div>
@@ -425,6 +459,7 @@
                 input += e.value;
 
                 var domains = document.getElementsByClassName('domain-row');
+                // var domains = document.querySelectorAll('[style*="max-height: 10px; border: none;"]');
                 for (var i = 0; i < domains.length; i++) {
                     var domain = domains[i];
                     if (domain.id.toLowerCase().includes(input.toLowerCase()) === false){
@@ -486,6 +521,30 @@
     <script>
         function GoBack() {
             window.history.back();
+        }
+    </script>
+    <script>
+        function FilterDomainLength(sel, tld) {
+            var val = parseInt(sel.value);
+            var tld_length = tld.length;
+
+            if(document.getElementById(sel.id).checked) {
+                var domains = document.querySelectorAll('[style*="max-height: 10px; border: none;"]');
+                for (var i = 0; i < domains.length; i++) {
+                    var domain = domains[i];
+                    if ((domain.id.toLowerCase().length - tld_length) !== val){
+                        domain.style.display = 'none';
+                    }
+                }
+            } else {
+                var domains = document.querySelectorAll('[style*="max-height: 10px; border: none; display: none;"]');
+                for (var i = 0; i < domains.length; i++) {
+                    var domain = domains[i];
+                    if ((domain.id.toLowerCase().length - tld_length) !== val){
+                        domain.style.display = '';
+                    }
+                }
+            }
         }
     </script>
     </body>

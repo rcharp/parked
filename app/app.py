@@ -340,7 +340,7 @@ def today_filter(arg):
 
 
 def site_name_filter(arg):
-    return 'getparked.io'
+    return 'NameCatcher.io'
 
 
 def site_color_filter(arg):

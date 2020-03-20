@@ -13,6 +13,7 @@ from sqlalchemy import exists, and_, or_, inspect
 from flask import current_app
 from importlib import import_module
 from app.blueprints.page.date import get_dt_string
+from flask_login import current_user
 
 
 # Create a distinct integration id for the integration.
@@ -83,14 +84,14 @@ def save_domain(user_id, customer_id, domain, expires, date_available, reserve_t
 def save_search(domain, expires, date_available, user_id):
     from app.blueprints.api.models.searched import SearchedDomain
 
-    if not db.session.query(exists().where(and_(SearchedDomain.name == domain, SearchedDomain.user_id == user_id))).scalar():
-        s = SearchedDomain()
-        s.name = domain
-        s.expires = expires
-        s.date_available = date_available
-        s.user_id = user_id
+    # if not db.session.query(exists().where(and_(SearchedDomain.name == domain, SearchedDomain.user_id == user_id))).scalar():
+    s = SearchedDomain()
+    s.name = domain
+    s.expires = expires
+    s.date_available = date_available
+    s.user_id = user_id
 
-        s.save()
+    s.save()
     return
 
 
@@ -104,6 +105,9 @@ def format_domain_search(domain):
 
 def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_delete):
     from app.blueprints.api.models.backorder import Backorder
+    from app.blueprints.user.models import User
+
+    u = User.query.filter(User.id == user_id).scalar()
 
     b = Backorder()
     b.domain = domain.id
@@ -119,7 +123,15 @@ def create_backorder(domain, available, pm, pi, customer_id, user_id, pending_de
     b.secured = False
     b.paid = False
 
+    if u is not None:
+        b.email = u.email
+
     b.save()
+
+    # Send a successful reservation email
+    from app.blueprints.user.tasks import send_reservation_email
+    send_reservation_email.delay(current_user.email, domain.name, available)
+
     return
 
 

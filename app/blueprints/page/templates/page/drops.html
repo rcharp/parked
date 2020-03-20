@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple</title>
-    <meta name="description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
-    <meta name="keywords" content="{{ 'site_name'|site_name_filter|capitalize }}">
+    <title>{{ 'site_name'|site_name_filter }}: Domain backordering made simple</title>
+    <meta name="description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
+    <meta name="keywords" content="{{ 'site_name'|site_name_filter }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,7 +13,7 @@
 
     <!-- Helps prevent duplicate content issues --
     <link rel="canonical" href="https://themesfor.app/preview/acharnae"> -->
-    <link rel="canonical" href="https://www.getparked.io">
+    <link rel="canonical" href="https://www.namecatcher.io">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,17 +33,17 @@
     </script>
 
     <!-- Facebook Open Graph -->
-    <meta property="og:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Domain backordering made simple" />
-    <meta property="og:url" content="https://www.getparked.io" />
-    <meta property="og:image" content="https://www.getparked.io/static/logo256x256.png" />
-    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering" />
-    <meta property="og:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering." />
+    <meta property="og:title" content="{{ 'site_name'|site_name_filter }}: Domain backordering made simple" />
+    <meta property="og:url" content="https://www.namecatcher.io" />
+    <meta property="og:image" content="https://www.namecatcher.io/static/logo256x256.png" />
+    <meta property="og:site_name" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering" />
+    <meta property="og:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering." />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="https://themesfor.app/themes/acharnae">
-    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter|capitalize }}: Automate your domain backordering">
-    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter|capitalize }} allows you to you automate your domain backordering.">
+    <meta name="twitter:title" content="{{ 'site_name'|site_name_filter }}: Automate your domain backordering">
+    <meta name="twitter:description" content="{{ 'site_name'|site_name_filter }} allows you to you automate your domain backordering.">
     <meta name="twitter:image" content="https://themesfor.app/preview/assets/images/acharnae.png">
 
     <!-- Google Fonts -->
@@ -95,7 +95,7 @@
 
         <div class="cover">
             <!-- Header -->
-            <header class="header border-bottom border-color-light-gray" style="background-color:#009fff">
+            <header class="header border-bottom border-color-light-gray" style="background-color:#0073ff">
                 <div class="header-inner">
                     <nav class="navbar navbar-expand-lg py-1">
                         <div class="container-fluid">
@@ -125,7 +125,7 @@
                                 </ul>
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item d-none d-lg-block m-1">
-                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-primary font-family-secondary sm-font-size px-3 font-weight__500">
+                                        <a href="{{ url_for('user.signup') }}" class="btn btn-md btn-success font-family-secondary sm-font-size px-3 font-weight__500">
                                             Sign up
                                         </a>
                                     </li>
@@ -198,7 +198,7 @@
                                                                 <tr>
                                                                     <td id="dropping-domain" style="min-width:275px !important;width:50%;max-height:10px;padding:.75rem">
                                                                         <a href="{{ url_for('page.view', domain=domain_name, available=available) }}">
-                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#009fff;"><u>{{ domain['name'] }}</u></span>
+                                                                            <span style="font-family:'Fredoka One', sans-serif !important; font-weight:200;color:#0073ff;"><u>{{ domain['name'] }}</u></span>
                                                                         </a>
                                                                     </td>
                                                                     <td style="min-width:75px;padding:.75rem"><span class="text-muted font-w400">{{ domain['date_available']|dropping_date_filter  }}</span></td>
@@ -274,7 +274,7 @@
 
                         </div>
                         <div class="copyright xs-font-size text-center text-lg-right">
-                            &copy; 2020 {{ 'site_name'|site_name_filter|capitalize }}. All Rights Reserved.
+                            &copy; 2020 {{ 'site_name'|site_name_filter }}. All Rights Reserved.
                         </div>
                     </div>
                 </div>

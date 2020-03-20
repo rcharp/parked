@@ -45,7 +45,7 @@ def pool_domains(limit):
                             if '--' in d[0]:
                                 continue
                             # domain_list.append({'name': d[0], 'date_available': d[1].replace(' 12:00:00 AM', '')})
-                            json.dump({'name': d[0], 'date_available': d[1].replace(' 12:00:00 AM', '')}, output)
+                            json.dump({'name': d[0], 'date_available': d[1].replace(' 12:00:00 AM', ''), 'tld': tld}, output)
                             output.write(os.linesep)
 
                             counter += 1
@@ -77,7 +77,7 @@ def park_domains(limit):
             with open('domains.json', 'a') as output:
                 counter = 0
                 for domain in domains:
-                    json.dump({'name': domain['name'], 'date_available': convert_string_dates(domain['date_available'])}, output)
+                    json.dump({'name': domain['name'], 'date_available': convert_string_dates(domain['date_available']), 'tld': tld}, output)
                     output.write(os.linesep)
                     counter += 1
 

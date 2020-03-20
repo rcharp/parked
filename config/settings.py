@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 from celery.schedules import crontab
 
-SITE_NAME = 'getparked.io'
+SITE_NAME = 'namecatcher.io'
 
 PRODUCTION = True
 
@@ -126,9 +126,6 @@ AWS_ACCESS_KEY_SECRET = os.environ.get('AWS_ACCESS_KEY_SECRET', None)
 # JSONBIN
 JSONBIN_API_KEY = os.environ.get('JSONBIN_API_KEY', None)
 
-# JSONBIN
-FILESTACK_API_KEY = os.environ.get('FILESTACK_API_KEY', None)
-
 # PASTEBIN
 PASTEBIN_API_KEY = os.environ.get('PASTEBIN_API_KEY', None)
 
@@ -170,10 +167,10 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG_TB_ENABLED = False
 
 # Ngrok
-SITE_URL = 'https://getparked.io'
+SITE_URL = 'https://namecatcher.io'
 
 # Webhook
-WEBHOOK_URL = 'https://www.getparked.io/webhook'
+WEBHOOK_URL = 'https://www.namecatcher.io/webhook'
 
 # Mailerlite
 # MAILERLITE_API_KEY = os.environ.get('MAILERLITE_API_KEY', None)

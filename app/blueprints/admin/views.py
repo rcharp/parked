@@ -14,6 +14,7 @@ from app.blueprints.user.decorators import role_required
 from app.blueprints.billing.models.subscription import Subscription
 from app.blueprints.billing.models.invoice import Invoice
 from app.blueprints.user.models import User
+from app.blueprints.api.models.backorder import Backorder
 from app.blueprints.admin.forms import (
     SearchForm,
     BulkDeleteForm,
@@ -36,12 +37,12 @@ def before_request():
 # Dashboard -------------------------------------------------------------------
 @admin.route('')
 def dashboard():
-    group_and_count_plans = Dashboard.group_and_count_plans()
+    group_and_count_backorders = Dashboard.group_and_count_backorders()
     # group_and_count_coupons = Dashboard.group_and_count_coupons()
     group_and_count_users = Dashboard.group_and_count_users()
 
     return render_template('admin/page/dashboard.html',
-                           group_and_count_plans=group_and_count_plans,
+                           group_and_count_backorders=group_and_count_backorders,
                            # group_and_count_coupons=group_and_count_coupons,
                            group_and_count_users=group_and_count_users)
 
@@ -90,6 +91,26 @@ def users(page):
     return render_template('admin/user/index.html',
                            form=search_form, bulk_form=bulk_form,
                            users=paginated_users)
+
+
+# Backorders -----------------------------------------------------------------------
+@admin.route('/backorders', defaults={'page': 1})
+@admin.route('/backorders/page/<int:page>')
+def backorders(page):
+    search_form = SearchForm()
+    bulk_form = BulkDeleteForm()
+
+    sort_by = Backorder.sort_by(request.args.get('sort', 'created_on'),
+                           request.args.get('direction', 'desc'))
+    order_values = '{0} {1}'.format(sort_by[0], sort_by[1])
+
+    paginated_backorders = Backorder.query \
+        .order_by(Backorder.created_on.asc(), Backorder.domain_name, text(order_values)) \
+        .paginate(page, 50, True)
+
+    return render_template('admin/backorder/index.html',
+                           form=search_form, bulk_form=bulk_form,
+                           backorders=paginated_backorders)
 
 
 @admin.route('/users/edit/<int:id>', methods=['GET', 'POST'])
@@ -149,6 +170,29 @@ def users_bulk_delete():
         flash('No users were deleted, something went wrong.', 'error')
 
     return redirect(url_for('admin.users'))
+
+
+@admin.route('/backorders/bulk_delete', methods=['POST'])
+def backorders_bulk_delete():
+    form = BulkDeleteForm()
+
+    if form.validate_on_submit():
+        ids = Backorder.get_bulk_action_ids(request.form.get('scope'),
+                                            request.form.getlist('bulk_ids'),
+                                            omit_ids=[current_user.id],
+                                            query=request.args.get('q', ''))
+
+        # Prevent circular imports.
+        from app.blueprints.billing.tasks import delete_backorders
+
+        delete_backorders.delay(ids)
+
+        flash('{0} backorders(s) were scheduled to be deleted.'.format(len(ids)),
+              'success')
+    else:
+        flash('No backorders were deleted, something went wrong.', 'error')
+
+    return redirect(url_for('admin.backorders'))
 
 
 @admin.route('/users/cancel_subscription', methods=['POST'])
