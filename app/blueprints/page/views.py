@@ -89,7 +89,7 @@ def view(domain, available):
     if current_user.is_authenticated:
         id = current_user.id
     else:
-        id = 3
+        id = 0
 
     available = available.replace('-', '/')
     from app.blueprints.api.api_functions import save_search
