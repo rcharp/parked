@@ -241,6 +241,9 @@ def generate_drops():
         if pool or park:
             with open('domains.json', 'r') as output:
 
+                # Create the selection to be displayed on the home page
+                create_selection(limit)
+
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
                 return upload_to_aws(output.name, 'namecatcherio', output.name)
