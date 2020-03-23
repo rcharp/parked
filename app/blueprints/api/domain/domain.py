@@ -242,7 +242,7 @@ def generate_drops():
             with open('domains.json', 'r') as output:
 
                 # Create the selection to be displayed on the home page
-                create_selection(limit)
+                # create_selection(limit)
 
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
