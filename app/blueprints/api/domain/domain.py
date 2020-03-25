@@ -184,13 +184,13 @@ def get_dropping_domains(limit=None):
         return domains, '{:,}'.format(get_drop_count())
 
 
-def create_selection(limit, return_file=True):
+def create_selection(limit):
     num_domains = '{:,}'.format(count_lines(open("domains.json")))
     today = get_utc_date_today_string()
     domains = list()
     counter = 0
 
-    if not path.exists("domains.json") and return_file:
+    if not path.exists("domains.json"):
         from app.blueprints.api.domain.s3 import get_content
         return get_content(limit), num_domains
 
@@ -218,11 +218,39 @@ def create_selection(limit, return_file=True):
                 json.dump(domain, output)
                 output.write(os.linesep)
 
-        if return_file:
-            # Shuffle the limited selection
-            random.seed(random.randrange(1000))
-            random.shuffle(domains)
-            return domains, num_domains
+        # Shuffle the limited selection
+        random.seed(random.randrange(1000))
+        random.shuffle(domains)
+        return domains, num_domains
+
+
+def update_selection(file, limit):
+    today = get_utc_date_today_string()
+    domains = list()
+    counter = 0
+
+    words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+    lines = file.readlines()
+
+    selection = [x for x in lines if json.loads(x)['date_available'] != today]
+    selection = random.sample(selection, k=int(len(selection) / 2))
+    for line in selection:
+        line = json.loads(line)
+
+        if has_word(words, line):
+            domains.append(line)
+            counter += 1
+
+        if counter == limit: break
+
+    # Delete the selection file if it exists
+    if path.exists("selection.json"):
+        os.remove("selection.json")
+
+    with open('selection.json', 'a') as output:
+        for domain in domains:
+            json.dump(domain, output)
+            output.write(os.linesep)
 
 
 def generate_drops():
@@ -242,9 +270,12 @@ def generate_drops():
         if pool or park:
 
             # Create the selection to be displayed on the home page
-            create_selection(limit, False)
+            # create_selection(limit, False)
 
             with open('domains.json', 'r') as output:
+
+                update_selection(output, limit)
+
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
                 return upload_to_aws(output.name, 'namecatcherio', output.name)
