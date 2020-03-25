@@ -224,39 +224,45 @@ def create_selection(limit):
         return domains, num_domains
 
 
-def update_selection(file, limit):
-    today = get_utc_date_today_string()
-    domains = list()
-    counter = 0
+def update_selection(limit):
+    with open('domains.json', 'r') as file:
+        today = get_utc_date_today_string()
+        domains = list()
+        counter = 0
 
-    words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
-    lines = file.readlines()
+        words = open('app/blueprints/api/domain/words/words.txt').read().splitlines()
+        lines = file.readlines()
 
-    selection = [x for x in lines if json.loads(x)['date_available'] != today]
-    selection = random.sample(selection, k=int(len(selection) / 2))
-    for line in selection:
-        line = json.loads(line)
+        selection = [x for x in lines if json.loads(x)['date_available'] != today]
+        selection = random.sample(selection, k=int(len(selection) / 2))
+        for line in selection:
+            line = json.loads(line)
 
-        if has_word(words, line):
-            domains.append(line)
-            counter += 1
+            if has_word(words, line):
+                domains.append(line)
+                counter += 1
 
-        if counter == limit: break
+            if counter == limit: break
 
-    # Delete the selection file if it exists
-    if path.exists("selection.json"):
-        os.remove("selection.json")
+        # Delete the selection file if it exists
+        if path.exists("selection.json"):
+            os.remove("selection.json")
 
-    with open('selection.json', 'a') as output:
-        for domain in domains:
-            json.dump(domain, output)
-            output.write(os.linesep)
+        with open('selection.json', 'a') as output:
+            for domain in domains:
+                json.dump(domain, output)
+                output.write(os.linesep)
 
 
-def generate_drops():
+def generate_drops(selection=False):
     try:
         # The max number of domains to get, per TLD
         limit = 1500
+
+        # Only update the selection
+        if selection:
+            update_selection(limit)
+            return
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
 
@@ -273,9 +279,6 @@ def generate_drops():
             # create_selection(limit, False)
 
             with open('domains.json', 'r') as output:
-
-                update_selection(output, limit)
-
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
                 return upload_to_aws(output.name, 'namecatcherio', output.name)
