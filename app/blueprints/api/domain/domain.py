@@ -184,13 +184,13 @@ def get_dropping_domains(limit=None):
         return domains, '{:,}'.format(get_drop_count())
 
 
-def create_selection(limit):
+def create_selection(limit, return_file=True):
     num_domains = '{:,}'.format(count_lines(open("domains.json")))
     today = get_utc_date_today_string()
     domains = list()
     counter = 0
 
-    if not path.exists("domains.json"):
+    if not path.exists("domains.json") and return_file:
         from app.blueprints.api.domain.s3 import get_content
         return get_content(limit), num_domains
 
@@ -218,10 +218,11 @@ def create_selection(limit):
                 json.dump(domain, output)
                 output.write(os.linesep)
 
-        # Shuffle the limited selection
-        random.seed(random.randrange(1000))
-        random.shuffle(domains)
-        return domains, num_domains
+        if return_file:
+            # Shuffle the limited selection
+            random.seed(random.randrange(1000))
+            random.shuffle(domains)
+            return domains, num_domains
 
 
 def generate_drops():
@@ -239,11 +240,11 @@ def generate_drops():
         park = park_domains(limit)
 
         if pool or park:
+
+            # Create the selection to be displayed on the home page
+            create_selection(limit, False)
+
             with open('domains.json', 'r') as output:
-
-                # Create the selection to be displayed on the home page
-                # create_selection(limit)
-
                 # Upload to AWS
                 from app.blueprints.api.domain.s3 import upload_to_aws
                 return upload_to_aws(output.name, 'namecatcherio', output.name)
