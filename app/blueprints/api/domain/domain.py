@@ -1,6 +1,6 @@
 from app.blueprints.api.domain.pynamecheap.namecheap import Api
 from app.blueprints.api.api_functions import print_traceback, valid_tlds, pool_tlds, park_tlds, tld_length, active_tlds
-from app.blueprints.page.date import get_string_from_utc_datetime, get_utc_date_today_string, get_dt_string, convert_datetime_to_available
+from app.blueprints.page.date import get_string_from_utc_datetime, get_utc_date_today_string, get_dt_string, convert_datetime_to_available, get_creation_date
 from flask import current_app, flash
 import pythonwhois
 import datetime
@@ -149,10 +149,50 @@ def get_domain_status(domain):
         return False
 
 
-def get_dropping_domains(limit=None):
+def generate_drops(selection=False):
+    try:
+        # The max number of domains to get, per TLD
+        limit = 1500
 
+        # Only update the selection
+        if selection:
+            update_selection(limit)
+            return
+
+        from app.blueprints.api.domain.download import pool_domains, park_domains
+
+        # Delete the existing domains.json
+        if path.exists("domains.json"):
+            os.remove("domains.json")
+
+        # Delete the existing selection.json
+        if path.exists("selection.json"):
+            os.remove("selection.json")
+
+        # Get the domains from the Pool list and the Park list
+        pool = pool_domains(limit)
+        park = park_domains(limit)
+
+        if pool or park:
+
+            # Create the selection to be displayed on the home page
+            # create_selection(limit, False)
+
+            with open('domains.json', 'r') as output:
+                # Upload to AWS
+                from app.blueprints.api.domain.s3 import upload_to_aws
+                return upload_to_aws(output.name, 'namecatcherio', output.name)
+    except Exception as e:
+        print_traceback(e)
+        return False
+
+
+def get_dropping_domains(limit=None):
     if limit is not None:
-        if not path.exists("selection.json") or os.path.exists("selection.json") and os.stat("selection.json").st_size == 0:
+        # If the selection file doesn't exist, or is empty, or is outdated, create a new one
+        if not path.exists("selection.json")\
+                or (os.path.exists("selection.json") and os.stat("selection.json").st_size == 0)\
+                or get_creation_date("selection.json") != get_utc_date_today_string():
             return create_selection(limit)
         else:
             selection = list()
@@ -252,39 +292,6 @@ def update_selection(limit):
             for domain in domains:
                 json.dump(domain, output)
                 output.write(os.linesep)
-
-
-def generate_drops(selection=False):
-    try:
-        # The max number of domains to get, per TLD
-        limit = 1500
-
-        # Only update the selection
-        if selection:
-            update_selection(limit)
-            return
-
-        from app.blueprints.api.domain.download import pool_domains, park_domains
-
-        if path.exists("domains.json"):
-            os.remove("domains.json")
-
-        # Get the domains from the Pool list and the Park list
-        pool = pool_domains(limit)
-        park = park_domains(limit)
-
-        if pool or park:
-
-            # Create the selection to be displayed on the home page
-            # create_selection(limit, False)
-
-            with open('domains.json', 'r') as output:
-                # Upload to AWS
-                from app.blueprints.api.domain.s3 import upload_to_aws
-                return upload_to_aws(output.name, 'namecatcherio', output.name)
-    except Exception as e:
-        print_traceback(e)
-        return False
 
 
 def get_drop_count():

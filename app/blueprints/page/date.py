@@ -8,6 +8,8 @@ import tzlocal
 # import app.blueprints.simple.prettydate as p
 from json import dumps
 from dateutil.parser import parse
+import os
+import platform
 
 now = dtime.now()
 yesterday = now - datetime.timedelta(days=1)
@@ -52,6 +54,30 @@ def is_date(string, fuzzy=False):
         return False
     except Exception:
         return False
+
+
+def get_creation_date(path_to_file):
+    """
+    Try to get the date that a file was created, falling back to when it was
+    last modified if that isn't possible.
+    See http://stackoverflow.com/a/39501288/1709587 for explanation.
+    """
+    if platform.system() == 'Windows':
+        dt = convert_timestamp_to_datetime_utc(os.path.getctime(path_to_file))
+        date = convert_datetime_to_available(dt)
+        return date
+    else:
+        stat = os.stat(path_to_file)
+        try:
+            dt = convert_timestamp_to_datetime_utc(stat.st_birthtime)
+            date = convert_datetime_to_available(dt)
+            return date
+        except AttributeError:
+            # We're probably on Linux. No easy way to get creation dates here,
+            # so we'll settle for when its content was last modified.
+            dt = convert_timestamp_to_datetime_utc(stat.st_mtime)
+            date = convert_datetime_to_available(dt)
+            return date
 
 
 # Time conversions ###################################

@@ -18,7 +18,7 @@ from app.blueprints.api.domain.dynadot import (
     forward_domain
 )
 from app.blueprints.api.domain.s3 import download_from_aws
-
+from app.blueprints.page.date import get_creation_date
 from celery.result import AsyncResult
 
 
@@ -66,7 +66,8 @@ def test(domain):
     # results = generate_drops()
 
     # results = forward_domain('photocamp.io')
-    results = download_from_aws('domains.json')
+    # results = download_from_aws('domains.json')
+    results = get_creation_date("selection.json")
     return results
 
 
