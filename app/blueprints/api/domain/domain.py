@@ -149,15 +149,10 @@ def get_domain_status(domain):
         return False
 
 
-def generate_drops(selection=False):
+def generate_drops():
     try:
         # The max number of domains to get, per TLD
         limit = 1500
-
-        # Only update the selection
-        if selection:
-            update_selection(limit)
-            return
 
         from app.blueprints.api.domain.download import pool_domains, park_domains
 

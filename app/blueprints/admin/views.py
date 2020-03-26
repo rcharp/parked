@@ -54,10 +54,7 @@ def update_domains():
     if request.method == 'POST':
         try:
             from app.blueprints.api.domain.domain import generate_drops
-
-            selection = request.form['selection']
-            update_selection = True if selection == 'true' else False
-            results = generate_drops(update_selection)
+            results = generate_drops()
 
             if results is not None:
                 flash("Drops generatetd succesfully.", 'success')
