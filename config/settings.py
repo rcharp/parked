@@ -61,10 +61,11 @@ CELERY_TASK_FREQUENCY = 2  # How often (in minutes) to run this task
 CELERYBEAT_SCHEDULE = {
     'dropping_domains': {
         'task': 'app.blueprints.api.tasks.generate_drops',
+        'schedule': timedelta(minutes=60)
         # 'schedule': crontab(minute=0, hour="*/12") # every 12 hours
         # 'schedule': crontab(minute="*/1") # every minute
         # 'schedule': crontab(minute="*/5") # every 5 minutes
-        'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
+        # 'schedule': crontab(hour=0, minute=0) # every night at midnight, GMT
     },
 
     # Attempt to order the domains

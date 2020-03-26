@@ -53,7 +53,7 @@ from app.blueprints.api.models.searched import SearchedDomain
 from app.blueprints.api.models.backorder import Backorder
 from app.blueprints.api.api_functions import (
     save_domain,
-    save_search,
+    # save_search,
     valid_tlds,
     active_tlds,
     update_customer,
@@ -321,7 +321,7 @@ def check_availability():
 
         # Save the search if it is a valid domain
         if domain is not None and 'available' in domain and domain['available'] is not None:
-            save_search(domain_name, domain['expires'], domain['date_available'], current_user.id)
+            # save_search(domain_name, domain['expires'], domain['date_available'], current_user.id)
 
             domains = Domain.query.filter(Domain.user_id == current_user.id).all()
             details = get_domain_details(domain_name)
