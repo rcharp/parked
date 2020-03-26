@@ -21,7 +21,7 @@ from app.blueprints.api import api
 from app.blueprints.billing import billing
 from app.blueprints.user.models import User
 from app.blueprints.errors import errors
-from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date
+from app.blueprints.page.date import get_string_from_datetime, get_datetime_from_string, get_dt_string, is_date, convert_datetime_to_available
 from app.blueprints.billing.template_processors import (
   format_currency,
   current_year
@@ -195,6 +195,7 @@ def template_processors(app):
     """
     app.jinja_env.filters['format_currency'] = format_currency
     app.jinja_env.filters['pretty_date_filter'] = pretty_date_filter
+    app.jinja_env.filters['short_date_filter'] = short_date_filter
     app.jinja_env.filters['logo_filter'] = logo_filter
     app.jinja_env.filters['list_filter'] = list_filter
     app.jinja_env.filters['dict_filter'] = dict_filter
@@ -323,6 +324,18 @@ def pretty_date_filter(arg):
             time_string = time_string.split('.')[0]
         dt = get_datetime_from_string(time_string)
         return get_dt_string(dt) + ' UTC'
+
+    return arg
+
+
+def short_date_filter(arg):
+    time_string = str(arg)
+
+    if is_date(time_string):
+        if '.' in time_string:
+            time_string = time_string.split('.')[0]
+        dt = get_datetime_from_string(time_string)
+        return convert_datetime_to_available(dt)
 
     return arg
 

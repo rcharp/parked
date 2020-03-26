@@ -258,7 +258,7 @@ def dashboard():
 
     test = not current_app.config.get('PRODUCTION')
 
-    domains = Domain.query.filter(Domain.user_id == current_user.id).all()
+    domains = Backorder.query.filter(Backorder.user_id == current_user.id).all()
     searched = SearchedDomain.query.filter(SearchedDomain.user_id == current_user.id).order_by(SearchedDomain.id.desc()).limit(20).all()
     tlds = active_tlds()
 

@@ -484,10 +484,12 @@
                                                     <thead>
                                                         <tr role="row">
                                                             <th class="text-center sorting_asc hidden font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="" style="width: 57px;"></th>
-                                                            <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>
-                                                            <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Requested on</th>
-                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Available On" onclick="ChangeSortIcon(this)" style="width: 200px;">Available On&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>
-                                                            <th class="sorting_disabled text-center font-w300" tabindex="0" aria-controls="DataTables_Table_0" data-value="owned" style="width: 69px;padding-left:30px;" rowspan="1" colspan="1" aria-label="Owned">Owned</th>
+                                                            <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" style="width: 200px;"> Domain Name</th>
+{#                                                            <th class="sorting name-header font-w300" id="name_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="name" aria-label="Name" onclick="ChangeSortIcon(this)" style="width: 200px;"> Domain Name&nbsp;&nbsp;<i id="name-sort-icon" class="fa fa-sort"></i></th>#}
+                                                            <th class="sorting_disabled font-w300" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Requested On" style="width: 150px;">Date Backorderd</th>
+                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Available On" style="width: 150px;">Date Available</th>
+{#                                                            <th class="sorting date-header font-w300" id="date_header" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" data-value="date" aria-label="Available On" onclick="ChangeSortIcon(this)" style="width: 200px;">Available On&nbsp;&nbsp;<i id="date-sort-icon" class="si si-arrow-down"></i></th>#}
+                                                            <th class="sorting_disabled text-center font-w300" tabindex="0" aria-controls="DataTables_Table_0" data-value="owned" style="width:150px;padding-left:30px;" rowspan="1" colspan="1" aria-label="Caught">Successfully Caught</th>
                                                             <th class="sorting_disabled text-center font-w300" style="width:200px;min-width:200px;max-width:200px;" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
                                                         </tr>
                                                     </thead>
@@ -499,35 +501,37 @@
                                                             <span>
                                                                 <td class="text-center sorting_1 hidden">1</td>
                                                                 <td style="min-width:200px;padding-top:20px;">
-                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#0073ff;font-weight:100;">{{ domain.name }}</span>
+                                                                    <span class="font-w100 text-muted" style="font-size:18px;font-family:'Fredoka One', sans-serif !important;color:#0073ff;font-weight:100;">{{ domain.domain_name }}</span>
                                                                 </td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|pretty_date_filter }}</span></td>
-                                                                <td style="min-width:200px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.date_available %}{{ domain.date_available }}{% else %}N/A{% endif %}</span></td>
+                                                                <td style="min-width:150px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{{ domain.created_on|short_date_filter }}</span></td>
+                                                                <td style="min-width:150px;padding-top:20px;"><span class="font-w400 text-muted" style="font-size:18px;">{% if domain.date_available %}{{ domain.date_available }}{% else %}N/A{% endif %}</span></td>
                                                                 <td class="text-center" style="min-width:75px;padding:10px 0;">
-                                                                    {% if domain.registered %}
+                                                                    {% if domain.secured %}
                                                                         <span style="color:green"><i class="si si-check fa-2x"></i></span>
-                                                                    {% else %}
+                                                                    {% elif domain.lost %}
                                                                         <span style="color:red"><i class="si si-close fa-2x"></i></span>
+                                                                    {% else %}
+                                                                        <span class="font-w400 text-muted" style="font-size:18px;"><i>Not available yet</i></span>
                                                                     {% endif %}
                                                                 </td>
                                                                 <td class="text-center" style="min-width:200px;max-width:200px;width:200px;">
-                                                                    {% if not domain.registered %}
+                                                                    {% if not domain.secured %}
                                                                         <div style="width:50%;float:left">
                                                                     {% endif %}
                                                                         <form class="form-horizontal push-5-t" action="{{ url_for('user.view_domain' ) }}" method="post">
                                                                             <div class="form-group">
-                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.domain }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                                 <button class="btn btn-sm btn-success" id="submit-button" type="submit"
                                                                                             style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> View
                                                                                 </button>
                                                                             </div>
                                                                         </form>
-                                                                    {% if not domain.registered %}
+                                                                    {% if not domain.secured %}
                                                                         </div>
                                                                         <div style="width:50%;float:right">
                                                                             <form class="form-horizontal push-5-t" action="{{ url_for('user.delete_domain' ) }}" method="post">
                                                                                 <div class="form-group">
-                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.domain }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                                     <button class="btn btn-sm btn-danger" id="submit-button" type="submit" onclick="return ConfirmDeleteReservation();"
                                                                                                 style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Delete
                                                                                     </button>
@@ -538,7 +542,7 @@
                                                                             <form class="form-horizontal push-5-t" action="{{ url_for('user.register_domain' ) }}" method="post">
                                                                                 <br /><br />
                                                                                 <div class="form-group">
-                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.id }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
+                                                                                    <input class="form-control" id="domain" name="domain" type="hidden" value="{{ domain.domain }}" style="text-align:center;min-height:40px;font-size:24px;color:#606060; padding:30px;" />
                                                                                     <button class="btn btn-sm btn-primary" id="submit-button" type="submit"
                                                                                                 style="width:50%;min-height:15px;min-width:80px; margin:0 auto;font-size:12px;padding:10px;"><i class="push-5-r"></i> Register
                                                                                     </button>
