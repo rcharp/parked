@@ -28,11 +28,11 @@ def send_reservation_email(email, domain, available):
                   recipients=[email])
     msg.html = render_template('user/mail/reservation_email.html', domain=domain, available=available)
 
-    response = Message("User " + email + " reserved " + domain + " .",
+    response = Message("User " + email + " reserved " + domain + ".",
                        recipients=["namecatcherio@gmail.com"],
                        sender="namecatcherio@gmail.com")
 
-    response.body = email + " reserved the following domain:\n\n" + domain + ". It's available on " + available + "."
+    response.body = email + " reserved the following domain:\n\n" + domain + ".\n\nIt's available on " + available + "."
 
     mail.send(msg)
     mail.send(response)
