@@ -6,7 +6,7 @@ celery = create_celery_app()
 @celery.task()
 def generate_drops():
     from app.blueprints.api.domain.domain import generate_drops
-    generate_drops()
+    return generate_drops()
 
 
 @celery.task()
