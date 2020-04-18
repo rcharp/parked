@@ -57,9 +57,9 @@ def update_domains():
             results = generate_drops()
 
             if results is not None:
-                flash("Drops generatetd succesfully.", 'success')
+                flash("Drops generated succesfully.", 'success')
             else:
-                flash("Drops not generatetd succesfully.", 'error')
+                flash("Drops not generated succesfully.", 'error')
 
             return redirect(url_for('user.dashboard'))
         except Exception as e:
